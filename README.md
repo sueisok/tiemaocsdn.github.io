@@ -1,2 +1,0 @@
-# tiemaocsdn.github.io
-allornothing
