@@ -1,0 +1,2 @@
+# sueisok.github.io
+allornothing
