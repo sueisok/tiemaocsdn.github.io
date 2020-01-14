@@ -1,2 +1,2 @@
 # sueisok.github.io
-allornothing
+whysoserious
