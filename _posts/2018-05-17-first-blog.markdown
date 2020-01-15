@@ -3,11 +3,10 @@ layout:	post
 title:	"第一篇博客"
 date:	2020-01-15 15:04:21 +0800
 tags:	jekyll github
-color:	rgb(255,90,90)
+color:	rgb(154,133,255)
 cover:	'../assets/th.jpg'
 subtitle:	'搞了一天，记录一下是怎么搞出来的博客'
 ---
-
 ## 0x00 拥有github
 - 为什么用github：
 (￣▽￣)"方便不要钱，没有别的
