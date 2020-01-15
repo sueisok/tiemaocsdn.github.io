@@ -1,6 +1,161 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-01-15T11:23:37+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes，Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">第一篇博客</title><link href="http://localhost:4000/blog/first-blog/" rel="alternate" type="text/html" title="第一篇博客" /><published>2018-05-17T14:05:21+08:00</published><updated>2018-05-17T14:05:21+08:00</updated><id>http://localhost:4000/blog/first-blog</id><content type="html" xml:base="http://localhost:4000/blog/first-blog/">&lt;h1 id=&quot;大标题&quot;&gt;大标题&lt;/h1&gt;
-&lt;h2 id=&quot;二标题&quot;&gt;二标题&lt;/h2&gt;
-&lt;h3 id=&quot;三标题&quot;&gt;三标题&lt;/h3&gt;
-&lt;p&gt;第一篇博客，想整理一下怎么搭博客&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-01-15T15:04:08+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes，Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">第一篇博客</title><link href="http://localhost:4000/blog/first-blog/" rel="alternate" type="text/html" title="第一篇博客" /><published>2018-05-17T14:05:21+08:00</published><updated>2018-05-17T14:05:21+08:00</updated><id>http://localhost:4000/blog/first-blog</id><content type="html" xml:base="http://localhost:4000/blog/first-blog/">&lt;h2 id=&quot;0x00-拥有github&quot;&gt;0x00 拥有github&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;为什么用github：
+(￣▽￣)”方便不要钱，没有别的&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;注册github账号：&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
-&lt;p&gt;将会更新。。。&lt;/p&gt;</content><author><name>true</name></author><category term="jekyll" /><category term="github" /><summary type="html">大标题 二标题 三标题 第一篇博客，想整理一下怎么搭博客</summary></entry></feed>
+&lt;p&gt;这个不用说了，之前就有账号了，直接在仓库里新建就行，会有个域名，比如我的是&lt;code class=&quot;highlighter-rouge&quot;&gt;sueisok&lt;/code&gt;，域名就是&lt;code class=&quot;highlighter-rouge&quot;&gt;sueisok.github.io&lt;/code&gt;了。不需要什么dnspod，什么dnsdaddy，什么一年50美元租服务器，贵且不好维护，且第三方平台比如wordpress可能有漏洞之类的，还要时常更新版本&lt;/p&gt;
+
+&lt;h2 id=&quot;0x01-选择的工具&quot;&gt;0x01 选择的工具&lt;/h2&gt;
+
+&lt;p&gt;本人电脑为win10系统&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://rubyinstaller.org/downloads/&quot;&gt;Ruby&lt;/a&gt;:一种简单快捷的面向对象（面向对象程序设计）脚本语言，安装Jekyll需要电脑上安装Ruby&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jekyllcn.com/&quot;&gt;Jekyll&lt;/a&gt;：jekyll是一个简单的免费的Blog生成工具，类似WordPress。但是和WordPress又有很大的不同，原因是jekyll只是一个生成静态网页的工具，不需要数据库支持。但是可以配合第三方服务，比如评论区可以有第三方支持，我这里用的是Gitment&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://typora.io/&quot;&gt;Typora&lt;/a&gt;:是一款支持实时预览的 Markdown 文本编辑器，很强大&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/imsun/gitment&quot;&gt;Gitment&lt;/a&gt;:基于 GitHub Issues 的评论系统&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;0x02-安装工具&quot;&gt;0x02 安装工具&lt;/h2&gt;
+
+&lt;h3 id=&quot;安装ruby&quot;&gt;安装ruby&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://rubyinstaller.org/downloads/&quot;&gt;Ruby官网&lt;/a&gt;下载安装包，选择带DevKit的&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;安装到某个路径下即可&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;添加到环境变量&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;检查ruby是否安装成功：&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ruby -v
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;检查gem版本，gem是一个管理ruby库和程序的标准包，用RubyInstaller安装ruby之后都附带有gem（不是邓紫棋&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem -v
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;h3 id=&quot;安装bundle&quot;&gt;安装bundle&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem install bundle
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;至于这是什么，我不知道，至于会出现什么报错，我没遇见&lt;/p&gt;
+
+&lt;h3 id=&quot;安装jekyll&quot;&gt;安装jekyll&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem install jekyll
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;成功的话就成功了。这里碎碎念一下，(ノへ￣、)公司电脑上就可以安装成功，家里自己的电脑就不成功&lt;/p&gt;
+
+&lt;p&gt;查看jekyll版本&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ jekyll -v
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;如果报错啥的，就按他提示，有可能是&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle exec jekyll -v
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;显示了版本就是成功袅 我的是jekyll 3.8.6&lt;/p&gt;
+
+&lt;h2 id=&quot;0x03-发表自己的第一篇博客&quot;&gt;0x03 发表自己的第一篇博客&lt;/h2&gt;
+
+&lt;p&gt;我自己之前在github上有过主页，所以我这里只写如何应用一个自己喜欢的主题，然后提交到git上，让所有人都看到&lt;/p&gt;
+
+&lt;h3 id=&quot;把自己原先的仓库clone下来&quot;&gt;把自己原先的仓库clone下来&lt;/h3&gt;
+
+&lt;p&gt;原先github上有过主页，clone到本地一个路径下&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git clone xxx你的仓库xxx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;选择一个自己喜欢的主题&quot;&gt;选择一个自己喜欢的主题&lt;/h3&gt;
+
+&lt;p&gt;有好多主题的网站，我这个是在&lt;a href=&quot;http://jekyllthemes.org/&quot;&gt;jekyllthemes&lt;/a&gt;找的，也可以在喜欢的博主页脚中找到他们用的主题（真是个小机灵鬼儿&lt;/p&gt;
+
+&lt;p&gt;下载下来，如果这个主题能用的话，接着往下进行&lt;/p&gt;
+
+&lt;p&gt;如果直接把主题中的内容复制到仓库里，会出错，这里建议先在主题的目录下生成页面，再复制到clone的仓库目录下，在下载的主题目录下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle exec jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后将生成的所有内容复制到自己目录下&lt;/p&gt;
+
+&lt;p&gt;如果之前仓库有自己的内容，比如&lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt;里的静态页面或者&lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;的内容，需要修改后再替换&lt;/p&gt;
+
+&lt;p&gt;在自己的仓库目录下：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle exec jekyll serve
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;显示&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Configuration file: xxxx/sueisok.github.io/_config.yml
+            Source: xxxx/sueisok.github.io
+       Destination: xxxx/sueisok.github.io/_site
+ Incremental build: disabled. Enable with --incremental
+      Generating...
+       Jekyll Feed: Generating feed for posts
+                    done in 2.183 seconds.
+ Auto-regeneration: enabled for 'xxxx/sueisok.github.io'
+  JekyllAdmin mode: production
+    Server address: http://127.0.0.1:4000
+  Server running... press ctrl-c to stop.
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;即可访问本地&lt;code class=&quot;highlighter-rouge&quot;&gt;http://127.0.0.1:4000&lt;/code&gt;查看页面，直到自己满意了之后再提交到github上&lt;/p&gt;
+
+&lt;h3 id=&quot;用typora写一篇内容&quot;&gt;用Typora写一篇内容&lt;/h3&gt;
+
+&lt;p&gt;Typora是可以写markdown格式内容的编辑器，简约大方又不失便捷，还可以直接添加emoji表情，下次试一下&lt;/p&gt;
+
+&lt;p&gt;写完直接丢到仓库的&lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt;里面&lt;/p&gt;
+
+&lt;h3 id=&quot;将修改内容提交到github&quot;&gt;将修改内容提交到github&lt;/h3&gt;
+
+&lt;p&gt;可以下载&lt;a href=&quot;https://desktop.github.com/&quot;&gt;GitHub Desktop&lt;/a&gt;，比较直观&lt;/p&gt;
+
+&lt;p&gt;也可以手动提交到git，我这里目前只有一个master分支，操作也比较暴力因为只有我一个人维护，如果需要其他分支可自行百度&lt;/p&gt;
+
+&lt;p&gt;查看修改内容：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git status
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;将要提交的文件的信息添加到索引库&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git add .
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;添加此次修改的备注&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git commit -m &quot;xxxx&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;提交到master分支&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git push origin master
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;网络差的话可能提交失败，再试一下就好了（〃｀ 3′〃）&lt;/p&gt;
+
+&lt;p&gt;然后稍等一下就可以看到自己的commit成功，在等一下就可以看到自己的文章更新好了，奥里给！&lt;/p&gt;</content><author><name>true</name></author><category term="jekyll" /><category term="github" /><summary type="html">0x00 拥有github 为什么用github： (￣▽￣)”方便不要钱，没有别的</summary></entry></feed>
