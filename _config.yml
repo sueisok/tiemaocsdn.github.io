@@ -145,3 +145,5 @@ exclude:
   - .git*
   - package-lock.json
   - gulpconfig.json
+
+theme: jekyll-theme-slate
