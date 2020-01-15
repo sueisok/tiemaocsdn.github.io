@@ -16,13 +16,13 @@
 <meta property="og:url" content="http://localhost:4000/blog/first-blog/" />
 <meta property="og:site_name" content="sueisok" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2018-05-17T14:05:21+08:00" />
+<meta property="article:published_time" content="2020-01-15T15:04:21+08:00" />
 <meta name="twitter:card" content="summary" />
 <meta property="twitter:title" content="第一篇博客" />
 <meta name="twitter:site" content="@your_name" />
 <meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","headline":"第一篇博客","dateModified":"2018-05-17T14:05:21+08:00","datePublished":"2018-05-17T14:05:21+08:00","url":"http://localhost:4000/blog/first-blog/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/first-blog/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"0x00 拥有github 为什么用github： (￣▽￣)”方便不要钱，没有别的","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","headline":"第一篇博客","dateModified":"2020-01-15T15:04:21+08:00","datePublished":"2020-01-15T15:04:21+08:00","url":"http://localhost:4000/blog/first-blog/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/first-blog/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"0x00 拥有github 为什么用github： (￣▽￣)”方便不要钱，没有别的","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <script type="application/ld+json">
@@ -252,9 +252,9 @@
 
 <ul>
   <li><a href="https://rubyinstaller.org/downloads/">Ruby</a>:一种简单快捷的面向对象（面向对象程序设计）脚本语言，安装Jekyll需要电脑上安装Ruby</li>
-  <li><a href="http://jekyllcn.com/">Jekyll</a>：jekyll是一个简单的免费的Blog生成工具，类似WordPress。但是和WordPress又有很大的不同，原因是jekyll只是一个生成静态网页的工具，不需要数据库支持。但是可以配合第三方服务，比如评论区可以有第三方支持，我这里用的是Gitment</li>
+  <li><a href="http://jekyllcn.com/">Jekyll</a>：jekyll生成Git Pages，是一个生成静态网页的工具，不需要数据库支持。但是可以配合第三方服务，比如评论区可以有第三方支持，我这里用的是来必力</li>
   <li><a href="https://typora.io/">Typora</a>:是一款支持实时预览的 Markdown 文本编辑器，很强大</li>
-  <li><a href="https://github.com/imsun/gitment">Gitment</a>:基于 GitHub Issues 的评论系统</li>
+  <li><a href="https://livere.com/">来必力</a>:添加的第三方评论工具</li>
 </ul>
 
 <h2 id="0x02-安装工具">0x02 安装工具</h2>
@@ -309,6 +309,10 @@
 </code></pre></div></div>
 
 <p>显示了版本就是成功袅 我的是jekyll 3.8.6</p>
+
+<h3 id="注册来必力">注册来必力</h3>
+
+<p>注册完将生成的内容添加到仓库文件的<code class="highlighter-rouge">_config.yml</code>里</p>
 
 <h2 id="0x03-发表自己的第一篇博客">0x03 发表自己的第一篇博客</h2>
 
@@ -433,26 +437,29 @@
 
 
 
+    <section class="post-footer-item comment">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80ODI3Ny8yNDc3MQ=="></div>
+    </section>
+
+    <!-- 来必力City版安装代码 -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+
+           if (typeof LivereTower === 'function') { return; }
+
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>Please activate JavaScript for normal use.</noscript>
+    <!-- City version code installation has been completed -->
 
 
-<section class="post-footer-item comment">
-  <div id="container"></div>
-</section>
 
-<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-var gitment = new Gitment({
-  id: '/blog/first-blog', // Optional. The default is location.href
-  owner: 'sueisok',
-  repo: 'sueisok.github.io',
-  oauth: {
-    client_id: '8b36b459c1d0c3e2fe26',
-    client_secret: 'f4b211003721be9869280788c20f393717a77b47',
-  },
-})
-gitment.render('container')
-</script>
 
 
 <!-- Introducing the goto module -->
@@ -462,7 +469,7 @@ gitment.render('container')
         Top
     </div>
   </a>
-  <a title="At the bottomGitment评论哦" class="gotobottom" href="#htmldown" target="_self">
+  <a title="At the bottomlivere评论哦" class="gotobottom" href="#htmldown" target="_self">
     <div class="box" style="font-family:'ffad_matroregular';">
         Foot
     </div>

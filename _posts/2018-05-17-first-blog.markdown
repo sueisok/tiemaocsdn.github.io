@@ -21,15 +21,15 @@ subtitle:	'搞了一天，记录一下是怎么搞出来的博客'
 本人电脑为win10系统
 
 - [Ruby][ruby]:一种简单快捷的面向对象（面向对象程序设计）脚本语言，安装Jekyll需要电脑上安装Ruby
-- [Jekyll][jekyll]：jekyll是一个简单的免费的Blog生成工具，类似WordPress。但是和WordPress又有很大的不同，原因是jekyll只是一个生成静态网页的工具，不需要数据库支持。但是可以配合第三方服务，比如评论区可以有第三方支持，我这里用的是Gitment
+- [Jekyll][jekyll]：jekyll生成Git Pages，是一个生成静态网页的工具，不需要数据库支持。但是可以配合第三方服务，比如评论区可以有第三方支持，我这里用的是来必力
 - [Typora][typora]:是一款支持实时预览的 Markdown 文本编辑器，很强大
-- [Gitment][gitment]:基于 GitHub Issues 的评论系统
+- [来必力][laibili]:添加的第三方评论工具
 
 
 [ruby]:https://rubyinstaller.org/downloads/
 [jekyll]:http://jekyllcn.com/
 [typora]:https://typora.io/
-[gitment]:https://github.com/imsun/gitment
+[laibili]:https://livere.com/
 
 ## 0x02 安装工具
 
@@ -81,7 +81,9 @@ $ bundle exec jekyll -v
 
 显示了版本就是成功袅 我的是jekyll 3.8.6 
 
+### 注册来必力
 
+注册完将生成的内容添加到仓库文件的`_config.yml`里
 
 ## 0x03 发表自己的第一篇博客
 

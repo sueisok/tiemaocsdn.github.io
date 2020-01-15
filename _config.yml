@@ -80,9 +80,9 @@ friends:
 
 disqus: false
 disqus_url: 'https://jonysblog.disqus.com/embed.js'
-livere: false
-livere_uid: MTAyMC8zNDI2OS8xMDgwNg==
-Gitment: true
+livere: true
+livere_uid: MTAyMC80ODI3Ny8yNDc3MQ==
+Gitment: false
 Gitment_owner: 'sueisok'
 Gitment_repo: 'sueisok.github.io'
 client_id: '8b36b459c1d0c3e2fe26'
