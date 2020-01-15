@@ -1,4 +1,6 @@
+
 <footer id="bottom">
+  {% include breadcrumbs.html %}
   <br>
   <span>{{ site.title }} ©
   {% assign current = "now" | date: "%Y" | plus: 0%}
@@ -8,5 +10,6 @@
   {% endunless %}
   {{ current }}
   <br>
-  Powered by <a href="https://www.jekyll.com.cn/">Jekyll</a> | <a href="https://github.com/xukimseven/HardCandy-Jekyll">HardCandy-Jekyll</a></span>
+  Powered by <a href="https://www.jekyll.com/">Jekyll</a> | <a href="https://github.com/JonyBepary/HardCandy-Jekyll-Mod">HardCandy-Jekyll Mod</a></span>
 </footer>
+{% include script.html %}

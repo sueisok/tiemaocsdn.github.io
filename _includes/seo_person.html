@@ -1,0 +1,49 @@
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Person",
+      "image": {{ site.image }},
+      "honorificPrefix": "MD.",
+      "name": {{ site.name }},
+      "familyName": {{ site.familyname }},
+      "honorificSuffix": {{ site.honorificSuffix }},
+      "disambiguatingDescription": {{ site.disambiguatingDescription }},
+      "birthPlace": {{ site.birthPlace }},
+      "birthDate": {{ site.birthDate }},
+      "height": {{ site.height }},
+      "gender": {{ site.gender }},
+      "memberOf": {{ site.memberOf }},
+      "nationality": {{ site.nationality }},
+      "jobTitle": {{ site.jobTitle }},
+      "knowsAbout": {{ site.knowsAbout }},
+      "knowsLanguage": {{ site.knowsLanguage }},
+      "email": {{ site.email }},
+      "url": " {{site.url}} ",
+      "test": {{ site.worksFor.types }}
+      "worksFor": {
+        "@type": {{ site.worksFor.type }},
+        "name": {{ site.worksFor.name }},
+        "openingHours": {{ site.worksFor.openingHours }},
+        "priceRange": {{ site.worksFor.priceRange }},
+        "telephone": {{ site.worksFor.telephone }},
+        "image": {{ site.worksFor.image }},
+        "address": {
+        "@type": {{ site.worksFor.type }},
+        "addressCountry": {{ site.worksFor.addressCountry }},
+        "addressLocality": {{ site.worksFor.addressLocality }},
+        "addressRegion": {{ site.worksFor.addressRegion }}
+         }
+      },
+      "address": {
+        "@type": {{ site.worksFor.address.type }},
+        "addressCountry": {{ site.worksFor.address.addressCountry }},
+        "addressLocality": {{ site.worksFor.address.addressLocality }},
+        "addressRegion": {{ site.worksFor.address.addressRegion }}
+      },
+      "colleague": [
+        "https://deb108471.dhakaeducationboard.gov.bd",
+        "https://deb113652.dhakaeducationboard.gov.bd",
+        "https://deb110880.dhakaeducationboard.gov.bd"
+      ]
+    }
+</script>
