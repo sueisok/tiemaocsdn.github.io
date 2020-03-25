@@ -1,4 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-03-13T14:02:25+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">ThinkPHP6任意文件操作漏洞</title><link href="http://localhost:4000/blog/thinkphp6.0/" rel="alternate" type="text/html" title="ThinkPHP6任意文件操作漏洞" /><published>2020-03-13T15:13:21+08:00</published><updated>2020-03-13T15:13:21+08:00</updated><id>http://localhost:4000/blog/thinkphp6.0</id><content type="html" xml:base="http://localhost:4000/blog/thinkphp6.0/">&lt;p&gt;👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-03-25T09:11:27+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">ThinkPHP6任意文件操作漏洞</title><link href="http://localhost:4000/blog/thinkphp6.0/" rel="alternate" type="text/html" title="ThinkPHP6任意文件操作漏洞" /><published>2020-03-13T15:13:21+08:00</published><updated>2020-03-13T15:13:21+08:00</updated><id>http://localhost:4000/blog/thinkphp6.0</id><content type="html" xml:base="http://localhost:4000/blog/thinkphp6.0/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#环境准备&quot; id=&quot;markdown-toc-环境准备&quot;&gt;环境准备&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#洞析漏洞分析&quot; id=&quot;markdown-toc-洞析漏洞分析&quot;&gt;洞析（漏洞分析）&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#复现漏洞&quot; id=&quot;markdown-toc-复现漏洞&quot;&gt;复现漏洞&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#其他的坑&quot; id=&quot;markdown-toc-其他的坑&quot;&gt;其他的坑&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell&lt;/p&gt;
 
 &lt;p&gt;具体受影响版本为ThinkPHP6.0.0-6.0.1&lt;/p&gt;
 
@@ -8,7 +15,7 @@
 
 &lt;p&gt;在什么特定情况下可以getshell啦&lt;/p&gt;
 
-&lt;h2 id=&quot;环境准备&quot;&gt;环境准备&lt;/h2&gt;
+&lt;h1 id=&quot;环境准备&quot;&gt;环境准备&lt;/h1&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
@@ -70,7 +77,7 @@
 
     &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/ojbk.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
 
-    &lt;p&gt;修改为6.0.1版本，将&lt;code class=&quot;highlighter-rouge&quot;&gt;/app/composer.json:24&lt;/code&gt;修改为&lt;/p&gt;
+    &lt;p&gt;修改为6.0.0版本，将&lt;code class=&quot;highlighter-rouge&quot;&gt;/app/composer.json:24&lt;/code&gt;修改为&lt;/p&gt;
 
     &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&quot;topthink/framework&quot;: &quot;6.0.0&quot;,
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
@@ -89,7 +96,7 @@
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;洞析漏洞分析&quot;&gt;洞析（漏洞分析）&lt;/h2&gt;
+&lt;h1 id=&quot;洞析漏洞分析&quot;&gt;洞析（漏洞分析）&lt;/h1&gt;
 
 &lt;p&gt;参考：&lt;/p&gt;
 
@@ -178,7 +185,7 @@
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;复现漏洞&quot;&gt;复现漏洞&lt;/h2&gt;
+&lt;h1 id=&quot;复现漏洞&quot;&gt;复现漏洞&lt;/h1&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
@@ -245,7 +252,7 @@ Cache-Control: max-age=0
 
 &lt;p&gt;😇此时的心情彷佛春天来到&lt;/p&gt;
 
-&lt;h2 id=&quot;其他的坑&quot;&gt;其他的坑&lt;/h2&gt;
+&lt;h1 id=&quot;其他的坑&quot;&gt;其他的坑&lt;/h1&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
@@ -262,7 +269,26 @@ Cache-Control: max-age=0
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;所以能任意写入文件getshell的条件还是很苛刻的&lt;/p&gt;</content><author><name>true</name></author><category term="ThinkPHP" /><category term="漏洞复现" /><summary type="html">👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell</summary></entry><entry><title type="html">第一篇博客</title><link href="http://localhost:4000/blog/first-blog/" rel="alternate" type="text/html" title="第一篇博客" /><published>2020-01-15T15:04:21+08:00</published><updated>2020-01-15T15:04:21+08:00</updated><id>http://localhost:4000/blog/first-blog</id><content type="html" xml:base="http://localhost:4000/blog/first-blog/">&lt;h2 id=&quot;0x00-拥有github&quot;&gt;0x00 拥有github&lt;/h2&gt;
+&lt;p&gt;所以能任意写入文件getshell的条件还是很苛刻的&lt;/p&gt;</content><author><name>true</name></author><category term="ThinkPHP" /><category term="漏洞复现" /><summary type="html"></summary></entry><entry><title type="html">第一篇博客</title><link href="http://localhost:4000/blog/first-blog/" rel="alternate" type="text/html" title="第一篇博客" /><published>2020-01-15T15:04:21+08:00</published><updated>2020-01-15T15:04:21+08:00</updated><id>http://localhost:4000/blog/first-blog</id><content type="html" xml:base="http://localhost:4000/blog/first-blog/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#0x00-拥有github&quot; id=&quot;markdown-toc-0x00-拥有github&quot;&gt;0x00 拥有github&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#0x01-选择的工具&quot; id=&quot;markdown-toc-0x01-选择的工具&quot;&gt;0x01 选择的工具&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#0x02-安装工具&quot; id=&quot;markdown-toc-0x02-安装工具&quot;&gt;0x02 安装工具&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#安装ruby&quot; id=&quot;markdown-toc-安装ruby&quot;&gt;安装ruby&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#安装bundle&quot; id=&quot;markdown-toc-安装bundle&quot;&gt;安装bundle&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#安装jekyll&quot; id=&quot;markdown-toc-安装jekyll&quot;&gt;安装jekyll&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#注册来必力&quot; id=&quot;markdown-toc-注册来必力&quot;&gt;注册来必力&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#0x03-发表自己的第一篇博客&quot; id=&quot;markdown-toc-0x03-发表自己的第一篇博客&quot;&gt;0x03 发表自己的第一篇博客&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#把自己原先的仓库clone下来&quot; id=&quot;markdown-toc-把自己原先的仓库clone下来&quot;&gt;把自己原先的仓库clone下来&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#选择一个自己喜欢的主题&quot; id=&quot;markdown-toc-选择一个自己喜欢的主题&quot;&gt;选择一个自己喜欢的主题&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#用typora写一篇内容&quot; id=&quot;markdown-toc-用typora写一篇内容&quot;&gt;用Typora写一篇内容&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#将修改内容提交到github&quot; id=&quot;markdown-toc-将修改内容提交到github&quot;&gt;将修改内容提交到github&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;0x00-拥有github&quot;&gt;0x00 拥有github&lt;/h1&gt;
 &lt;ul&gt;
   &lt;li&gt;
     &lt;p&gt;为什么用github：
@@ -275,7 +301,7 @@ Cache-Control: max-age=0
 
 &lt;p&gt;这个不用说了，之前就有账号了，直接在仓库里新建就行，会有个域名，比如我的是&lt;code class=&quot;highlighter-rouge&quot;&gt;sueisok&lt;/code&gt;，域名就是&lt;code class=&quot;highlighter-rouge&quot;&gt;sueisok.github.io&lt;/code&gt;了。不需要什么dnspod，什么dnsdaddy，什么一年50美元租服务器，贵且不好维护，且第三方平台比如wordpress可能有漏洞之类的，还要时常更新版本&lt;/p&gt;
 
-&lt;h2 id=&quot;0x01-选择的工具&quot;&gt;0x01 选择的工具&lt;/h2&gt;
+&lt;h1 id=&quot;0x01-选择的工具&quot;&gt;0x01 选择的工具&lt;/h1&gt;
 
 &lt;p&gt;本人电脑为win10系统&lt;/p&gt;
 
@@ -286,9 +312,9 @@ Cache-Control: max-age=0
   &lt;li&gt;&lt;a href=&quot;https://livere.com/&quot;&gt;来必力&lt;/a&gt;:添加的第三方评论工具&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;0x02-安装工具&quot;&gt;0x02 安装工具&lt;/h2&gt;
+&lt;h1 id=&quot;0x02-安装工具&quot;&gt;0x02 安装工具&lt;/h1&gt;
 
-&lt;h3 id=&quot;安装ruby&quot;&gt;安装ruby&lt;/h3&gt;
+&lt;h2 id=&quot;安装ruby&quot;&gt;安装ruby&lt;/h2&gt;
 
 &lt;ul&gt;
   &lt;li&gt;
@@ -313,14 +339,14 @@ Cache-Control: max-age=0
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem -v
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;h3 id=&quot;安装bundle&quot;&gt;安装bundle&lt;/h3&gt;
+&lt;h2 id=&quot;安装bundle&quot;&gt;安装bundle&lt;/h2&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem install bundle
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;至于这是什么，我不知道，至于会出现什么报错，我没遇见&lt;/p&gt;
 
-&lt;h3 id=&quot;安装jekyll&quot;&gt;安装jekyll&lt;/h3&gt;
+&lt;h2 id=&quot;安装jekyll&quot;&gt;安装jekyll&lt;/h2&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem install jekyll
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -339,22 +365,22 @@ Cache-Control: max-age=0
 
 &lt;p&gt;显示了版本就是成功袅 我的是jekyll 3.8.6&lt;/p&gt;
 
-&lt;h3 id=&quot;注册来必力&quot;&gt;注册来必力&lt;/h3&gt;
+&lt;h2 id=&quot;注册来必力&quot;&gt;注册来必力&lt;/h2&gt;
 
 &lt;p&gt;注册完将生成的内容添加到仓库文件的&lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;里&lt;/p&gt;
 
-&lt;h2 id=&quot;0x03-发表自己的第一篇博客&quot;&gt;0x03 发表自己的第一篇博客&lt;/h2&gt;
+&lt;h1 id=&quot;0x03-发表自己的第一篇博客&quot;&gt;0x03 发表自己的第一篇博客&lt;/h1&gt;
 
 &lt;p&gt;我自己之前在github上有过主页，所以我这里只写如何应用一个自己喜欢的主题，然后提交到git上，让所有人都看到&lt;/p&gt;
 
-&lt;h3 id=&quot;把自己原先的仓库clone下来&quot;&gt;把自己原先的仓库clone下来&lt;/h3&gt;
+&lt;h2 id=&quot;把自己原先的仓库clone下来&quot;&gt;把自己原先的仓库clone下来&lt;/h2&gt;
 
 &lt;p&gt;原先github上有过主页，clone到本地一个路径下&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git clone xxx你的仓库xxx
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;h3 id=&quot;选择一个自己喜欢的主题&quot;&gt;选择一个自己喜欢的主题&lt;/h3&gt;
+&lt;h2 id=&quot;选择一个自己喜欢的主题&quot;&gt;选择一个自己喜欢的主题&lt;/h2&gt;
 
 &lt;p&gt;有好多主题的网站，我这个是在&lt;a href=&quot;http://jekyllthemes.org/&quot;&gt;jekyllthemes&lt;/a&gt;找的，也可以在喜欢的博主页脚中找到他们用的主题（真是个小机灵鬼儿&lt;/p&gt;
 
@@ -392,13 +418,13 @@ Cache-Control: max-age=0
 
 &lt;p&gt;即可访问本地&lt;code class=&quot;highlighter-rouge&quot;&gt;http://127.0.0.1:4000&lt;/code&gt;查看页面，直到自己满意了之后再提交到github上&lt;/p&gt;
 
-&lt;h3 id=&quot;用typora写一篇内容&quot;&gt;用Typora写一篇内容&lt;/h3&gt;
+&lt;h2 id=&quot;用typora写一篇内容&quot;&gt;用Typora写一篇内容&lt;/h2&gt;
 
 &lt;p&gt;Typora是可以写markdown格式内容的编辑器，简约大方又不失便捷，还可以直接添加emoji表情，下次试一下&lt;/p&gt;
 
 &lt;p&gt;写完直接丢到仓库的&lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt;里面&lt;/p&gt;
 
-&lt;h3 id=&quot;将修改内容提交到github&quot;&gt;将修改内容提交到github&lt;/h3&gt;
+&lt;h2 id=&quot;将修改内容提交到github&quot;&gt;将修改内容提交到github&lt;/h2&gt;
 
 &lt;p&gt;可以下载&lt;a href=&quot;https://desktop.github.com/&quot;&gt;GitHub Desktop&lt;/a&gt;，比较直观&lt;/p&gt;
 
@@ -426,4 +452,4 @@ Cache-Control: max-age=0
 
 &lt;p&gt;网络差的话可能提交失败，再试一下就好了（〃｀ 3′〃）&lt;/p&gt;
 
-&lt;p&gt;然后稍等一下就可以看到自己的commit成功，在等一下就可以看到自己的文章更新好了，奥里给！&lt;/p&gt;</content><author><name>true</name></author><category term="jekyll" /><category term="github" /><summary type="html">0x00 拥有github 为什么用github： (￣▽￣)”方便不要钱，没有别的</summary></entry></feed>
+&lt;p&gt;然后稍等一下就可以看到自己的commit成功，在等一下就可以看到自己的文章更新好了，奥里给！&lt;/p&gt;</content><author><name>true</name></author><category term="jekyll" /><category term="github" /><summary type="html"></summary></entry></feed>

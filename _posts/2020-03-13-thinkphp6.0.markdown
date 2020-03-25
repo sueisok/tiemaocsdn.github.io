@@ -8,6 +8,8 @@ cover:	'../assets/blog_pic/20200313_thinkphp6.0/ID-INVADED.png'
 subtitle:	'Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞'
 ---
 
+* 目录
+{:toc}
 
 
 👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell
@@ -21,8 +23,7 @@ subtitle:	'Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞'
 在什么特定情况下可以getshell啦
 
 
-
-## 环境准备
+# 环境准备
 
 - PHP7.1
 
@@ -89,7 +90,7 @@ subtitle:	'Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞'
   
   ![avatar](../../assets/blog_pic/20200313_thinkphp6.0/ojbk.png)
   
-  修改为6.0.1版本，将`/app/composer.json:24`修改为
+  修改为6.0.0版本，将`/app/composer.json:24`修改为
 
   ```
   "topthink/framework": "6.0.0",
@@ -111,7 +112,7 @@ subtitle:	'Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞'
   
   
 
-## 洞析（漏洞分析）
+# 洞析（漏洞分析）
 
 参考：
 
@@ -188,7 +189,7 @@ subtitle:	'Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞'
 
   那接下来就get一下shell吧
 
-## 复现漏洞
+# 复现漏洞
 
 - 修改`app/composer/Index.php`，加一句
 
@@ -254,7 +255,7 @@ subtitle:	'Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞'
 
 😇此时的心情彷佛春天来到
 
-## 其他的坑
+# 其他的坑
 
 - 💢如果修改了session以后，http://localhost:8000访问之后出错，就要试一下
 

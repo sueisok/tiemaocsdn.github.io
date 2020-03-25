@@ -3,12 +3,11 @@
 <html>
 <head>
 <!-- Introducing the head tag -->
-
 {% include head.html %}
 {% include androidColor.html %}
-
 </head>
-<body onload="loaderFunc()">
+<body onload="loaderFunc()" data-spy="scroll" data-target="#toc" data-offset="20">
+
 {% include loader_body.html %}
 <!-- Top anchor -->
 <a id="htmlup" name="htmlup"></a>
@@ -20,6 +19,7 @@
 {% include post-title.html %}
 <div class="markdown-body fadeInUp animated">
   {% if page.subtitle %}
+
     {% if page.color.size==0 or page.color==nil %}
       <div class="postpage-subtitle" style="border-left: 8px solid #9A85FF; border-right: 8px solid #9A85FF;">
         {{ page.subtitle }}
@@ -32,7 +32,7 @@
   {% endif %}
 
   <!-- Article content -->
-  {{ page.content }}
+ {{ page.content | toc_generate }}
   <!-- Introducing the share module -->
   {% include share.html %}
 </div>

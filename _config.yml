@@ -65,6 +65,7 @@ paginatepath:
 footer:
   since: 2020
 markdown: kramdown
+toc_levels: 1..6
 kramdown:
   input: GFM
 highlighter: rouge

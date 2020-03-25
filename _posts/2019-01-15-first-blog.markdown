@@ -7,7 +7,11 @@ color:	rgb(154,133,255)
 cover:	'../assets/th.jpg'
 subtitle:	'搞了一天，记录一下是怎么搞出来的博客'
 ---
-## 0x00 拥有github
+
+* 目录
+{:toc}
+
+# 0x00 拥有github
 - 为什么用github：
 (￣▽￣)"方便不要钱，没有别的
 
@@ -15,7 +19,7 @@ subtitle:	'搞了一天，记录一下是怎么搞出来的博客'
 
 这个不用说了，之前就有账号了，直接在仓库里新建就行，会有个域名，比如我的是`sueisok`，域名就是`sueisok.github.io`了。不需要什么dnspod，什么dnsdaddy，什么一年50美元租服务器，贵且不好维护，且第三方平台比如wordpress可能有漏洞之类的，还要时常更新版本
 
-## 0x01 选择的工具
+# 0x01 选择的工具
 
 本人电脑为win10系统
 
@@ -30,9 +34,9 @@ subtitle:	'搞了一天，记录一下是怎么搞出来的博客'
 [typora]:https://typora.io/
 [laibili]:https://livere.com/
 
-## 0x02 安装工具
+# 0x02 安装工具
 
-### 安装ruby
+## 安装ruby
 
 - [Ruby官网][ruby]下载安装包，选择带DevKit的
 
@@ -50,7 +54,7 @@ $ ruby -v
 ```
 $ gem -v
 ```
-### 安装bundle
+## 安装bundle
 
 ```
 $ gem install bundle
@@ -58,7 +62,7 @@ $ gem install bundle
 
 至于这是什么，我不知道，至于会出现什么报错，我没遇见
 
-### 安装jekyll
+## 安装jekyll
 
 ```
 $ gem install jekyll
@@ -80,15 +84,15 @@ $ bundle exec jekyll -v
 
 显示了版本就是成功袅 我的是jekyll 3.8.6 
 
-### 注册来必力
+## 注册来必力
 
 注册完将生成的内容添加到仓库文件的`_config.yml`里
 
-## 0x03 发表自己的第一篇博客
+# 0x03 发表自己的第一篇博客
 
 我自己之前在github上有过主页，所以我这里只写如何应用一个自己喜欢的主题，然后提交到git上，让所有人都看到
 
-### 把自己原先的仓库clone下来
+## 把自己原先的仓库clone下来
 
 原先github上有过主页，clone到本地一个路径下
 
@@ -96,7 +100,7 @@ $ bundle exec jekyll -v
 $ git clone xxx你的仓库xxx
 ```
 
-### 选择一个自己喜欢的主题
+## 选择一个自己喜欢的主题
 
 有好多主题的网站，我这个是在[jekyllthemes][jekyllthemes]找的，也可以在喜欢的博主页脚中找到他们用的主题（真是个小机灵鬼儿
 
@@ -139,13 +143,13 @@ Configuration file: xxxx/sueisok.github.io/_config.yml
 
 即可访问本地`http://127.0.0.1:4000`查看页面，直到自己满意了之后再提交到github上
 
-### 用Typora写一篇内容
+## 用Typora写一篇内容
 
 Typora是可以写markdown格式内容的编辑器，简约大方又不失便捷，还可以直接添加emoji表情，下次试一下
 
 写完直接丢到仓库的`_posts`里面
 
-### 将修改内容提交到github
+## 将修改内容提交到github
 
 可以下载[GitHub Desktop][githubdesktop]，比较直观
 

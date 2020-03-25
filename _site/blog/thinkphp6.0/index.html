@@ -4,14 +4,13 @@
 <head>
 <!-- Introducing the head tag -->
 
-
 <!-- Begin Jekyll SEO tag v2.6.1 -->
 <title>ThinkPHP6任意文件操作漏洞 | sueisok</title>
 <meta name="generator" content="Jekyll v3.8.6" />
 <meta property="og:title" content="ThinkPHP6任意文件操作漏洞" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell" />
-<meta property="og:description" content="👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell" />
+<meta name="description" content="Notes,Thoughts and Else" />
+<meta property="og:description" content="Notes,Thoughts and Else" />
 <link rel="canonical" href="http://localhost:4000/blog/thinkphp6.0/" />
 <meta property="og:url" content="http://localhost:4000/blog/thinkphp6.0/" />
 <meta property="og:site_name" content="sueisok" />
@@ -22,7 +21,7 @@
 <meta name="twitter:site" content="@your_name" />
 <meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","headline":"ThinkPHP6任意文件操作漏洞","dateModified":"2020-03-13T15:13:21+08:00","datePublished":"2020-03-13T15:13:21+08:00","url":"http://localhost:4000/blog/thinkphp6.0/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/thinkphp6.0/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","headline":"ThinkPHP6任意文件操作漏洞","dateModified":"2020-03-13T15:13:21+08:00","datePublished":"2020-03-13T15:13:21+08:00","url":"http://localhost:4000/blog/thinkphp6.0/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/thinkphp6.0/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"Notes,Thoughts and Else","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <script type="application/ld+json">
@@ -107,9 +106,9 @@
 
 <!-- Android Lolipop Theme Color -->
 <meta name="theme-color" content=" rgb(255,210,32) ">
-
 </head>
-<body onload="loaderFunc()">
+<body onload="loaderFunc()" data-spy="scroll" data-target="#toc" data-offset="20">
+
 
 <!-- preloader -->
 <div id="loader" class="loader">
@@ -225,6 +224,7 @@
 
 <div class="markdown-body fadeInUp animated">
   
+
     
       <div class="postpage-subtitle" style="border-left: 8px solid rgb(255,210,32); border-right: 8px solid rgb(255,210,32)">
         Ubuntu+PHP7.1+ThinkPHP6.0.0复现任意文件操作漏洞
@@ -233,7 +233,14 @@
   
 
   <!-- Article content -->
-  <p>👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell</p>
+ <ul id="markdown-toc">
+  <li><a href="#环境准备" id="markdown-toc-环境准备">环境准备</a></li>
+  <li><a href="#洞析漏洞分析" id="markdown-toc-洞析漏洞分析">洞析（漏洞分析）</a></li>
+  <li><a href="#复现漏洞" id="markdown-toc-复现漏洞">复现漏洞</a></li>
+  <li><a href="#其他的坑" id="markdown-toc-其他的坑">其他的坑</a></li>
+</ul>
+
+<p>👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell</p>
 
 <p>具体受影响版本为ThinkPHP6.0.0-6.0.1</p>
 
@@ -243,7 +250,7 @@
 
 <p>在什么特定情况下可以getshell啦</p>
 
-<h2 id="环境准备">环境准备</h2>
+<h1 id="环境准备">环境准备</h1>
 
 <ul>
   <li>
@@ -305,7 +312,7 @@
 
     <p><img src="../../assets/blog_pic/20200313_thinkphp6.0/ojbk.png" alt="avatar" /></p>
 
-    <p>修改为6.0.1版本，将<code class="highlighter-rouge">/app/composer.json:24</code>修改为</p>
+    <p>修改为6.0.0版本，将<code class="highlighter-rouge">/app/composer.json:24</code>修改为</p>
 
     <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"topthink/framework": "6.0.0",
 </code></pre></div>    </div>
@@ -324,7 +331,7 @@
   </li>
 </ul>
 
-<h2 id="洞析漏洞分析">洞析（漏洞分析）</h2>
+<h1 id="洞析漏洞分析">洞析（漏洞分析）</h1>
 
 <p>参考：</p>
 
@@ -413,7 +420,7 @@
   </li>
 </ul>
 
-<h2 id="复现漏洞">复现漏洞</h2>
+<h1 id="复现漏洞">复现漏洞</h1>
 
 <ul>
   <li>
@@ -480,7 +487,7 @@ Cache-Control: max-age=0
 
 <p>😇此时的心情彷佛春天来到</p>
 
-<h2 id="其他的坑">其他的坑</h2>
+<h1 id="其他的坑">其他的坑</h1>
 
 <ul>
   <li>
