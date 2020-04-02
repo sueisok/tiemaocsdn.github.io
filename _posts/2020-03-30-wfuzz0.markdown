@@ -1,0 +1,441 @@
+---
+layout:	post
+title:	"fuzz第一步，Wfuzz来指路"
+date:	2020-03-31 15:13:21 +0800
+tags:	fuzz
+color:	rgb(238,99,99)
+cover:	'../assets/blog_pic/20200330_wfuzz0/wfuzz.png'
+subtitle:	'Wfuzz简单使用方法记录'
+
+---
+
+* 目录
+{:toc}
+
+
+🤺[该项目的官网手册](https://wfuzz.readthedocs.io/en/latest/)
+
+🤺Kali Linux自带此工具
+
+🤺到目前为止对这个工具最大的感觉就是，目录爆破，爆破用户名和密码，之后会尝试各种注入，见缝插针
+
+🤺内心os，以上这些都对字典的依赖比较大，是一个需要自己想办法维护的工具，在我菜鸡的手里和别人的手里就很不一样，所以就是个人积累问题了，通过个人的积累和增删，让工具更顺敏锐
+
+
+
+
+# 说明书
+
+完整版help如下
+
+```
+# wfuzz --help
+···
+Options:
+    -h/--help                 : This help
+    --help                    : Advanced help
+    --filter-help             : Filter language specification
+    --version                 : Wfuzz version details
+    -e <type>                 : List of available encoders/payloads/iterators/printers/scripts
+    
+    --recipe <filename>       : Reads options from a recipe. Repeat for various recipes.
+    --dump-recipe <filename>  : Prints current options as a recipe
+    --oF <filename>           : Saves fuzz results to a file. These can be consumed later using the wfuzz payload.
+    
+    -c                        : Output with colors
+    -v                        : Verbose information.
+    -f filename,printer       : Store results in the output file using the specified printer (raw printer if omitted).
+    -o printer                : Show results using the specified printer.
+    --interact                : (beta) If selected,all key presses are captured. This allows you to interact with the program.
+    --dry-run                 : Print the results of applying the requests without actually making any HTTP request.
+    --prev                    : Print the previous HTTP requests (only when using payloads generating fuzzresults)
+    --efield <expr>           : Show the specified language expression together with the current payload
+    --field <expr>            : Do not show the payload but only the specified language expression
+    
+    -p addr                   : Use Proxy in format ip:port:type. Repeat option for using various proxies.
+                                Where type could be SOCKS4,SOCKS5 or HTTP if omitted.
+    
+    -t N                      : Specify the number of concurrent connections (10 default)
+    -s N                      : Specify time delay between requests (0 default)
+    -R depth                  : Recursive path discovery being depth the maximum recursion level.
+    -L,--follow               : Follow HTTP redirections
+    --ip host:port            : Specify an IP to connect to instead of the URL's host in the format ip:port
+    -Z                        : Scan mode (Connection errors will be ignored).
+    --req-delay N             : Sets the maximum time in seconds the request is allowed to take (CURLOPT_TIMEOUT). Default 90.
+    --conn-delay N            : Sets the maximum time in seconds the connection phase to the server to take (CURLOPT_CONNECTTIMEOUT). Default 90.
+    
+    -A, --AA, --AAA           : Alias for --script=default,verbose,discovery -v -c
+    --no-cache                : Disable plugins cache. Every request will be scanned.
+    --script=                 : Equivalent to --script=default
+    --script=<plugins>        : Runs script's scan. <plugins> is a comma separated list of plugin-files or plugin-categories
+    --script-help=<plugins>   : Show help about scripts.
+    --script-args n1=v1,...   : Provide arguments to scripts. ie. --script-args grep.regex="<A href=\"(.*?)\">"
+    
+    -u url                    : Specify a URL for the request.
+    -m iterator               : Specify an iterator for combining payloads (product by default)
+    -z payload                : Specify a payload for each FUZZ keyword used in the form of name[,parameter][,encoder].
+                                A list of encoders can be used, ie. md5-sha1. Encoders can be chained, ie. md5@sha1.
+                                Encoders category can be used. ie. url
+                                Use help as a payload to show payload plugin's details (you can filter using --slice)
+    --zP <params>             : Arguments for the specified payload (it must be preceded by -z or -w).
+    --zD <default>            : Default parameter for the specified payload (it must be preceded by -z or -w).
+    --zE <encoder>            : Encoder for the specified payload (it must be preceded by -z or -w).
+    --slice <filter>          : Filter payload's elements using the specified expression. It must be preceded by -z.
+    -w wordlist               : Specify a wordlist file (alias for -z file,wordlist).
+    -V alltype                : All parameters bruteforcing (allvars and allpost). No need for FUZZ keyword.
+    -X method                 : Specify an HTTP method for the request, ie. HEAD or FUZZ
+    
+    -b cookie                 : Specify a cookie for the requests. Repeat option for various cookies.
+    -d postdata               : Use post data (ex: "id=FUZZ&catalogue=1")
+    -H header                 : Use header (ex:"Cookie:id=1312321&user=FUZZ"). Repeat option for various headers.
+    --basic/ntlm/digest auth  : in format "user:pass" or "FUZZ:FUZZ" or "domain\FUZ2Z:FUZZ"
+    
+    --hc/hl/hw/hh N[,N]+      : Hide responses with the specified code/lines/words/chars (Use BBB for taking values from baseline)
+    --sc/sl/sw/sh N[,N]+      : Show responses with the specified code/lines/words/chars (Use BBB for taking values from baseline)
+    --ss/hs regex             : Show/hide responses with the specified regex within the content
+    --filter <filter>         : Show/hide responses using the specified filter expression (Use BBB for taking values from baseline)
+    --prefilter <filter>      : Filter items before fuzzing using the specified expression.
+```
+
+
+
+其中比较关注的参数如下
+
+| 参数                                            | 说明                                         |
+| ----------------------------------------------- | -------------------------------------------- |
+| -e encoders/payloads/iterators/printers/scripts | 罗列可用模块：加密/载荷/迭代器/打印格式/脚本 |
+| -w                                              | 指定payload文件                              |
+| -z                                              | 指定payload文件                              |
+| --hc/hl/hw/hh                                   | 隐藏过滤项                                   |
+| --sc/sl/sw/sh                                   | 显示过滤项                                   |
+| --hs/ss                                         | 正则过滤                                     |
+| -m                                              | 迭代器                                       |
+| --script                                        | 使用脚本                                     |
+
+
+
+
+
+# 字典
+
+Kali自带此工具，字典在目录`/usr/share/wfuzz/wordlist/`下
+
+```
+├── Injections
+│   ├── All_attack.txt
+│   ├── SQL.txt
+│   ├── Traversal.txt
+│   ├── XML.txt
+│   ├── XSS.txt
+│   └── bad_chars.txt
+├── general
+│   ├── admin-panels.txt
+│   ├── big.txt
+│   ├── catala.txt
+│   ├── common.txt
+│   ├── euskera.txt
+│   ├── extensions_common.txt
+│   ├── http_methods.txt
+│   ├── medium.txt
+│   ├── megabeast.txt
+│   ├── mutations_common.txt
+│   ├── spanish.txt
+│   └── test.txt
+├── others
+│   ├── common_pass.txt
+│   └── names.txt
+├── stress
+│   ├── alphanum_case.txt
+│   ├── alphanum_case_extra.txt
+│   ├── char.txt
+│   ├── doble_uri_hex.txt
+│   ├── test_ext.txt
+│   └── uri_hex.txt
+├── vulns
+│   ├── apache.txt
+│   ├── cgis.txt
+│   ├── coldfusion.txt
+│   ├── dirTraversal-nix.txt
+│   ├── dirTraversal-win.txt
+│   ├── dirTraversal.txt
+│   ├── domino.txt
+│   ├── fatwire.txt
+│   ├── fatwire_pagenames.txt
+│   ├── frontpage.txt
+│   ├── iis.txt
+│   ├── iplanet.txt
+│   ├── jrun.txt
+│   ├── netware.txt
+│   ├── oracle9i.txt
+│   ├── sharepoint.txt
+│   ├── sql_inj.txt
+│   ├── sunas.txt
+│   ├── tests.txt
+│   ├── tomcat.txt
+│   ├── vignette.txt
+│   ├── weblogic.txt
+│   └── websphere.txt
+└── webservices
+    ├── ws-dirs.txt
+    └── ws-files.txt
+
+
+```
+
+当然只是举个🌰，用这里的字典基本不会得到什么，这里贴一个寻到的[字典集合](https://github.com/TheKingOfDuck/fuzzDicts)
+
+
+
+# 载荷(payloads)
+
+哈哈哈就是payload，查看payload模块
+
+```
+# wfuzz -e payloads
+
+Available payloads:
+
+  Name            | Summary                                                                           
+------------------------------------------------------------------------------------------------------
+  guitab          | This payload reads requests from a tab in the GUI                                 
+  names           | Returns possible usernames by mixing the given words, separated by -, using know  
+                  | n typical constructions.                                                          
+  range           | Returns each number of the given range.                                           
+  wfuzzp          | Returns fuzz results' URL from a previous stored wfuzz session.                   
+  stdin           | Returns each item read from stdin.                                                
+  hexrange        | Returns each hex number of the given hex range.                                   
+  burplog         | Returns fuzz results from a Burp log.                                             
+  hexrand         | Returns random hex numbers from the given range.                                  
+  permutation     | Returns permutations of the given charset and length.                             
+  file            | Returns each word from a file.                                                    
+  burpstate       | Returns fuzz results from a Burp state.                                           
+  dirwalk         | Returns filename's recursively from a local directory.                            
+  iprange         | Returns list of IP addresses of a given IP range.                                 
+  list            | Returns each element of the given word list separated by -.                       
+  ipnet           | Returns list of IP addresses of a network.                                        
+  autorize        | Returns fuzz results' from autorize.                                              
+  buffer_overflow | Returns a string using the following pattern A * given number.
+```
+
+`wfuzz -z help`可以获取关于payloads类模块的详细信息，也可以通过`--slice`参数来过滤返回信息的结果。
+
+```
+# wfuzz -z help --slice dirwalk
+
+Name: dirwalk 0.1
+Categories: default
+Summary: Returns filename's recursively from a local directory.
+Author: Xavi Mendez (@xmendez)
+Description:
+   Returns all the file paths found in the specified directory.
+   Handy if you want to check a directory structure against a webserver,
+   for example, because you have previously downloaded a specific version
+   of what is supposed to be on-line.
+Parameters:
+   + dir: Directory path to walk and generate payload from.
+```
+
+使用的命令行基础长相如下
+
+```
+# wfuzz -w wordlist url/FUZZ
+```
+
+wordlist是字典，url是目标链接，FUZZ是占位符，替换payload，形如
+
+```
+# wfuzz -w /usr/share/wfuzz/wordlist/general/common.txt http://172.16.70.163/FUZZ
+```
+
+占位符也可以多个，即多个payload，例如可以同时爆破用户名和密码
+使用`-z` 或`-w`参数可以同时指定多个payloads，这时相应的占位符应设置为 `FUZZ, … , FUZnZ,`其中n代表了payload的序号。比如下面的例子，我们同时暴破文件，后缀和目录：
+
+```
+# wfuzz -w /usr/share/wfuzz/wordlist/general/common.txt -w /usr/share/wfuzz/wordlist/general/common.txt -w /usr/share/wfuzz/wordlist/general/extensions_common.txt http://172.16.70.163/FUZZ/FUZ2ZFUZ3Z
+```
+
+关于`-z` 或`-w`有啥区别：
+
+1、多个payload时候没有区别
+
+2、`-w wordlist`是指定一个文件，等效于`-z file,wordlist`和`-z file --zP fn=`
+
+以下等效：
+
+```
+# wfuzz -z file --zP fn=/usr/share/wfuzz/wordlist/general/common.txt http://172.16.70.163/FUZZ
+```
+
+```
+# wfuzz -z file,/usr/share/wfuzz/wordlist/general/common.txt http://172.16.70.163/FUZZ
+```
+
+```
+# wfuzz -w /usr/share/wfuzz/wordlist/general/common.txt http://172.16.70.163/FUZZ
+```
+
+
+
+# 输出格式
+
+我们在终端运行会在命令行得到结果
+
+```
+# wfuzz -w /usr/share/wfuzz/wordlist/general/common.txt --hc 404,403 http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://testphp.vulnweb.com/FUZZ
+Total requests: 949
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000035:   301        7 L      12 W     184 Ch      "admin"                                     
+000000229:   301        7 L      12 W     184 Ch      "CVS"                                       
+000000412:   301        7 L      12 W     184 Ch      "images"                                    
+000000721:   301        7 L      12 W     184 Ch      "secured"                                   
+
+Total time: 27.57318
+Processed Requests: 949
+Filtered Requests: 945
+Requests/sec.: 34.41750
+```
+
+也可以将结果输出为我们指定的格式，查看支持的输出格式
+
+```
+# wfuzz -e printers
+
+Available printers:
+
+  Name      | Summary                             
+--------------------------------------------------
+  csv       | CSV printer ftw                     
+  html      | Prints results in html format       
+  json      | Results in json format              
+  magictree | Prints results in magictree format  
+  raw       | Raw output format
+```
+
+指定输出结果为html
+
+```
+# wfuzz -f /tmp/outfile,html -w /usr/share/wfuzz/wordlist/general/common.txt --hc 404,403 http://testphp.vulnweb.com/FUZZ
+```
+
+![avatar](../../assets/blog_pic/20200330_wfuzz0/output.png)
+
+这个看着太黑可以把html里的背景色和字体颜色换一下
+
+# 过滤
+
+以上的命令行中`--hc`就是过滤器，过滤器有
+
+| 参数 | 说明                                                         |
+| ---- | ------------------------------------------------------------ |
+| --hc | hide code将指定的Response状态码隐藏，如--hc 404，隐藏响应为404 |
+| --hl | hide lines将指定的Lines数隐藏                                |
+| --hw | hide word将指定的Word数隐藏                                  |
+| --hh | hide chars将指定的Chars数隐藏                                |
+| --sc | show code将指定的Response状态码显示，如--sc 200，只显示响应为200 |
+| --sl | show lines将指定的Lines数显示                                |
+| --sw | show word将指定的Word数显示                                  |
+| --sh | show chars将指定的Chars数显示                                |
+| --hs | 正则隐藏                                                     |
+| --ss | 正则显示                                                     |
+
+
+**Baseline(基准线)**
+
+过滤器可以是某个HTTP响应的引用，例如
+
+```
+# wfuzz -w /usr/share/wfuzz/wordlist/general/common.txt --hh BBB http://172.16.70.163/FUZZ{404there}
+```
+
+意为wfuzz第一个请求是请求`http://testphp.vulnweb.com/404there`这个网址，这个请求被标记为`BBB`，`BBB`也是不可以变的，这里用到了`--hh`，即以`BBB`这条请求返回的Chars为基准，隐藏其他与`BBB`相同的返回
+
+**使用正则表达式过滤**
+
+`--hs`和`--ss`都可以使用正则表达式来对返回结果过滤，例如
+
+```
+# wfuzz -w /usr/share/wfuzz/wordlist/general/common.txt --hs "Not Found" http://172.16.70.163/FUZZ
+```
+
+
+
+# 递归测试
+
+`-R`可用于指定有效负载递归的深度。例如，如果要搜索现有目录，然后使用相同的有效负载再次在这些目录中进行模糊测试
+
+```
+# wfuzz -z list,"admin/-Login-CVS-cgi-bin"  -R 1 http://172.16.70.163/FUZZ
+
+Warning: Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/shodanp.py Exception, msg=No module named 'shodan'
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/bing.py Exception, msg=No module named 'shodan'
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 5
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000002:   404        828 L    1806 W   36886 Ch    "Login"                                            
+000000001:   200        45 L     150 W    2076 Ch     "admin/"                                           
+ |_  Enqueued response for recursion (level=1)
+000000003:   404        828 L    1806 W   36868 Ch    "CVS"                                              
+000000004:   404        828 L    1806 W   36867 Ch    "cgi"                                              
+000000006:   404        828 L    1815 W   36947 Ch    "admin/ - admin/"                                  
+000000008:   404        828 L    1815 W   36923 Ch    "admin/ - CVS"                                     
+000000009:   404        828 L    1815 W   36923 Ch    "admin/ - cgi"                                     
+000000007:   200        79 L     220 W    3700 Ch     "admin/ - Login"                                   
+000000005:   404        828 L    1806 W   36867 Ch    "bin"                                              
+000000010:   404        828 L    1815 W   36922 Ch    "admin/ - bin"                                     
+
+Total time: 1.141663
+Processed Requests: 10
+Filtered Requests: 0
+Requests/sec.: 8.759149
+```
+
+
+
+# 其他
+
+**Openssl**
+
+工具输出以这个开头，我在寻求解决办法时候，StackOverflow有要安装Pycurl，我看这工具还挺麻烦，然后看大家写Wfuzz的教程截图里都有这句话，就不管啦，等以后有影响再说
+
+```
+Warning: Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+```
+
+**Recipes**
+
+Wfuzz可以生成一个recipes用来保存命令，方便下次执行或者分享给别人。
+
+生成一个recipes：
+
+```
+# wfuzz --script=robots -z list,"robots.txt" --dumo-recipe outrecipe URL/FUZZ
+```
+
+使用某个recipes：
+
+```
+# wfuzz --recip outrecipe
+```
+
+
+

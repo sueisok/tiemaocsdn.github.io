@@ -1,0 +1,434 @@
+---
+layout:	post
+title:	"Wfuzz的其他模块"
+date:	2020-04-02 17:08:36 +0800
+tags:	fuzz
+color:	rgb(238,99,99)
+cover:	'../assets/blog_pic/20200402_wfuzz1/wfuzz.png'
+subtitle:	'Wfuzz的iterators、scripts、encoders模块'
+
+---
+
+* 目录
+{:toc}
+🤺基础用法请看上一篇
+
+🤺[该项目的官网手册](https://wfuzz.readthedocs.io/en/latest/)
+
+🤺Kali Linux自带此工具
+
+🤺上一篇写了简单介绍和`payloads`模块的用法，这里介绍其他三个主要模块`iterators`、`scripts`、`encoders`
+
+
+
+
+
+# 迭代器(iterators)
+
+**具体说明**
+
+```
+# wfuzz -e iterators
+
+Available iterators:
+
+  Name    | Summary                                                                       
+-----------------------------------------------------------------------------------------
+  chain   | Returns an iterator returns elements from the first iterable until it is  
+          | exhausted, then proceeds to the next iterable, until all of the iterables are 
+          | exhausted.                                                                   
+  product | Returns an iterator cartesian product of input iterables.                     
+  zip     | Returns an iterator that aggregates elements from each of the iterables. 
+```
+
+`iterators`自带三个迭代器，`-m xxx`使用迭代器
+
+**chain**
+
+需要两个字典，一个占位符FUZZ，`chain`可以整合两个字典为一个，传入占位符，一共`n+m`条payloads
+
+```
+# wfuzz -z range,0-10 -w Deutsch.txt -m chain http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 17
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000002:   404        828 L    1806 W   36851 Ch    "1"                                         
+000000003:   404        828 L    1806 W   36850 Ch    "2"                                         
+000000004:   404        828 L    1806 W   36849 Ch    "3"                                         
+000000005:   404        828 L    1806 W   36850 Ch    "4"                                         
+000000006:   404        828 L    1806 W   36850 Ch    "5"                                         
+000000007:   404        828 L    1806 W   36850 Ch    "6"                                         
+000000008:   404        828 L    1806 W   36850 Ch    "7"                                         
+000000001:   200        213 L    495 W    7870 Ch     "0"                                         
+000000009:   404        828 L    1806 W   36850 Ch    "8"                                         
+000000010:   404        828 L    1806 W   36850 Ch    "9"                                         
+000000013:   404        828 L    1806 W   36886 Ch    "Milch"                                     
+000000014:   404        828 L    1806 W   36886 Ch    "Apfel"                                     
+000000017:   404        828 L    1806 W   36895 Ch    "Schule"                                    
+000000011:   404        828 L    1806 W   36859 Ch    "10"                                        
+000000012:   404        828 L    1806 W   36877 Ch    "Heft"                                      
+000000015:   404        828 L    1806 W   36976 Ch    "Schweinefleisch"                           
+000000016:   404        828 L    1806 W   36895 Ch    "Kamera"                                    
+
+Total time: 0.215062
+Processed Requests: 17
+Filtered Requests: 0
+Requests/sec.: 79.04683
+```
+
+**product**
+
+需要两个字典，两个占位符FUZZ，`product`可以排列组合两个字典，按顺序传入占位符，一共`n*m`条payloads
+
+```
+# wfuzz -z range,0-3 -w Deutsch.txt -m product http://172.16.70.163/FUZZ=FUZ2Z
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ=FUZ2Z
+Total requests: 16
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000001:   404        828 L    1807 W   36895 Ch    "0 - Heft"                                  
+000000002:   404        828 L    1807 W   36904 Ch    "0 - Milch"                                 
+000000003:   404        828 L    1807 W   36902 Ch    "0 - Apfel"                                 
+000000004:   404        828 L    1807 W   36993 Ch    "0 - Schweinefleisch"                       
+000000005:   404        828 L    1807 W   36894 Ch    "1 - Heft"                                  
+000000006:   404        828 L    1807 W   36903 Ch    "1 - Milch"                                 
+000000007:   404        828 L    1807 W   36903 Ch    "1 - Apfel"                                 
+000000008:   404        828 L    1807 W   36994 Ch    "1 - Schweinefleisch"                       
+000000009:   404        828 L    1807 W   36894 Ch    "2 - Heft"                                  
+000000010:   404        828 L    1807 W   36903 Ch    "2 - Milch"                                 
+000000011:   404        828 L    1807 W   36903 Ch    "2 - Apfel"                                 
+000000012:   404        828 L    1807 W   36993 Ch    "2 - Schweinefleisch"                       
+000000013:   404        828 L    1807 W   36894 Ch    "3 - Heft"                                  
+000000014:   404        828 L    1807 W   36904 Ch    "3 - Milch"                                 
+000000015:   404        828 L    1807 W   36903 Ch    "3 - Apfel"                                 
+000000016:   404        828 L    1807 W   36994 Ch    "3 - Schweinefleisch"                       
+
+Total time: 0.207002
+Processed Requests: 16
+Filtered Requests: 0
+Requests/sec.: 77.29370
+```
+
+**zip**
+
+需要两个字典，两个个占位符FUZZ和FU2Z，`zip`可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共`min(n,m)`条payloads
+
+```
+# wfuzz -z range,0-10 -w Deutsch.txt -m zip http://172.16.70.163/FUZZ=FUZ2Z
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ=FUZ2Z
+Total requests: 6
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000001:   404        828 L    1807 W   36895 Ch    "0 - Heft"                                  
+000000003:   404        828 L    1807 W   36903 Ch    "2 - Apfel"                                 
+000000002:   404        828 L    1807 W   36904 Ch    "1 - Milch"                                 
+000000004:   404        828 L    1807 W   36993 Ch    "3 - Schweinefleisch"                       
+000000005:   404        828 L    1807 W   36912 Ch    "4 - Kamera"                                
+000000006:   404        828 L    1807 W   36911 Ch    "5 - Schule"                                
+
+Total time: 0.238128
+Processed Requests: 6
+Filtered Requests: 0
+Requests/sec.: 25.19648
+```
+
+其实就很像Burpsuite里面的Intruder模块，目前感觉还是Intruder好用
+
+
+
+# 脚本(scripts)
+
+**具体说明**
+
+```
+# wfuzz -e scripts
+
+Available scripts:
+
+  Category                      | Name          | Summary                                              
+-------------------------------------------------------------------------------------------------------
+  default, active, discovery    | cvs_extractor | Parses CVS/Entries file.                             
+  default, passive              | errors        | Looks for error messages                             
+  default, active, discovery    | wc_extractor  | Parses subversion's wc.db file.                      
+  active, discovery             | links         | Parses HTML looking for new content.                 
+  re-enqueue, active, discovery | backups       | Looks for known backup filenames.                    
+  default, passive              | listing       | Looks for directory listing vulnerabilities          
+  default, active, discovery    | svn_extractor | Parses .svn/entries file.                            
+  verbose, passive              | headers       | Looks for server headers                             
+  default, active, discovery    | sitemap       | Parses sitemap.xml file                              
+  verbose, passive              | cookies       | Looks for new cookies                                
+  verbose, passive              | title         | Parses HTML page title                               
+  tools                         | grep          | HTTP response grep                                   
+  default, active, discovery    | robots        | Parses robots.txt looking for new content.           
+  tools, active                 | screenshot    | Performs a screen capture using linux cutycapt tool
+```
+
+**分类说明**
+
+| 参数      | 说明                                                      |
+| --------- | --------------------------------------------------------- |
+| passive   | 被动脚本分析现有请求和响应，而无需执行新请求              |
+| active    | 主动脚本对应用程序执行新请求以探测其漏洞                  |
+| discovery | 通过自动将发现的内容排入wfuzz请求的资源池，来帮助抓取网站 |
+
+**使用Scripts**
+
+可以先查看一下某个模块的信息
+
+```
+# wfuzz --script-help=backups
+
+Name: backups 0.1
+Categories: re-enqueue,active,discovery
+Summary: Looks for known backup filenames.
+Author: Xavi Mendez (@xmendez)
+Description:
+   Looks for known backup filenames.
+Parameters:
+   - ext (= .bak,.tgz,.zip,.tar.gz,~,.rar,.old,.-.swp): Extensions to look for.
+
+```
+
+**使用scripts**
+
+使用`backup`脚本模块，`backups.txt`为字典
+
+```
+# wfuzz --script=backups -w backups.txt http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000004:   404        828 L    1806 W   36850 Ch    "4"                                                
+000000001:   404        828 L    1806 W   36850 Ch    "1"                                                
+000000002:   404        828 L    1806 W   36850 Ch    "2"                                                
+000000003:   404        828 L    1806 W   36849 Ch    "3"                                                
+000000006:   404        828 L    1806 W   36868 Ch    "saf"                                              
+000000005:   404        828 L    1806 W   36859 Ch    "ad"                                               
+000000007:   404        828 L    1806 W   36868 Ch    "zxs"                                              
+
+Total time: 1.044162
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 6.703940
+```
+
+为了不再重复扫描相同的请求（具有相同的参数），有一个缓存，可以使用–no-cache标志禁用缓存
+
+例如，如果我们以具有相同URL但参数值不同的Web服务器为目标，则会得到
+
+```
+# wfuzz -z range --zD 0-3 -z list --zD "'" -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A
+
+000000004:   0.195s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "3 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000001:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "0 - '"
+000000002:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "1 - '"
+000000003:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "2 - '"
+```
+
+相同操作，禁用了缓存
+
+```
+# wfuzz -z range --zD 0-3 -z list --zD "'" -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A --no-cache
+
+000000004:   1.170s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "3 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000002:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "1 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000001:   1.174s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "0 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000003:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "2 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+```
+
+**自定义脚本**
+
+如果要创建脚本，需要在“ .wfuzz”目录下创建一个名为“ scripts”的目录，将脚本放入目录下
+
+[参考如何编写插件](https://github.com/xmendez/wfuzz/tree/master/src/wfuzz/plugins/scripts)
+
+
+
+# 加密(encoders)
+
+**具体说明**
+
+```
+# wfuzz -e encoders
+
+Available encoders:
+
+  Category      | Name              | Summary                                                                           
+-----------------------------------------------------------------------------------------
+  hashes        | base64            | Encodes the given string using base64                                             
+  url           | doble_nibble_hex  | Replaces ALL characters in string using the %%dd%dd escape                        
+  url_safe, url | double urlencode  | Applies a double encode to special characters in string using the %25xx escape.   
+                |                   | Letters, digits, and the characters '_.-' are never quoted.                       
+  url           | first_nibble_hex  | Replaces ALL characters in string using the %%dd? escape                          
+  default       | hexlify           | Every byte of data is converted into the corresponding 2-digit hex representatio  
+                |                   | n.                                                                                
+  html          | html_decimal      | Replaces ALL characters in string using the &#dd; escape                          
+  html          | html_escape       | Convert the characters &<>" in string to HTML-safe sequences.                     
+  html          | html_hexadecimal  | Replaces ALL characters in string using the &#xx; escape                          
+  hashes        | md5               | Applies a md5 hash to the given string                                            
+  db            | mssql_char        | Converts ALL characters to MsSQL's char(xx)                                       
+  db            | mysql_char        | Converts ALL characters to MySQL's char(xx)                                       
+  default       | none              | Returns string without changes                                                    
+  db            | oracle_char       | Converts ALL characters to Oracle's chr(xx)                                       
+  default       | random_upper      | Replaces random characters in string with its capitals letters                    
+  url           | second_nibble_hex | Replaces ALL characters in string using the %?%dd escape                          
+  hashes        | sha1              | Applies a sha1 hash to the given string                                           
+  url           | uri_double_hex    | Encodes ALL charachers using the %25xx escape.                                    
+  url           | uri_hex           | Encodes ALL charachers using the %xx escape.                                      
+  url           | uri_triple_hex    | Encodes ALL charachers using the %25%xx%xx escape.                                
+  url           | uri_unicode       | Replaces ALL characters in string using the %u00xx escape                         
+  url_safe, url | urlencode         | Replace special characters in string using the %xx escape. Letters, digits, and   
+                |                   | the characters '_.-' are never quoted.                                            
+  url           | utf8              | Replaces ALL characters in string using the \u00xx escape                         
+  url           | utf8_binary       | Replaces ALL characters in string using the \uxx escape
+```
+
+`encoders`的作用是将payload进行编码或加密
+
+**使用方法**
+
+在字典后面直接加加密方式就可以了
+
+```
+# wfuzz -w wordlist.txt,md5 http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000001:   404        828 L    1810 W   37237 Ch    "c4ca4238a0b923820dcc509a6f75849b"                 
+000000002:   404        828 L    1810 W   37237 Ch    "c81e728d9d4c2f636f067f89cc14862c"                 
+000000003:   404        828 L    1810 W   37237 Ch    "eccbc87e4b5ce2fe28308fd9f2a7baf3"                 
+000000004:   404        828 L    1810 W   37237 Ch    "a87ff679a2f3e71d9181a67b7542122c"                 
+000000005:   404        828 L    1810 W   37237 Ch    "523af537946b79c4f8369ed39ba78605"                 
+000000006:   404        828 L    1810 W   37237 Ch    "e8a88bb6f4d420a8517965d25cd54a14"                 
+000000007:   404        828 L    1810 W   37237 Ch    "68f43f44054de89e6ee5ff03adb26542"                 
+
+Total time: 0.239509
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 29.22638
+```
+
+**使用多个encoder**
+
+多个encoder，使用一个`-`号分隔的列表来指定
+
+```
+wfuzz -w wordlist.txt,md5-base64 http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 14
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000001:   404        828 L    1810 W   37237 Ch    "c4ca4238a0b923820dcc509a6f75849b"                 
+000000002:   404        828 L    1807 W   36876 Ch    "MQ=="                                             
+000000003:   404        828 L    1810 W   37237 Ch    "c81e728d9d4c2f636f067f89cc14862c"                 
+000000004:   404        828 L    1807 W   36876 Ch    "Mg=="                                             
+000000005:   404        828 L    1810 W   37237 Ch    "eccbc87e4b5ce2fe28308fd9f2a7baf3"                 
+000000006:   404        828 L    1807 W   36876 Ch    "Mw=="                                             
+000000007:   404        828 L    1810 W   37237 Ch    "a87ff679a2f3e71d9181a67b7542122c"                 
+000000008:   404        828 L    1807 W   36876 Ch    "NA=="                                             
+000000009:   404        828 L    1810 W   37237 Ch    "523af537946b79c4f8369ed39ba78605"                 
+000000013:   404        828 L    1810 W   37237 Ch    "68f43f44054de89e6ee5ff03adb26542"                 
+000000010:   404        828 L    1806 W   36876 Ch    "YWQ="                                             
+000000011:   404        828 L    1810 W   37236 Ch    "e8a88bb6f4d420a8517965d25cd54a14"                 
+000000012:   404        828 L    1806 W   36877 Ch    "c2Fm"                                             
+000000014:   404        828 L    1806 W   36877 Ch    "enhz"                                             
+
+Total time: 0.266457
+Processed Requests: 14
+Filtered Requests: 0
+Requests/sec.: 52.54129
+```
+
+**多次encoder**
+
+多次encoder，使用一个`@`号分隔的列表来指定，顺序为由右到左
+
+```
+# wfuzz -w wordlist.txt,md5@base64 http://172.16.70.163/FUZZ
+
+Warning: Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/shodanp.py Exception, msg=No module named 'shodan'
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/bing.py Exception, msg=No module named 'shodan'
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000003:   404        828 L    1810 W   37237 Ch    "0b24df25fe628797b3a50ae0724d2730"                 
+000000006:   404        828 L    1810 W   37237 Ch    "461194a350fdac0ef28e8b2073f34a6a"                 
+000000001:   404        828 L    1810 W   37237 Ch    "cdd96d3cc73d1dbdaffa03cc6cd7339b"                 
+000000002:   404        828 L    1810 W   37235 Ch    "0b7e7dee87b1c3b98e72131173dfbbbf"                 
+000000004:   404        828 L    1810 W   37237 Ch    "f7947d50da7a043693a592b4db43b0a1"                 
+000000005:   404        828 L    1810 W   37237 Ch    "5fae8a76529cf25432da8e49f1053e08"                 
+000000007:   404        828 L    1810 W   37237 Ch    "4094c4aed3ced5fbd69159b16af12b7b"                 
+
+Total time: 1.048273
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 6.677649
+```
+
+

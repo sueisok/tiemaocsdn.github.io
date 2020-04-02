@@ -1,0 +1,975 @@
+<!-- Post layout -->
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Introducing the head tag -->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Wfuzz的其他模块 | sueisok</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="Wfuzz的其他模块" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="🤺基础用法请看上一篇" />
+<meta property="og:description" content="🤺基础用法请看上一篇" />
+<link rel="canonical" href="http://localhost:4000/blog/wfuzz1/" />
+<meta property="og:url" content="http://localhost:4000/blog/wfuzz1/" />
+<meta property="og:site_name" content="sueisok" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-02T17:08:36+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Wfuzz的其他模块" />
+<meta name="twitter:site" content="@your_name" />
+<meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"Wfuzz的其他模块","dateModified":"2020-04-02T17:08:36+08:00","datePublished":"2020-04-02T17:08:36+08:00","url":"http://localhost:4000/blog/wfuzz1/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/wfuzz1/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"🤺基础用法请看上一篇","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Person",
+      "image": /assets/JHON.jpg,
+      "honorificPrefix": "MD.",
+      "name": sueisok,
+      "familyName": Your family name,
+      "honorificSuffix": King,
+      "disambiguatingDescription": Your awesome description,
+      "birthPlace": Your address,
+      "birthDate": Your Date of Birth,
+      "height": XX inches,
+      "gender": Your gender,
+      "memberOf": Your awesome orgranization,
+      "nationality": Your proud nationality,
+      "jobTitle": Your Respectful Position,
+      "knowsAbout": Your awesome Skill,
+      "knowsLanguage": ,
+      "email": ,
+      "url": " http://localhost:4000 ",
+      "test": 
+      "worksFor": {
+        "@type": ,
+        "name": ,
+        "openingHours": ,
+        "priceRange": ,
+        "telephone": ,
+        "image": ,
+        "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+         }
+      },
+      "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+      },
+      "colleague": [
+        "https://deb108471.dhakaeducationboard.gov.bd",
+        "https://deb113652.dhakaeducationboard.gov.bd",
+        "https://deb110880.dhakaeducationboard.gov.bd"
+      ]
+    }
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-sclable=0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="description" content="Notes,Thoughts and Else" />
+<meta name="keywords" content="123456" />
+
+<!-- preloader -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/preloader.css">
+
+<!-- Favicon -->
+<link href="/assets/icon.png" rel="shortcut icon" />
+<link href="/assets/icon.png" rel="apple-touch-icon-precomposed" />
+<!-- Android Lolipop Theme Color -->
+<!-- <meta name="theme-color" content="#1464FB"> -->
+<title>Wfuzz的其他模块</title>
+<!-- Baidu statistics -->
+
+<!-- Google Analytics -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id="></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '');
+</script>
+
+
+<!-- Android Lolipop Theme Color -->
+<meta name="theme-color" content=" rgb(238,99,99) ">
+</head>
+<body onload="loaderFunc()" data-spy="scroll" data-target="#toc" data-offset="20">
+
+
+<!-- preloader -->
+<div id="loader" class="loader">
+  <div class="artboard">
+    <div class="square"></div>
+    <div class="path">
+      <div class="small-squares">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end -->
+
+<!-- Top anchor -->
+<a id="htmlup" name="htmlup"></a>
+<!-- Introduce blog post options -->
+
+<header id="post-header" style="background-color:rgb(238,99,99);">
+  <div class="top-center">
+      <div class="logo">
+          <a href="/" title="my awesome webtitle" style="color: white;">sueisok</a>
+      </div>
+      <nav class="top-nav">
+          <ul>
+              
+                <li><a href="/" style="color: white;">Home</a></li>
+              
+                <li><a href="/tags/" style="color: white;">Tags</a></li>
+              
+                <li><a href="/timeline/" style="color: white;">Timeline</a></li>
+              
+                <li><a href="/about/" style="color: white;">About</a></li>
+              
+                <li><a href="/reLink/" style="color: white;">reLink</a></li>
+              
+          </ul>
+      </nav>
+      <div id="top-boot">
+        <a href="javascript:;" id="boot1" style="display:block;" onclick="document.getElementById('boot-area').style.display='block';document.getElementById('boot1').style.display='none';document.getElementById('boot2').style.display='block';"><img src="/assets/boot_white.png" alt=""></a>
+        <a href="javascript:;" id="boot2" style="display: none;" onclick="document.getElementById('boot-area').style.display='none';document.getElementById('boot1').style.display='block';document.getElementById('boot2').style.display='none';"><img src="/assets/boot_white.png" alt=""></a>
+      </div>
+  </div>
+
+</header>
+
+
+<!-- Introducing the mobile dropdown option -->
+<div id="boot-area">
+    <ul>
+        
+          <a href="/"><li>Home</li></a>
+        
+          <a href="/tags/"><li>Tags</li></a>
+        
+          <a href="/timeline/"><li>Timeline</li></a>
+        
+          <a href="/about/"><li>About</li></a>
+        
+          <a href="/reLink/"><li>reLink</li></a>
+        
+    </ul>
+</div>
+
+<!-- Introducing the blog post style -->
+<!-- Version one garbage -->
+<!-- <div class="wow fadeIn top" data-wow-duration="3.5s" >
+    <span class="wow fadeInUp" data-wow-delay="0.2s">Wfuzz的其他模块</span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span>
+</div> -->
+
+<!--Version 2 switchable page -->
+
+<div class="post-top" style="background-color:rgb(238,99,99);">
+  <!-- Page width is greater than 800px -->
+  <div class="left-area">
+    
+      <a href="javascript:;" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(238,99,99)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
+      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(238,99,99);"><sapn class="main">No previous page</sapn></span></div>
+    
+  </div>
+  <div class="post-titlearea">
+    <span class="wow fadeInUp" data-wow-delay="0.2s">Wfuzz的其他模块</span>
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span> -->
+  </div>
+  <div class="right-area">
+    
+      <a href="/blog/wfuzz0/" class="btn bounceInRight self-animated" onmouseover="showRight();this.style.color='rgb(238,99,99)';" onmouseout="goneRight();this.style.color='rgba(0,0,0,.2)';">></a>
+      <div id="right-tab" style="display:none;"><span class="right-san"></span><span class="right-main" style="color:rgb(238,99,99);"><sapn class="main">fuzz第一步，Wfuzz来指路</sapn></span></div>
+    
+  </div>
+
+  <!-- Page width is less than 800px -->
+  <div class="post-changearea">
+    
+      <a href="javascript:;" class="leftchange" style="border-right: 1px solid rgb(238,99,99);border-bottom: 2px solid rgb(238,99,99);"><span><br>No previous one</span></a>
+    
+    
+      <a href="/blog/wfuzz0/" class="rightchange" style="border-left: 1px solid rgb(238,99,99);border-bottom: 2px solid rgb(238,99,99);"><span>Next<br><br>fuzz第一步，Wfuzz来指路</span></a>
+    
+  </div>
+</div>
+
+
+<div class="markdown-body fadeInUp animated">
+  
+
+    
+      <div class="postpage-subtitle" style="border-left: 8px solid rgb(238,99,99); border-right: 8px solid rgb(238,99,99)">
+        Wfuzz的iterators、scripts、encoders模块
+      </div>
+    
+  
+
+  <!-- Article content -->
+ <ul id="markdown-toc">
+  <li><a href="#迭代器iterators" id="markdown-toc-迭代器iterators">迭代器(iterators)</a></li>
+  <li><a href="#脚本scripts" id="markdown-toc-脚本scripts">脚本(scripts)</a></li>
+  <li><a href="#加密encoders" id="markdown-toc-加密encoders">加密(encoders)</a></li>
+</ul>
+<p>🤺基础用法请看上一篇</p>
+
+<p>🤺<a href="https://wfuzz.readthedocs.io/en/latest/">该项目的官网手册</a></p>
+
+<p>🤺Kali Linux自带此工具</p>
+
+<p>🤺上一篇写了简单介绍和<code class="highlighter-rouge">payloads</code>模块的用法，这里介绍其他三个主要模块<code class="highlighter-rouge">iterators</code>、<code class="highlighter-rouge">scripts</code>、<code class="highlighter-rouge">encoders</code></p>
+
+<h1 id="迭代器iterators">迭代器(iterators)</h1>
+
+<p><strong>具体说明</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -e iterators
+
+Available iterators:
+
+  Name    | Summary                                                                       
+-----------------------------------------------------------------------------------------
+  chain   | Returns an iterator returns elements from the first iterable until it is  
+          | exhausted, then proceeds to the next iterable, until all of the iterables are 
+          | exhausted.                                                                   
+  product | Returns an iterator cartesian product of input iterables.                     
+  zip     | Returns an iterator that aggregates elements from each of the iterables. 
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">iterators</code>自带三个迭代器，<code class="highlighter-rouge">-m xxx</code>使用迭代器</p>
+
+<p><strong>chain</strong></p>
+
+<p>需要两个字典，一个占位符FUZZ，<code class="highlighter-rouge">chain</code>可以整合两个字典为一个，传入占位符，一共<code class="highlighter-rouge">n+m</code>条payloads</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -z range,0-10 -w Deutsch.txt -m chain http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 17
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000002:   404        828 L    1806 W   36851 Ch    "1"                                         
+000000003:   404        828 L    1806 W   36850 Ch    "2"                                         
+000000004:   404        828 L    1806 W   36849 Ch    "3"                                         
+000000005:   404        828 L    1806 W   36850 Ch    "4"                                         
+000000006:   404        828 L    1806 W   36850 Ch    "5"                                         
+000000007:   404        828 L    1806 W   36850 Ch    "6"                                         
+000000008:   404        828 L    1806 W   36850 Ch    "7"                                         
+000000001:   200        213 L    495 W    7870 Ch     "0"                                         
+000000009:   404        828 L    1806 W   36850 Ch    "8"                                         
+000000010:   404        828 L    1806 W   36850 Ch    "9"                                         
+000000013:   404        828 L    1806 W   36886 Ch    "Milch"                                     
+000000014:   404        828 L    1806 W   36886 Ch    "Apfel"                                     
+000000017:   404        828 L    1806 W   36895 Ch    "Schule"                                    
+000000011:   404        828 L    1806 W   36859 Ch    "10"                                        
+000000012:   404        828 L    1806 W   36877 Ch    "Heft"                                      
+000000015:   404        828 L    1806 W   36976 Ch    "Schweinefleisch"                           
+000000016:   404        828 L    1806 W   36895 Ch    "Kamera"                                    
+
+Total time: 0.215062
+Processed Requests: 17
+Filtered Requests: 0
+Requests/sec.: 79.04683
+</code></pre></div></div>
+
+<p><strong>product</strong></p>
+
+<p>需要两个字典，两个占位符FUZZ，<code class="highlighter-rouge">product</code>可以排列组合两个字典，按顺序传入占位符，一共<code class="highlighter-rouge">n*m</code>条payloads</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -z range,0-3 -w Deutsch.txt -m product http://172.16.70.163/FUZZ=FUZ2Z
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ=FUZ2Z
+Total requests: 16
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000001:   404        828 L    1807 W   36895 Ch    "0 - Heft"                                  
+000000002:   404        828 L    1807 W   36904 Ch    "0 - Milch"                                 
+000000003:   404        828 L    1807 W   36902 Ch    "0 - Apfel"                                 
+000000004:   404        828 L    1807 W   36993 Ch    "0 - Schweinefleisch"                       
+000000005:   404        828 L    1807 W   36894 Ch    "1 - Heft"                                  
+000000006:   404        828 L    1807 W   36903 Ch    "1 - Milch"                                 
+000000007:   404        828 L    1807 W   36903 Ch    "1 - Apfel"                                 
+000000008:   404        828 L    1807 W   36994 Ch    "1 - Schweinefleisch"                       
+000000009:   404        828 L    1807 W   36894 Ch    "2 - Heft"                                  
+000000010:   404        828 L    1807 W   36903 Ch    "2 - Milch"                                 
+000000011:   404        828 L    1807 W   36903 Ch    "2 - Apfel"                                 
+000000012:   404        828 L    1807 W   36993 Ch    "2 - Schweinefleisch"                       
+000000013:   404        828 L    1807 W   36894 Ch    "3 - Heft"                                  
+000000014:   404        828 L    1807 W   36904 Ch    "3 - Milch"                                 
+000000015:   404        828 L    1807 W   36903 Ch    "3 - Apfel"                                 
+000000016:   404        828 L    1807 W   36994 Ch    "3 - Schweinefleisch"                       
+
+Total time: 0.207002
+Processed Requests: 16
+Filtered Requests: 0
+Requests/sec.: 77.29370
+</code></pre></div></div>
+
+<p><strong>zip</strong></p>
+
+<p>需要两个字典，两个个占位符FUZZ和FU2Z，<code class="highlighter-rouge">zip</code>可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共<code class="highlighter-rouge">min(n,m)</code>条payloads</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -z range,0-10 -w Deutsch.txt -m zip http://172.16.70.163/FUZZ=FUZ2Z
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ=FUZ2Z
+Total requests: 6
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000001:   404        828 L    1807 W   36895 Ch    "0 - Heft"                                  
+000000003:   404        828 L    1807 W   36903 Ch    "2 - Apfel"                                 
+000000002:   404        828 L    1807 W   36904 Ch    "1 - Milch"                                 
+000000004:   404        828 L    1807 W   36993 Ch    "3 - Schweinefleisch"                       
+000000005:   404        828 L    1807 W   36912 Ch    "4 - Kamera"                                
+000000006:   404        828 L    1807 W   36911 Ch    "5 - Schule"                                
+
+Total time: 0.238128
+Processed Requests: 6
+Filtered Requests: 0
+Requests/sec.: 25.19648
+</code></pre></div></div>
+
+<p>其实就很像Burpsuite里面的Intruder模块，目前感觉还是Intruder好用</p>
+
+<h1 id="脚本scripts">脚本(scripts)</h1>
+
+<p><strong>具体说明</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -e scripts
+
+Available scripts:
+
+  Category                      | Name          | Summary                                              
+-------------------------------------------------------------------------------------------------------
+  default, active, discovery    | cvs_extractor | Parses CVS/Entries file.                             
+  default, passive              | errors        | Looks for error messages                             
+  default, active, discovery    | wc_extractor  | Parses subversion's wc.db file.                      
+  active, discovery             | links         | Parses HTML looking for new content.                 
+  re-enqueue, active, discovery | backups       | Looks for known backup filenames.                    
+  default, passive              | listing       | Looks for directory listing vulnerabilities          
+  default, active, discovery    | svn_extractor | Parses .svn/entries file.                            
+  verbose, passive              | headers       | Looks for server headers                             
+  default, active, discovery    | sitemap       | Parses sitemap.xml file                              
+  verbose, passive              | cookies       | Looks for new cookies                                
+  verbose, passive              | title         | Parses HTML page title                               
+  tools                         | grep          | HTTP response grep                                   
+  default, active, discovery    | robots        | Parses robots.txt looking for new content.           
+  tools, active                 | screenshot    | Performs a screen capture using linux cutycapt tool
+</code></pre></div></div>
+
+<p><strong>分类说明</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>参数</th>
+      <th>说明</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>passive</td>
+      <td>被动脚本分析现有请求和响应，而无需执行新请求</td>
+    </tr>
+    <tr>
+      <td>active</td>
+      <td>主动脚本对应用程序执行新请求以探测其漏洞</td>
+    </tr>
+    <tr>
+      <td>discovery</td>
+      <td>通过自动将发现的内容排入wfuzz请求的资源池，来帮助抓取网站</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>使用Scripts</strong></p>
+
+<p>可以先查看一下某个模块的信息</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz --script-help=backups
+
+Name: backups 0.1
+Categories: re-enqueue,active,discovery
+Summary: Looks for known backup filenames.
+Author: Xavi Mendez (@xmendez)
+Description:
+   Looks for known backup filenames.
+Parameters:
+   - ext (= .bak,.tgz,.zip,.tar.gz,~,.rar,.old,.-.swp): Extensions to look for.
+
+</code></pre></div></div>
+
+<p><strong>使用scripts</strong></p>
+
+<p>使用<code class="highlighter-rouge">backup</code>脚本模块，<code class="highlighter-rouge">backups.txt</code>为字典</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz --script=backups -w backups.txt http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000004:   404        828 L    1806 W   36850 Ch    "4"                                                
+000000001:   404        828 L    1806 W   36850 Ch    "1"                                                
+000000002:   404        828 L    1806 W   36850 Ch    "2"                                                
+000000003:   404        828 L    1806 W   36849 Ch    "3"                                                
+000000006:   404        828 L    1806 W   36868 Ch    "saf"                                              
+000000005:   404        828 L    1806 W   36859 Ch    "ad"                                               
+000000007:   404        828 L    1806 W   36868 Ch    "zxs"                                              
+
+Total time: 1.044162
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 6.703940
+</code></pre></div></div>
+
+<p>为了不再重复扫描相同的请求（具有相同的参数），有一个缓存，可以使用–no-cache标志禁用缓存</p>
+
+<p>例如，如果我们以具有相同URL但参数值不同的Web服务器为目标，则会得到</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -z range --zD 0-3 -z list --zD "'" -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A
+
+000000004:   0.195s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "3 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000001:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "0 - '"
+000000002:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "1 - '"
+000000003:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "2 - '"
+</code></pre></div></div>
+
+<p>相同操作，禁用了缓存</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -z range --zD 0-3 -z list --zD "'" -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A --no-cache
+
+000000004:   1.170s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "3 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000002:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "1 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000001:   1.174s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "0 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+000000003:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   "2 - '"
+|_  Error identified: Warning: mysql_fetch_array()
+</code></pre></div></div>
+
+<p><strong>自定义脚本</strong></p>
+
+<p>如果要创建脚本，需要在“ .wfuzz”目录下创建一个名为“ scripts”的目录，将脚本放入目录下</p>
+
+<p><a href="https://github.com/xmendez/wfuzz/tree/master/src/wfuzz/plugins/scripts">参考如何编写插件</a></p>
+
+<h1 id="加密encoders">加密(encoders)</h1>
+
+<p><strong>具体说明</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -e encoders
+
+Available encoders:
+
+  Category      | Name              | Summary                                                                           
+-----------------------------------------------------------------------------------------
+  hashes        | base64            | Encodes the given string using base64                                             
+  url           | doble_nibble_hex  | Replaces ALL characters in string using the %%dd%dd escape                        
+  url_safe, url | double urlencode  | Applies a double encode to special characters in string using the %25xx escape.   
+                |                   | Letters, digits, and the characters '_.-' are never quoted.                       
+  url           | first_nibble_hex  | Replaces ALL characters in string using the %%dd? escape                          
+  default       | hexlify           | Every byte of data is converted into the corresponding 2-digit hex representatio  
+                |                   | n.                                                                                
+  html          | html_decimal      | Replaces ALL characters in string using the &amp;#dd; escape                          
+  html          | html_escape       | Convert the characters &amp;&lt;&gt;" in string to HTML-safe sequences.                     
+  html          | html_hexadecimal  | Replaces ALL characters in string using the &amp;#xx; escape                          
+  hashes        | md5               | Applies a md5 hash to the given string                                            
+  db            | mssql_char        | Converts ALL characters to MsSQL's char(xx)                                       
+  db            | mysql_char        | Converts ALL characters to MySQL's char(xx)                                       
+  default       | none              | Returns string without changes                                                    
+  db            | oracle_char       | Converts ALL characters to Oracle's chr(xx)                                       
+  default       | random_upper      | Replaces random characters in string with its capitals letters                    
+  url           | second_nibble_hex | Replaces ALL characters in string using the %?%dd escape                          
+  hashes        | sha1              | Applies a sha1 hash to the given string                                           
+  url           | uri_double_hex    | Encodes ALL charachers using the %25xx escape.                                    
+  url           | uri_hex           | Encodes ALL charachers using the %xx escape.                                      
+  url           | uri_triple_hex    | Encodes ALL charachers using the %25%xx%xx escape.                                
+  url           | uri_unicode       | Replaces ALL characters in string using the %u00xx escape                         
+  url_safe, url | urlencode         | Replace special characters in string using the %xx escape. Letters, digits, and   
+                |                   | the characters '_.-' are never quoted.                                            
+  url           | utf8              | Replaces ALL characters in string using the \u00xx escape                         
+  url           | utf8_binary       | Replaces ALL characters in string using the \uxx escape
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">encoders</code>的作用是将payload进行编码或加密</p>
+
+<p><strong>使用方法</strong></p>
+
+<p>在字典后面直接加加密方式就可以了</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -w wordlist.txt,md5 http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000001:   404        828 L    1810 W   37237 Ch    "c4ca4238a0b923820dcc509a6f75849b"                 
+000000002:   404        828 L    1810 W   37237 Ch    "c81e728d9d4c2f636f067f89cc14862c"                 
+000000003:   404        828 L    1810 W   37237 Ch    "eccbc87e4b5ce2fe28308fd9f2a7baf3"                 
+000000004:   404        828 L    1810 W   37237 Ch    "a87ff679a2f3e71d9181a67b7542122c"                 
+000000005:   404        828 L    1810 W   37237 Ch    "523af537946b79c4f8369ed39ba78605"                 
+000000006:   404        828 L    1810 W   37237 Ch    "e8a88bb6f4d420a8517965d25cd54a14"                 
+000000007:   404        828 L    1810 W   37237 Ch    "68f43f44054de89e6ee5ff03adb26542"                 
+
+Total time: 0.239509
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 29.22638
+</code></pre></div></div>
+
+<p><strong>使用多个encoder</strong></p>
+
+<p>多个encoder，使用一个<code class="highlighter-rouge">-</code>号分隔的列表来指定</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wfuzz -w wordlist.txt,md5-base64 http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 14
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000001:   404        828 L    1810 W   37237 Ch    "c4ca4238a0b923820dcc509a6f75849b"                 
+000000002:   404        828 L    1807 W   36876 Ch    "MQ=="                                             
+000000003:   404        828 L    1810 W   37237 Ch    "c81e728d9d4c2f636f067f89cc14862c"                 
+000000004:   404        828 L    1807 W   36876 Ch    "Mg=="                                             
+000000005:   404        828 L    1810 W   37237 Ch    "eccbc87e4b5ce2fe28308fd9f2a7baf3"                 
+000000006:   404        828 L    1807 W   36876 Ch    "Mw=="                                             
+000000007:   404        828 L    1810 W   37237 Ch    "a87ff679a2f3e71d9181a67b7542122c"                 
+000000008:   404        828 L    1807 W   36876 Ch    "NA=="                                             
+000000009:   404        828 L    1810 W   37237 Ch    "523af537946b79c4f8369ed39ba78605"                 
+000000013:   404        828 L    1810 W   37237 Ch    "68f43f44054de89e6ee5ff03adb26542"                 
+000000010:   404        828 L    1806 W   36876 Ch    "YWQ="                                             
+000000011:   404        828 L    1810 W   37236 Ch    "e8a88bb6f4d420a8517965d25cd54a14"                 
+000000012:   404        828 L    1806 W   36877 Ch    "c2Fm"                                             
+000000014:   404        828 L    1806 W   36877 Ch    "enhz"                                             
+
+Total time: 0.266457
+Processed Requests: 14
+Filtered Requests: 0
+Requests/sec.: 52.54129
+</code></pre></div></div>
+
+<p><strong>多次encoder</strong></p>
+
+<p>多次encoder，使用一个<code class="highlighter-rouge">@</code>号分隔的列表来指定，顺序为由右到左</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -w wordlist.txt,md5@base64 http://172.16.70.163/FUZZ
+
+Warning: Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/shodanp.py Exception, msg=No module named 'shodan'
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/bing.py Exception, msg=No module named 'shodan'
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000003:   404        828 L    1810 W   37237 Ch    "0b24df25fe628797b3a50ae0724d2730"                 
+000000006:   404        828 L    1810 W   37237 Ch    "461194a350fdac0ef28e8b2073f34a6a"                 
+000000001:   404        828 L    1810 W   37237 Ch    "cdd96d3cc73d1dbdaffa03cc6cd7339b"                 
+000000002:   404        828 L    1810 W   37235 Ch    "0b7e7dee87b1c3b98e72131173dfbbbf"                 
+000000004:   404        828 L    1810 W   37237 Ch    "f7947d50da7a043693a592b4db43b0a1"                 
+000000005:   404        828 L    1810 W   37237 Ch    "5fae8a76529cf25432da8e49f1053e08"                 
+000000007:   404        828 L    1810 W   37237 Ch    "4094c4aed3ced5fbd69159b16af12b7b"                 
+
+Total time: 1.048273
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 6.677649
+</code></pre></div></div>
+
+
+  <!-- Introducing the share module -->
+  
+  <div class="social-share-wrapper">
+    <div class="social-share"></div>
+  </div>
+
+
+<!-- share.js -->
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+  socialShare('.social-share', {
+    sites: [
+      
+        'weibo'
+        ,
+        
+      
+        'qq'
+        ,
+        
+      
+        'wechat'
+        
+      
+    ],
+    wechatQrcodeTitle: "Share to WeChat circle",
+    wechatQrcodeHelper: 'I look forward to seeing this article in the circle of friends.'
+  });
+</script>
+
+</div>
+
+<!-- Bottom anchor -->
+<a id="htmldown" name="htmldown"></a>
+<!-- Introducing the comment module -->
+
+
+
+    <section class="post-footer-item comment">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80ODI3Ny8yNDc3MQ=="></div>
+    </section>
+
+    <!-- 来必力City版安装代码 -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+
+           if (typeof LivereTower === 'function') { return; }
+
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>Please activate JavaScript for normal use.</noscript>
+    <!-- City version code installation has been completed -->
+
+
+
+
+
+<!-- Introducing the goto module -->
+<div class="bounceInRight animated go">
+  <a title="Top switch page" class="gototop" href="#htmlup" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Top
+    </div>
+  </a>
+  <a title="At the bottomlivere评论哦" class="gotobottom" href="#htmldown" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Foot
+    </div>
+  </a>
+</div>
+
+<!-- Introduce the module at the bottom of the page -->
+
+<footer id="bottom">
+  <script src="/assets/css/bootstrap.min.css"></script>
+
+<!-- START BREADCRUMBS -->
+<nav aria-label="breadcrumb">
+
+  <ol class="breadcrumb">
+  
+  
+  
+  </ol>
+</nav>
+
+<!-- END BREADCRUMBS -->
+
+
+<div id="breadcrumbs">
+
+<a href="/">Home</a>
+
+  
+    / <a href="/blog/">Blog</a>
+  
+
+  
+    / Wfuzz1
+  
+
+</div>
+<style>
+#breadcrumbs {margin-left: 0
+
+      font-size: 10rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      list-style: none;
+      background-color: # #fcfcfc;
+      border-radius: 0.25rem;
+
+      content: "";
+      display: table;
+      clear: both;
+
+      float: left;
+
+      display: inline-block;
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+      color: #818a91;
+      content: "/";
+
+      text-decoration: underline;
+
+      text-decoration: none;
+
+}
+</style>
+
+  <br>
+  <span>sueisok ©
+  
+  
+  2020
+  <br>
+  Powered by <a href="https://www.jekyll.com/">Jekyll</a> | <a href="https://github.com/JonyBepary/HardCandy-Jekyll-Mod">HardCandy-Jekyll Mod</a></span>
+</footer>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/media.css">
+<link rel="stylesheet" href="/assets/css/animate.min.css">
+<link rel="stylesheet" href="/assets/css/pygments/pygments_default.css">
+<link rel="stylesheet" href="/assets/css/github-markdown.css">
+<!-- SNS-icon -->
+<script src="/assets/js/font_856428_y9z6nq7zf5.js"></script>
+<!-- share.css -->
+<link rel="stylesheet" href="/assets/css/share.min.css">
+<!-- font -->
+<link rel="stylesheet" href="/assets/css/font.css">
+<!-- <link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Pacifico|Ubuntu|Roboto+Mono|Source+Sans+Pro" rel="stylesheet"> -->
+
+
+
+<!-- Quote the animation effect of wow.js -->
+<script src="/assets/js/wow.js"></script>
+<script>
+    var wow = new WOW({
+        boxClass: 'wow',
+        animateClass: 'animated',
+        // offset: 600,
+        mobile: true,
+        live: true
+    });
+    wow.init();
+</script>
+<!-- Page refreshes back to top -->
+<script>
+    window.onbeforeunload = function(){
+        //The page automatically returns to the top after refreshing
+        document.documentElement.scrollTop = 0;  //ie下
+        document.body.scrollTop = 0;  //非ie
+    }
+</script>
+
+<!-- preloder script -->
+<!-- end -->
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+    var b = c[a];
+    b.getAttribute("href") && b.hostname !== location.hostname
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window()
+external_new_window();
+</script>
+
+<style>
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.333%;
+    height: 0;
+    background: black;
+}
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+
+<script>
+function get_youtube_id(url) {
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return (url.match(p)) ? RegExp.$1 : false;
+}
+function vimeo_embed(url,el) {
+    var id = false;
+    $.ajax({
+      url: 'https://vimeo.com/api/oembed.json?url='+url,
+      async: true,
+      success: function(response) {
+        if(response.video_id) {
+          id = response.video_id;
+          if(url.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+          if(url.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+          var theInnerHTML = '<div class="videoWrapper"><iframe src="https://player.vimeo.com/video/'+id+'/?byline=0&title=0&portrait=0';
+          if(autoplay==1) theInnerHTML += '&autoplay=1';
+          if(loop==1) theInnerHTML += '&loop=1';
+          theInnerHTML += '" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+          el.innerHTML = theInnerHTML;
+        }
+      }
+    });
+}
+function video_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        //check if this is an external url (that starts with https:// or http://
+        if (p[i].innerHTML.indexOf("http://") == 0 ||
+            p[i].innerHTML.indexOf("https://") == 0) {
+            var youtube_id = get_youtube_id(p[i].innerHTML);
+            if(youtube_id) {
+                if(p[i].innerHTML.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(p[i].innerHTML.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                var theInnerHTML = '<div class="videoWrapper"><iframe width="720" height="420" src="https://www.youtube.com/embed/' + youtube_id + '?rel=0&showinfo=0';
+                if(autoplay==1) theInnerHTML += '&autoplay=1';
+                if(loop==1) theInnerHTML += '&loop=1&playlist='+youtube_id+'&version=3';
+                theInnerHTML += '" frameborder="0" allowfullscreen></iframe></div>';
+                p[i].innerHTML = theInnerHTML;
+            }
+            if(p[i].innerHTML.indexOf('vimeo.com') !== -1) {
+                //ask vimeo for the id and place the embed
+                vimeo_embed(p[i].innerHTML,p[i]);
+            }
+        }
+    }
+}
+video_embed();
+
+function mp3_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        if(p[i].innerHTML.indexOf('.mp3') !== -1) {
+            var str = p[i].innerHTML.split('?');
+            if(str.length == 1) str[1] = '';
+            var str1 = str[1];
+            str1 = str1.replace('&','').replace('&','');
+            str1 = str1.replace('autoplay=1','').replace('autoplay=0','');
+            str1 = str1.replace('loop=1','').replace('loop=0','');
+            str1 = str1.replace('controls=0','').replace('controls=1','');
+
+            if (str[0].lastIndexOf('.mp3', str[0].length - 4) === str[0].length - 4 && str1.length == 0) {
+                if(str[1].indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(str[1].indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                if(str[1].indexOf('controls=0') !== -1) var controls=0; else var controls=1;
+                var newInnerHTML = '<audio';
+                if(autoplay==1) newInnerHTML += ' autoplay';
+                if(loop==1) newInnerHTML += ' loop';
+                if(controls==1) newInnerHTML += ' controls';
+                newInnerHTML += '><source src="'+str[0]+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                p[i].innerHTML = newInnerHTML;
+            }
+        }
+    }
+}
+mp3_embed();
+</script>
+
+
+<!-- preloder script -->
+<script>
+    var preloader = document.getElementById("loader");
+    function loaderFunc(){
+      preloader.style.display = 'none';
+    };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<!-- end -->
+
+</body>
+</html>
