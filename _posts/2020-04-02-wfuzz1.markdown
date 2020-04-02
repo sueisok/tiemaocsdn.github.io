@@ -87,7 +87,7 @@ Requests/sec.: 79.04683
 
 **product**
 
-需要两个字典，两个占位符FUZZ，`product`可以排列组合两个字典，按顺序传入占位符，一共`n*m`条payloads
+需要两个字典，两个占位符FUZZ和FUZ2Z，`product`可以排列组合两个字典，按顺序传入占位符，一共`n*m`条payloads
 
 ```
 # wfuzz -z range,0-3 -w Deutsch.txt -m product http://172.16.70.163/FUZZ=FUZ2Z
@@ -128,7 +128,7 @@ Requests/sec.: 77.29370
 
 **zip**
 
-需要两个字典，两个个占位符FUZZ和FU2Z，`zip`可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共`min(n,m)`条payloads
+需要两个字典，两个个占位符FUZZ和FUZ2Z，`zip`可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共`min(n,m)`条payloads
 
 ```
 # wfuzz -z range,0-10 -w Deutsch.txt -m zip http://172.16.70.163/FUZZ=FUZ2Z

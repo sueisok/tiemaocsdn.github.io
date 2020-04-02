@@ -1,4 +1,423 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-02T17:37:55+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Wfuzz的其他模块</title><link href="http://localhost:4000/blog/wfuzz1/" rel="alternate" type="text/html" title="Wfuzz的其他模块" /><published>2020-04-02T17:08:36+08:00</published><updated>2020-04-02T17:08:36+08:00</updated><id>http://localhost:4000/blog/wfuzz1</id><content type="html" xml:base="http://localhost:4000/blog/wfuzz1/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-02T17:47:26+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Wfuzz的其他模块</title><link href="http://localhost:4000/blog/wfuzz2/" rel="alternate" type="text/html" title="Wfuzz的其他模块" /><published>2020-04-02T17:08:36+08:00</published><updated>2020-04-02T17:08:36+08:00</updated><id>http://localhost:4000/blog/wfuzz2</id><content type="html" xml:base="http://localhost:4000/blog/wfuzz2/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#迭代器iterators&quot; id=&quot;markdown-toc-迭代器iterators&quot;&gt;迭代器(iterators)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#脚本scripts&quot; id=&quot;markdown-toc-脚本scripts&quot;&gt;脚本(scripts)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#加密encoders&quot; id=&quot;markdown-toc-加密encoders&quot;&gt;加密(encoders)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;🤺基础用法请看上一篇&lt;/p&gt;
+
+&lt;p&gt;🤺&lt;a href=&quot;https://wfuzz.readthedocs.io/en/latest/&quot;&gt;该项目的官网手册&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;🤺Kali Linux自带此工具&lt;/p&gt;
+
+&lt;p&gt;🤺上一篇写了简单介绍和&lt;code class=&quot;highlighter-rouge&quot;&gt;payloads&lt;/code&gt;模块的用法，这里介绍其他三个主要模块&lt;code class=&quot;highlighter-rouge&quot;&gt;iterators&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;scripts&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;encoders&lt;/code&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;迭代器iterators&quot;&gt;迭代器(iterators)&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;具体说明&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -e iterators
+
+Available iterators:
+
+  Name    | Summary                                                                       
+-----------------------------------------------------------------------------------------
+  chain   | Returns an iterator returns elements from the first iterable until it is  
+          | exhausted, then proceeds to the next iterable, until all of the iterables are 
+          | exhausted.                                                                   
+  product | Returns an iterator cartesian product of input iterables.                     
+  zip     | Returns an iterator that aggregates elements from each of the iterables. 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iterators&lt;/code&gt;自带三个迭代器，&lt;code class=&quot;highlighter-rouge&quot;&gt;-m xxx&lt;/code&gt;使用迭代器&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;chain&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;需要两个字典，一个占位符FUZZ，&lt;code class=&quot;highlighter-rouge&quot;&gt;chain&lt;/code&gt;可以整合两个字典为一个，传入占位符，一共&lt;code class=&quot;highlighter-rouge&quot;&gt;n+m&lt;/code&gt;条payloads&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-10 -w Deutsch.txt -m chain http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 17
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000002:   404        828 L    1806 W   36851 Ch    &quot;1&quot;                                         
+000000003:   404        828 L    1806 W   36850 Ch    &quot;2&quot;                                         
+000000004:   404        828 L    1806 W   36849 Ch    &quot;3&quot;                                         
+000000005:   404        828 L    1806 W   36850 Ch    &quot;4&quot;                                         
+000000006:   404        828 L    1806 W   36850 Ch    &quot;5&quot;                                         
+000000007:   404        828 L    1806 W   36850 Ch    &quot;6&quot;                                         
+000000008:   404        828 L    1806 W   36850 Ch    &quot;7&quot;                                         
+000000001:   200        213 L    495 W    7870 Ch     &quot;0&quot;                                         
+000000009:   404        828 L    1806 W   36850 Ch    &quot;8&quot;                                         
+000000010:   404        828 L    1806 W   36850 Ch    &quot;9&quot;                                         
+000000013:   404        828 L    1806 W   36886 Ch    &quot;Milch&quot;                                     
+000000014:   404        828 L    1806 W   36886 Ch    &quot;Apfel&quot;                                     
+000000017:   404        828 L    1806 W   36895 Ch    &quot;Schule&quot;                                    
+000000011:   404        828 L    1806 W   36859 Ch    &quot;10&quot;                                        
+000000012:   404        828 L    1806 W   36877 Ch    &quot;Heft&quot;                                      
+000000015:   404        828 L    1806 W   36976 Ch    &quot;Schweinefleisch&quot;                           
+000000016:   404        828 L    1806 W   36895 Ch    &quot;Kamera&quot;                                    
+
+Total time: 0.215062
+Processed Requests: 17
+Filtered Requests: 0
+Requests/sec.: 79.04683
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;product&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;需要两个字典，两个占位符FUZZ，&lt;code class=&quot;highlighter-rouge&quot;&gt;product&lt;/code&gt;可以排列组合两个字典，按顺序传入占位符，一共&lt;code class=&quot;highlighter-rouge&quot;&gt;n*m&lt;/code&gt;条payloads&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-3 -w Deutsch.txt -m product http://172.16.70.163/FUZZ=FUZ2Z
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ=FUZ2Z
+Total requests: 16
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000001:   404        828 L    1807 W   36895 Ch    &quot;0 - Heft&quot;                                  
+000000002:   404        828 L    1807 W   36904 Ch    &quot;0 - Milch&quot;                                 
+000000003:   404        828 L    1807 W   36902 Ch    &quot;0 - Apfel&quot;                                 
+000000004:   404        828 L    1807 W   36993 Ch    &quot;0 - Schweinefleisch&quot;                       
+000000005:   404        828 L    1807 W   36894 Ch    &quot;1 - Heft&quot;                                  
+000000006:   404        828 L    1807 W   36903 Ch    &quot;1 - Milch&quot;                                 
+000000007:   404        828 L    1807 W   36903 Ch    &quot;1 - Apfel&quot;                                 
+000000008:   404        828 L    1807 W   36994 Ch    &quot;1 - Schweinefleisch&quot;                       
+000000009:   404        828 L    1807 W   36894 Ch    &quot;2 - Heft&quot;                                  
+000000010:   404        828 L    1807 W   36903 Ch    &quot;2 - Milch&quot;                                 
+000000011:   404        828 L    1807 W   36903 Ch    &quot;2 - Apfel&quot;                                 
+000000012:   404        828 L    1807 W   36993 Ch    &quot;2 - Schweinefleisch&quot;                       
+000000013:   404        828 L    1807 W   36894 Ch    &quot;3 - Heft&quot;                                  
+000000014:   404        828 L    1807 W   36904 Ch    &quot;3 - Milch&quot;                                 
+000000015:   404        828 L    1807 W   36903 Ch    &quot;3 - Apfel&quot;                                 
+000000016:   404        828 L    1807 W   36994 Ch    &quot;3 - Schweinefleisch&quot;                       
+
+Total time: 0.207002
+Processed Requests: 16
+Filtered Requests: 0
+Requests/sec.: 77.29370
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;zip&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;需要两个字典，两个个占位符FUZZ和FU2Z，&lt;code class=&quot;highlighter-rouge&quot;&gt;zip&lt;/code&gt;可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共&lt;code class=&quot;highlighter-rouge&quot;&gt;min(n,m)&lt;/code&gt;条payloads&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-10 -w Deutsch.txt -m zip http://172.16.70.163/FUZZ=FUZ2Z
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ=FUZ2Z
+Total requests: 6
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                     
+===================================================================
+
+000000001:   404        828 L    1807 W   36895 Ch    &quot;0 - Heft&quot;                                  
+000000003:   404        828 L    1807 W   36903 Ch    &quot;2 - Apfel&quot;                                 
+000000002:   404        828 L    1807 W   36904 Ch    &quot;1 - Milch&quot;                                 
+000000004:   404        828 L    1807 W   36993 Ch    &quot;3 - Schweinefleisch&quot;                       
+000000005:   404        828 L    1807 W   36912 Ch    &quot;4 - Kamera&quot;                                
+000000006:   404        828 L    1807 W   36911 Ch    &quot;5 - Schule&quot;                                
+
+Total time: 0.238128
+Processed Requests: 6
+Filtered Requests: 0
+Requests/sec.: 25.19648
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;其实就很像Burpsuite里面的Intruder模块，目前感觉还是Intruder好用&lt;/p&gt;
+
+&lt;h1 id=&quot;脚本scripts&quot;&gt;脚本(scripts)&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;具体说明&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -e scripts
+
+Available scripts:
+
+  Category                      | Name          | Summary                                              
+-------------------------------------------------------------------------------------------------------
+  default, active, discovery    | cvs_extractor | Parses CVS/Entries file.                             
+  default, passive              | errors        | Looks for error messages                             
+  default, active, discovery    | wc_extractor  | Parses subversion's wc.db file.                      
+  active, discovery             | links         | Parses HTML looking for new content.                 
+  re-enqueue, active, discovery | backups       | Looks for known backup filenames.                    
+  default, passive              | listing       | Looks for directory listing vulnerabilities          
+  default, active, discovery    | svn_extractor | Parses .svn/entries file.                            
+  verbose, passive              | headers       | Looks for server headers                             
+  default, active, discovery    | sitemap       | Parses sitemap.xml file                              
+  verbose, passive              | cookies       | Looks for new cookies                                
+  verbose, passive              | title         | Parses HTML page title                               
+  tools                         | grep          | HTTP response grep                                   
+  default, active, discovery    | robots        | Parses robots.txt looking for new content.           
+  tools, active                 | screenshot    | Performs a screen capture using linux cutycapt tool
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;分类说明&lt;/strong&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;参数&lt;/th&gt;
+      &lt;th&gt;说明&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;passive&lt;/td&gt;
+      &lt;td&gt;被动脚本分析现有请求和响应，而无需执行新请求&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;active&lt;/td&gt;
+      &lt;td&gt;主动脚本对应用程序执行新请求以探测其漏洞&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;discovery&lt;/td&gt;
+      &lt;td&gt;通过自动将发现的内容排入wfuzz请求的资源池，来帮助抓取网站&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;strong&gt;使用Scripts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;可以先查看一下某个模块的信息&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz --script-help=backups
+
+Name: backups 0.1
+Categories: re-enqueue,active,discovery
+Summary: Looks for known backup filenames.
+Author: Xavi Mendez (@xmendez)
+Description:
+   Looks for known backup filenames.
+Parameters:
+   - ext (= .bak,.tgz,.zip,.tar.gz,~,.rar,.old,.-.swp): Extensions to look for.
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;使用scripts&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;使用&lt;code class=&quot;highlighter-rouge&quot;&gt;backup&lt;/code&gt;脚本模块，&lt;code class=&quot;highlighter-rouge&quot;&gt;backups.txt&lt;/code&gt;为字典&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz --script=backups -w backups.txt http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000004:   404        828 L    1806 W   36850 Ch    &quot;4&quot;                                                
+000000001:   404        828 L    1806 W   36850 Ch    &quot;1&quot;                                                
+000000002:   404        828 L    1806 W   36850 Ch    &quot;2&quot;                                                
+000000003:   404        828 L    1806 W   36849 Ch    &quot;3&quot;                                                
+000000006:   404        828 L    1806 W   36868 Ch    &quot;saf&quot;                                              
+000000005:   404        828 L    1806 W   36859 Ch    &quot;ad&quot;                                               
+000000007:   404        828 L    1806 W   36868 Ch    &quot;zxs&quot;                                              
+
+Total time: 1.044162
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 6.703940
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;为了不再重复扫描相同的请求（具有相同的参数），有一个缓存，可以使用–no-cache标志禁用缓存&lt;/p&gt;
+
+&lt;p&gt;例如，如果我们以具有相同URL但参数值不同的Web服务器为目标，则会得到&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range --zD 0-3 -z list --zD &quot;'&quot; -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A
+
+000000004:   0.195s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;3 - '&quot;
+|_  Error identified: Warning: mysql_fetch_array()
+000000001:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;0 - '&quot;
+000000002:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;1 - '&quot;
+000000003:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;2 - '&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;相同操作，禁用了缓存&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range --zD 0-3 -z list --zD &quot;'&quot; -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A --no-cache
+
+000000004:   1.170s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;3 - '&quot;
+|_  Error identified: Warning: mysql_fetch_array()
+000000002:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;1 - '&quot;
+|_  Error identified: Warning: mysql_fetch_array()
+000000001:   1.174s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;0 - '&quot;
+|_  Error identified: Warning: mysql_fetch_array()
+000000003:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;2 - '&quot;
+|_  Error identified: Warning: mysql_fetch_array()
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;自定义脚本&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;如果要创建脚本，需要在“ .wfuzz”目录下创建一个名为“ scripts”的目录，将脚本放入目录下&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/xmendez/wfuzz/tree/master/src/wfuzz/plugins/scripts&quot;&gt;参考如何编写插件&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;加密encoders&quot;&gt;加密(encoders)&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;具体说明&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -e encoders
+
+Available encoders:
+
+  Category      | Name              | Summary                                                                           
+-----------------------------------------------------------------------------------------
+  hashes        | base64            | Encodes the given string using base64                                             
+  url           | doble_nibble_hex  | Replaces ALL characters in string using the %%dd%dd escape                        
+  url_safe, url | double urlencode  | Applies a double encode to special characters in string using the %25xx escape.   
+                |                   | Letters, digits, and the characters '_.-' are never quoted.                       
+  url           | first_nibble_hex  | Replaces ALL characters in string using the %%dd? escape                          
+  default       | hexlify           | Every byte of data is converted into the corresponding 2-digit hex representatio  
+                |                   | n.                                                                                
+  html          | html_decimal      | Replaces ALL characters in string using the &amp;amp;#dd; escape                          
+  html          | html_escape       | Convert the characters &amp;amp;&amp;lt;&amp;gt;&quot; in string to HTML-safe sequences.                     
+  html          | html_hexadecimal  | Replaces ALL characters in string using the &amp;amp;#xx; escape                          
+  hashes        | md5               | Applies a md5 hash to the given string                                            
+  db            | mssql_char        | Converts ALL characters to MsSQL's char(xx)                                       
+  db            | mysql_char        | Converts ALL characters to MySQL's char(xx)                                       
+  default       | none              | Returns string without changes                                                    
+  db            | oracle_char       | Converts ALL characters to Oracle's chr(xx)                                       
+  default       | random_upper      | Replaces random characters in string with its capitals letters                    
+  url           | second_nibble_hex | Replaces ALL characters in string using the %?%dd escape                          
+  hashes        | sha1              | Applies a sha1 hash to the given string                                           
+  url           | uri_double_hex    | Encodes ALL charachers using the %25xx escape.                                    
+  url           | uri_hex           | Encodes ALL charachers using the %xx escape.                                      
+  url           | uri_triple_hex    | Encodes ALL charachers using the %25%xx%xx escape.                                
+  url           | uri_unicode       | Replaces ALL characters in string using the %u00xx escape                         
+  url_safe, url | urlencode         | Replace special characters in string using the %xx escape. Letters, digits, and   
+                |                   | the characters '_.-' are never quoted.                                            
+  url           | utf8              | Replaces ALL characters in string using the \u00xx escape                         
+  url           | utf8_binary       | Replaces ALL characters in string using the \uxx escape
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;encoders&lt;/code&gt;的作用是将payload进行编码或加密&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;在字典后面直接加加密方式就可以了&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -w wordlist.txt,md5 http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000001:   404        828 L    1810 W   37237 Ch    &quot;c4ca4238a0b923820dcc509a6f75849b&quot;                 
+000000002:   404        828 L    1810 W   37237 Ch    &quot;c81e728d9d4c2f636f067f89cc14862c&quot;                 
+000000003:   404        828 L    1810 W   37237 Ch    &quot;eccbc87e4b5ce2fe28308fd9f2a7baf3&quot;                 
+000000004:   404        828 L    1810 W   37237 Ch    &quot;a87ff679a2f3e71d9181a67b7542122c&quot;                 
+000000005:   404        828 L    1810 W   37237 Ch    &quot;523af537946b79c4f8369ed39ba78605&quot;                 
+000000006:   404        828 L    1810 W   37237 Ch    &quot;e8a88bb6f4d420a8517965d25cd54a14&quot;                 
+000000007:   404        828 L    1810 W   37237 Ch    &quot;68f43f44054de89e6ee5ff03adb26542&quot;                 
+
+Total time: 0.239509
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 29.22638
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;使用多个encoder&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;多个encoder，使用一个&lt;code class=&quot;highlighter-rouge&quot;&gt;-&lt;/code&gt;号分隔的列表来指定&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wfuzz -w wordlist.txt,md5-base64 http://172.16.70.163/FUZZ
+
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 14
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000001:   404        828 L    1810 W   37237 Ch    &quot;c4ca4238a0b923820dcc509a6f75849b&quot;                 
+000000002:   404        828 L    1807 W   36876 Ch    &quot;MQ==&quot;                                             
+000000003:   404        828 L    1810 W   37237 Ch    &quot;c81e728d9d4c2f636f067f89cc14862c&quot;                 
+000000004:   404        828 L    1807 W   36876 Ch    &quot;Mg==&quot;                                             
+000000005:   404        828 L    1810 W   37237 Ch    &quot;eccbc87e4b5ce2fe28308fd9f2a7baf3&quot;                 
+000000006:   404        828 L    1807 W   36876 Ch    &quot;Mw==&quot;                                             
+000000007:   404        828 L    1810 W   37237 Ch    &quot;a87ff679a2f3e71d9181a67b7542122c&quot;                 
+000000008:   404        828 L    1807 W   36876 Ch    &quot;NA==&quot;                                             
+000000009:   404        828 L    1810 W   37237 Ch    &quot;523af537946b79c4f8369ed39ba78605&quot;                 
+000000013:   404        828 L    1810 W   37237 Ch    &quot;68f43f44054de89e6ee5ff03adb26542&quot;                 
+000000010:   404        828 L    1806 W   36876 Ch    &quot;YWQ=&quot;                                             
+000000011:   404        828 L    1810 W   37236 Ch    &quot;e8a88bb6f4d420a8517965d25cd54a14&quot;                 
+000000012:   404        828 L    1806 W   36877 Ch    &quot;c2Fm&quot;                                             
+000000014:   404        828 L    1806 W   36877 Ch    &quot;enhz&quot;                                             
+
+Total time: 0.266457
+Processed Requests: 14
+Filtered Requests: 0
+Requests/sec.: 52.54129
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;多次encoder&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;多次encoder，使用一个&lt;code class=&quot;highlighter-rouge&quot;&gt;@&lt;/code&gt;号分隔的列表来指定，顺序为由右到左&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -w wordlist.txt,md5@base64 http://172.16.70.163/FUZZ
+
+Warning: Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/shodanp.py Exception, msg=No module named 'shodan'
+libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/bing.py Exception, msg=No module named 'shodan'
+********************************************************
+* Wfuzz 2.4 - The Web Fuzzer                           *
+********************************************************
+
+Target: http://172.16.70.163/FUZZ
+Total requests: 7
+
+===================================================================
+ID           Response   Lines    Word     Chars       Payload                                            
+===================================================================
+
+000000003:   404        828 L    1810 W   37237 Ch    &quot;0b24df25fe628797b3a50ae0724d2730&quot;                 
+000000006:   404        828 L    1810 W   37237 Ch    &quot;461194a350fdac0ef28e8b2073f34a6a&quot;                 
+000000001:   404        828 L    1810 W   37237 Ch    &quot;cdd96d3cc73d1dbdaffa03cc6cd7339b&quot;                 
+000000002:   404        828 L    1810 W   37235 Ch    &quot;0b7e7dee87b1c3b98e72131173dfbbbf&quot;                 
+000000004:   404        828 L    1810 W   37237 Ch    &quot;f7947d50da7a043693a592b4db43b0a1&quot;                 
+000000005:   404        828 L    1810 W   37237 Ch    &quot;5fae8a76529cf25432da8e49f1053e08&quot;                 
+000000007:   404        828 L    1810 W   37237 Ch    &quot;4094c4aed3ced5fbd69159b16af12b7b&quot;                 
+
+Total time: 1.048273
+Processed Requests: 7
+Filtered Requests: 0
+Requests/sec.: 6.677649
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>true</name></author><category term="fuzz" /><summary type="html">🤺基础用法请看上一篇</summary></entry><entry><title type="html">Wfuzz的其他模块</title><link href="http://localhost:4000/blog/wfuzz1/" rel="alternate" type="text/html" title="Wfuzz的其他模块" /><published>2020-04-02T17:08:36+08:00</published><updated>2020-04-02T17:08:36+08:00</updated><id>http://localhost:4000/blog/wfuzz1</id><content type="html" xml:base="http://localhost:4000/blog/wfuzz1/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#迭代器iterators&quot; id=&quot;markdown-toc-迭代器iterators&quot;&gt;迭代器(iterators)&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#脚本scripts&quot; id=&quot;markdown-toc-脚本scripts&quot;&gt;脚本(scripts)&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#加密encoders&quot; id=&quot;markdown-toc-加密encoders&quot;&gt;加密(encoders)&lt;/a&gt;&lt;/li&gt;
