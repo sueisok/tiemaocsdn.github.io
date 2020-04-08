@@ -193,8 +193,8 @@
   <!-- Page width is greater than 800px -->
   <div class="left-area">
     
-      <a href="/blog/wfuzz2/" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(238,99,99)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
-      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(238,99,99);"><sapn class="main">Wfuzz的其他模块</sapn></span></div>
+      <a href="/blog/sqli-stacked-queries/" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(238,99,99)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
+      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(238,99,99);"><sapn class="main">SQL注入-堆叠注入</sapn></span></div>
     
   </div>
   <div class="post-titlearea">
@@ -213,7 +213,7 @@
   <!-- Page width is less than 800px -->
   <div class="post-changearea">
     
-      <a href="/blog/wfuzz2/" class="leftchange" style="border-right: 1px solid rgb(238,99,99);border-bottom: 2px solid rgb(238,99,99);"><span>Previous<br><br>Wfuzz的其他模块</span></a>
+      <a href="/blog/sqli-stacked-queries/" class="leftchange" style="border-right: 1px solid rgb(238,99,99);border-bottom: 2px solid rgb(238,99,99);"><span>Previous<br><br>SQL注入-堆叠注入</span></a>
     
     
       <a href="/blog/wfuzz0/" class="rightchange" style="border-left: 1px solid rgb(238,99,99);border-bottom: 2px solid rgb(238,99,99);"><span>Next<br><br>fuzz第一步，Wfuzz来指路</span></a>
@@ -308,7 +308,7 @@ Requests/sec.: 79.04683
 
 <p><strong>product</strong></p>
 
-<p>需要两个字典，两个占位符FUZZ，<code class="highlighter-rouge">product</code>可以排列组合两个字典，按顺序传入占位符，一共<code class="highlighter-rouge">n*m</code>条payloads</p>
+<p>需要两个字典，两个占位符FUZZ和FUZ2Z，<code class="highlighter-rouge">product</code>可以排列组合两个字典，按顺序传入占位符，一共<code class="highlighter-rouge">n*m</code>条payloads</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -z range,0-3 -w Deutsch.txt -m product http://172.16.70.163/FUZZ=FUZ2Z
 
@@ -348,7 +348,7 @@ Requests/sec.: 77.29370
 
 <p><strong>zip</strong></p>
 
-<p>需要两个字典，两个个占位符FUZZ和FU2Z，<code class="highlighter-rouge">zip</code>可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共<code class="highlighter-rouge">min(n,m)</code>条payloads</p>
+<p>需要两个字典，两个个占位符FUZZ和FUZ2Z，<code class="highlighter-rouge">zip</code>可以两个字典一一对应，按顺序传入两个占位符，如果两个字典行数不相等则取行数少的，所以一共<code class="highlighter-rouge">min(n,m)</code>条payloads</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># wfuzz -z range,0-10 -w Deutsch.txt -m zip http://172.16.70.163/FUZZ=FUZ2Z
 
