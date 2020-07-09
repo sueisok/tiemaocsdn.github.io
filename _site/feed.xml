@@ -1,4 +1,227 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-06-05T15:51:36+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">SQL注入-失了智的盲注尝试</title><link href="http://localhost:4000/blog/stupid-sqli-blind/" rel="alternate" type="text/html" title="SQL注入-失了智的盲注尝试" /><published>2020-06-05T15:10:09+08:00</published><updated>2020-06-05T15:10:09+08:00</updated><id>http://localhost:4000/blog/stupid-sqli-blind</id><content type="html" xml:base="http://localhost:4000/blog/stupid-sqli-blind/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-07-09T11:33:09+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Android-绕过root检测</title><link href="http://localhost:4000/blog/hookroot/" rel="alternate" type="text/html" title="Android-绕过root检测" /><published>2020-07-08T18:00:09+08:00</published><updated>2020-07-08T18:00:09+08:00</updated><id>http://localhost:4000/blog/hookroot</id><content type="html" xml:base="http://localhost:4000/blog/hookroot/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#环境说明&quot; id=&quot;markdown-toc-环境说明&quot;&gt;环境说明&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#安装frida&quot; id=&quot;markdown-toc-安装frida&quot;&gt;安装frida&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#安装frida客户端&quot; id=&quot;markdown-toc-安装frida客户端&quot;&gt;安装frida客户端&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#安装frida服务端&quot; id=&quot;markdown-toc-安装frida服务端&quot;&gt;安装frida服务端&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#如何hook&quot; id=&quot;markdown-toc-如何hook&quot;&gt;如何hook&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#絮絮叨叨如何反编译&quot; id=&quot;markdown-toc-絮絮叨叨如何反编译&quot;&gt;絮絮叨叨如何反编译&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#定位函数&quot; id=&quot;markdown-toc-定位函数&quot;&gt;定位函数&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#编写js&quot; id=&quot;markdown-toc-编写js&quot;&gt;编写js&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#开始hook&quot; id=&quot;markdown-toc-开始hook&quot;&gt;开始hook&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/root.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;然后通过各种套娃别人的方法，来绕过一下&lt;/p&gt;
+
+&lt;h1 id=&quot;环境说明&quot;&gt;环境说明&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;环境&lt;/th&gt;
+      &lt;th&gt;版本&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;win&lt;/td&gt;
+      &lt;td&gt;10&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;android&lt;/td&gt;
+      &lt;td&gt;夜神模拟器安卓7&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;frida&lt;/td&gt;
+      &lt;td&gt;12.10.4&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h1 id=&quot;安装frida&quot;&gt;安装frida&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;Frida&lt;/strong&gt;是一款基于python + javascript 的hook框架，适用于android/ios/linux/win/osx等平台。&lt;strong&gt;Frida&lt;/strong&gt;的动态代码执行功能，主要是在它的核心引擎Gum中用C语言来实现的。（抄的&lt;/p&gt;
+
+&lt;h2 id=&quot;安装frida客户端&quot;&gt;安装frida客户端&lt;/h2&gt;
+
+&lt;p&gt;用&lt;strong&gt;pip&lt;/strong&gt;就可以安装&lt;strong&gt;frida&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ pip install frida
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但是我没成功，可以升级&lt;strong&gt;pip&lt;/strong&gt;试一下，也可以尝试&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ pip install frida-tools
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;但是我没成功，最终我在管理员权限下，成功了😑&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ frida --version
+12.10.4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;就说明你拥有了&lt;strong&gt;frida&lt;/strong&gt;💥&lt;/p&gt;
+
+&lt;h2 id=&quot;安装frida服务端&quot;&gt;安装frida服务端&lt;/h2&gt;
+
+&lt;p&gt;首先&lt;a href=&quot;https://github.com/frida/frida/releases/&quot;&gt;选择&lt;/a&gt;合适的&lt;strong&gt;frida-server&lt;/strong&gt;，怎么选呢？我们可以用&lt;strong&gt;adb&lt;/strong&gt;查看我们的手机是什么&lt;strong&gt;cpu&lt;/strong&gt;版本&lt;/p&gt;
+
+&lt;p&gt;用&lt;strong&gt;adb&lt;/strong&gt;连接手机，我这里是夜神模拟器，进入模拟器安装所在文件夹&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ nox_adb.exe connect 127.0.0.1:62026
+already connected to 127.0.0.1:62026
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;查看是否连接&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ nox_adb.exe devices
+List of devices attached
+127.0.0.1:62026 device
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;进入某台手机：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ adb -s 127.0.0.1:62026 shell
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;查看&lt;strong&gt;cpu&lt;/strong&gt;版本：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;R11:/ # getprop ro.product.cpu.abi
+x86
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;是&lt;strong&gt;x86&lt;/strong&gt;，那就选择对应的如图下载&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/x86.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;解压后将文件放入手机&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ adb push frida-server-12.10.4-android-x86 /data/local/tmp
+[100%] /data/local/tmp/frida-server-12.10.4-android-x86
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;设置端口转发到&lt;strong&gt;pc端&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ adb forward tcp:27042 tcp:27042
+
+λ adb forward tcp:27043 tcp:27043
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;再次进入手机，修改&lt;strong&gt;frida-server&lt;/strong&gt;权限，启动&lt;strong&gt;frida&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ adb shell
+R11:/ # cd /data/local/tmp
+R11:/data/local/tmp # ls
+frida-server-12.10.4-android-x86
+R11:/data/local/tmp # chmod 755 frida-server-12.10.4-android-x86
+R11:/data/local/tmp # ./frida-server-12.10.4-android-x86
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;再打开另一个&lt;strong&gt;cmd&lt;/strong&gt;：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ frida-ps -U
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;如果出现Android的进程，则代表安装成功。&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/psu.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;如何hook&quot;&gt;如何hook&lt;/h1&gt;
+
+&lt;p&gt;我们遇到的问题是&lt;strong&gt;app&lt;/strong&gt;刚启动检测到&lt;strong&gt;root&lt;/strong&gt;就关掉，所以我们要寻找是在哪检测到&lt;strong&gt;root&lt;/strong&gt;的，这是问题的切入点&lt;/p&gt;
+
+&lt;p&gt;二话不说掏出apk反编译（如果你手里的apk因为被加固了等情况无法反编译，出门左转再见&lt;/p&gt;
+
+&lt;h2 id=&quot;絮絮叨叨如何反编译&quot;&gt;絮絮叨叨如何反编译&lt;/h2&gt;
+
+&lt;p&gt;把&lt;strong&gt;apk&lt;/strong&gt;的后缀改为&lt;strong&gt;zip&lt;/strong&gt;，进行解压，解压后打开找到&lt;strong&gt;dex&lt;/strong&gt;后缀的文件&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/dex.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;用&lt;strong&gt;dex2jar&lt;/strong&gt;反编译&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ d2j-dex2jar.bat classes.dex
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;会生成一个&lt;strong&gt;jar&lt;/strong&gt;文件，这里是&lt;strong&gt;classes-dex2jar.jar&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;然后用&lt;strong&gt;jadx-gui&lt;/strong&gt;打开&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/jadx.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;定位函数&quot;&gt;定位函数&lt;/h2&gt;
+
+&lt;p&gt;全局搜索&lt;strong&gt;手机已被ROOT，请注意使用安全&lt;/strong&gt;，我们发现确有此句&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/message.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;这里的逻辑就是，如果&lt;strong&gt;c&lt;/strong&gt;，那就弹框这句话，那么&lt;strong&gt;c&lt;/strong&gt;的意思？大概就是判断手机是否被&lt;strong&gt;root&lt;/strong&gt;了，我们发现确有此&lt;strong&gt;c&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/c.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;如果存在这两个文件，说明手机被&lt;strong&gt;root&lt;/strong&gt;了，不存在就返回&lt;strong&gt;false&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;编写js&quot;&gt;编写js&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;hookroot.js&lt;/strong&gt;：&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Java.perform(function x() {
+    var application = Java.use(&quot;android.app.Application&quot;);
+    application.attach.overload('android.content.Context').implementation = function (context) {
+        var result = this.attach(context);
+        var classloader = context.getClassLoader();
+        Java.classFactory.loader = classloader;
+        var funk = Java.classFactory.use(&quot;com.xxx.xxx.xxx.xxx.HomeActivity&quot;);
+        funk.c.overload().implementation = function () {
+            return false;
+        }		
+    }
+});
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;com.xxx.xxx.xxx.xxx.HomeActivity&lt;/strong&gt;是我们那个函数所在的&lt;strong&gt;class&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;funk.c&lt;/strong&gt;是我们定位到识别&lt;strong&gt;root&lt;/strong&gt;，让他返回&lt;strong&gt;false&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;开始hook&quot;&gt;开始hook&lt;/h2&gt;
+
+&lt;p&gt;先打开&lt;strong&gt;app&lt;/strong&gt;，界面还是&lt;strong&gt;手机已被ROOT，请注意使用安全&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;此时，&lt;strong&gt;frida&lt;/strong&gt;启动&lt;strong&gt;hook&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ frida -U -f com.xxx.xxx.xxx -l hookroot.js
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;com.xxx.xxx.xxx&lt;/strong&gt;是我们的&lt;strong&gt;apk&lt;/strong&gt;包名&lt;/p&gt;
+
+&lt;p&gt;看到&lt;strong&gt;frida&lt;/strong&gt;启动，&lt;strong&gt;app&lt;/strong&gt;关闭，提示&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Use %resume to let the main thread start executing!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;然后根据提示输入&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;%resume
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/resume.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;app&lt;/strong&gt;启动后就没有&lt;strong&gt;root&lt;/strong&gt;提示，可以正常登录了👶&lt;/p&gt;
+
+&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;fuzhi&quot;&gt;https://www.jianshu.com/p/c349471bdef7&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;zhantie&quot;&gt;https://www.cnblogs.com/luoyesiqiu/p/10718997.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;？&quot;&gt;https://blog.csdn.net/cjx529377/article/details/95802532&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔</summary></entry><entry><title type="html">SQL注入-失了智的盲注尝试</title><link href="http://localhost:4000/blog/stupid-sqli-blind/" rel="alternate" type="text/html" title="SQL注入-失了智的盲注尝试" /><published>2020-06-05T15:10:09+08:00</published><updated>2020-06-05T15:10:09+08:00</updated><id>http://localhost:4000/blog/stupid-sqli-blind</id><content type="html" xml:base="http://localhost:4000/blog/stupid-sqli-blind/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#测试环境&quot; id=&quot;markdown-toc-测试环境&quot;&gt;测试环境&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#二分の盲注&quot; id=&quot;markdown-toc-二分の盲注&quot;&gt;二分の盲注&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#左移の盲注&quot; id=&quot;markdown-toc-左移の盲注&quot;&gt;左移の盲注&lt;/a&gt;&lt;/li&gt;

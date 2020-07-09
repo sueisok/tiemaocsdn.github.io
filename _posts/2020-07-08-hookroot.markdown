@@ -1,0 +1,228 @@
+---
+layout:	post
+title:	"Android-绕过root检测"
+date:	2020-07-08 18:00:09 +0800
+tags:	Android
+color:	rgb(50,205,50)
+cover:	'../assets/blog_pic/20200708_hookroot/cover.png'
+subtitle:	'root？hook'
+
+---
+
+* 目录
+{:toc}
+有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔
+
+![avatar](../../assets/blog_pic/20200708_hookroot/root.png)
+
+然后通过各种套娃别人的方法，来绕过一下
+
+
+
+# 环境说明
+
+| 环境    | 版本            |
+| ------- | --------------- |
+| win     | 10              |
+| android | 夜神模拟器安卓7 |
+| frida   | 12.10.4         |
+
+
+
+# 安装frida
+
+**Frida**是一款基于python + javascript 的hook框架，适用于android/ios/linux/win/osx等平台。**Frida**的动态代码执行功能，主要是在它的核心引擎Gum中用C语言来实现的。（抄的
+
+## 安装frida客户端
+
+用**pip**就可以安装**frida**
+
+```
+λ pip install frida
+```
+
+但是我没成功，可以升级**pip**试一下，也可以尝试
+
+```
+λ pip install frida-tools
+```
+
+但是我没成功，最终我在管理员权限下，成功了😑
+
+```
+λ frida --version
+12.10.4
+```
+
+就说明你拥有了**frida**💥
+
+## 安装frida服务端
+
+首先[选择](https://github.com/frida/frida/releases/)合适的**frida-server**，怎么选呢？我们可以用**adb**查看我们的手机是什么**cpu**版本
+
+用**adb**连接手机，我这里是夜神模拟器，进入模拟器安装所在文件夹
+
+```
+λ nox_adb.exe connect 127.0.0.1:62026
+already connected to 127.0.0.1:62026
+```
+
+查看是否连接
+
+```
+λ nox_adb.exe devices
+List of devices attached
+127.0.0.1:62026 device
+```
+
+进入某台手机：
+
+```
+λ adb -s 127.0.0.1:62026 shell
+```
+
+查看**cpu**版本：
+
+```
+R11:/ # getprop ro.product.cpu.abi
+x86
+```
+
+是**x86**，那就选择对应的如图下载
+
+![avatar](../../assets/blog_pic/20200708_hookroot/x86.png)
+
+解压后将文件放入手机
+
+```
+λ adb push frida-server-12.10.4-android-x86 /data/local/tmp
+[100%] /data/local/tmp/frida-server-12.10.4-android-x86
+```
+
+设置端口转发到**pc端**
+
+```
+λ adb forward tcp:27042 tcp:27042
+
+λ adb forward tcp:27043 tcp:27043
+```
+
+再次进入手机，修改**frida-server**权限，启动**frida**
+
+```
+λ adb shell
+R11:/ # cd /data/local/tmp
+R11:/data/local/tmp # ls
+frida-server-12.10.4-android-x86
+R11:/data/local/tmp # chmod 755 frida-server-12.10.4-android-x86
+R11:/data/local/tmp # ./frida-server-12.10.4-android-x86
+```
+
+再打开另一个**cmd**：
+
+```
+λ frida-ps -U
+```
+
+如果出现Android的进程，则代表安装成功。
+
+![avatar](../../assets/blog_pic/20200708_hookroot/psu.png)
+
+
+
+# 如何hook
+
+我们遇到的问题是**app**刚启动检测到**root**就关掉，所以我们要寻找是在哪检测到**root**的，这是问题的切入点
+
+二话不说掏出apk反编译（如果你手里的apk因为被加固了等情况无法反编译，出门左转再见
+
+## 絮絮叨叨如何反编译
+
+把**apk**的后缀改为**zip**，进行解压，解压后打开找到**dex**后缀的文件
+
+![avatar](../../assets/blog_pic/20200708_hookroot/dex.png)
+
+用**dex2jar**反编译
+
+```
+λ d2j-dex2jar.bat classes.dex
+```
+
+会生成一个**jar**文件，这里是**classes-dex2jar.jar**
+
+然后用**jadx-gui**打开
+
+![avatar](../../assets/blog_pic/20200708_hookroot/jadx.png)
+
+## 定位函数
+
+全局搜索**手机已被ROOT，请注意使用安全**，我们发现确有此句
+
+![avatar](../../assets/blog_pic/20200708_hookroot/message.png)
+
+这里的逻辑就是，如果**c**，那就弹框这句话，那么**c**的意思？大概就是判断手机是否被**root**了，我们发现确有此**c**
+
+![avatar](../../assets/blog_pic/20200708_hookroot/c.png)
+
+如果存在这两个文件，说明手机被**root**了，不存在就返回**false**
+
+## 编写js
+
+**hookroot.js**：
+
+```
+Java.perform(function x() {
+    var application = Java.use("android.app.Application");
+    application.attach.overload('android.content.Context').implementation = function (context) {
+        var result = this.attach(context);
+        var classloader = context.getClassLoader();
+        Java.classFactory.loader = classloader;
+        var funk = Java.classFactory.use("com.xxx.xxx.xxx.xxx.HomeActivity");
+        funk.c.overload().implementation = function () {
+            return false;
+        }		
+    }
+});
+```
+
+**com.xxx.xxx.xxx.xxx.HomeActivity**是我们那个函数所在的**class**
+
+**funk.c**是我们定位到识别**root**，让他返回**false**
+
+
+
+## 开始hook
+
+先打开**app**，界面还是**手机已被ROOT，请注意使用安全**
+
+此时，**frida**启动**hook**
+
+```
+λ frida -U -f com.xxx.xxx.xxx -l hookroot.js
+```
+
+**com.xxx.xxx.xxx**是我们的**apk**包名
+
+看到**frida**启动，**app**关闭，提示
+
+```
+Use %resume to let the main thread start executing!
+```
+
+然后根据提示输入
+
+```
+%resume
+```
+
+![avatar](../../assets/blog_pic/20200708_hookroot/resume.png)
+
+**app**启动后就没有**root**提示，可以正常登录了👶
+
+# Refer
+
+[https://www.jianshu.com/p/c349471bdef7](fuzhi)
+
+[https://www.cnblogs.com/luoyesiqiu/p/10718997.html](zhantie)
+
+[https://blog.csdn.net/cjx529377/article/details/95802532](？)
