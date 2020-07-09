@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-07-09T11:33:09+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Android-绕过root检测</title><link href="http://localhost:4000/blog/hookroot/" rel="alternate" type="text/html" title="Android-绕过root检测" /><published>2020-07-08T18:00:09+08:00</published><updated>2020-07-08T18:00:09+08:00</updated><id>http://localhost:4000/blog/hookroot</id><content type="html" xml:base="http://localhost:4000/blog/hookroot/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-07-09T15:50:52+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Android-绕过root检测</title><link href="http://localhost:4000/blog/hookroot/" rel="alternate" type="text/html" title="Android-绕过root检测" /><published>2020-07-08T18:00:09+08:00</published><updated>2020-07-08T18:00:09+08:00</updated><id>http://localhost:4000/blog/hookroot</id><content type="html" xml:base="http://localhost:4000/blog/hookroot/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#环境说明&quot; id=&quot;markdown-toc-环境说明&quot;&gt;环境说明&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#安装frida&quot; id=&quot;markdown-toc-安装frida&quot;&gt;安装frida&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#安装frida客户端&quot; id=&quot;markdown-toc-安装frida客户端&quot;&gt;安装frida客户端&lt;/a&gt;&lt;/li&gt;
@@ -221,7 +221,97 @@ R11:/data/local/tmp # ./frida-server-12.10.4-android-x86
 
 &lt;p&gt;&lt;a href=&quot;zhantie&quot;&gt;https://www.cnblogs.com/luoyesiqiu/p/10718997.html&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;？&quot;&gt;https://blog.csdn.net/cjx529377/article/details/95802532&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔</summary></entry><entry><title type="html">SQL注入-失了智的盲注尝试</title><link href="http://localhost:4000/blog/stupid-sqli-blind/" rel="alternate" type="text/html" title="SQL注入-失了智的盲注尝试" /><published>2020-06-05T15:10:09+08:00</published><updated>2020-06-05T15:10:09+08:00</updated><id>http://localhost:4000/blog/stupid-sqli-blind</id><content type="html" xml:base="http://localhost:4000/blog/stupid-sqli-blind/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;？&quot;&gt;https://blog.csdn.net/cjx529377/article/details/95802532&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔</summary></entry><entry><title type="html">Android-二次打包绕过root检测</title><link href="http://localhost:4000/blog/pass-root/" rel="alternate" type="text/html" title="Android-二次打包绕过root检测" /><published>2020-07-08T18:00:09+08:00</published><updated>2020-07-08T18:00:09+08:00</updated><id>http://localhost:4000/blog/pass-root</id><content type="html" xml:base="http://localhost:4000/blog/pass-root/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#工具介绍&quot; id=&quot;markdown-toc-工具介绍&quot;&gt;工具介绍&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#反编译二次打包&quot; id=&quot;markdown-toc-反编译二次打包&quot;&gt;反编译&amp;amp;二次打包&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;上一篇尝试了用hook的方式使得判断root的函数失灵&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/root.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;但是你在测的时候，要一直开着frida把他牢牢的勾住，有没有更粗暴的方法？既然我看到代码了，我就想直接把这行删掉，岂不是更好？&lt;/p&gt;
+
+&lt;p&gt;今天参考的一种方法是&lt;strong&gt;通过修改反编译得到的smali文件实现修改apk逻辑功能的目的。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;工具介绍&quot;&gt;工具介绍&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;工具&lt;/th&gt;
+      &lt;th&gt;功能&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;dex2jar&lt;/td&gt;
+      &lt;td&gt;将apk中的classes.dex文件转换成jar文件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;jd-gui&lt;/td&gt;
+      &lt;td&gt;查看由dex2jar转换成的jar文件，以界面的形式展示反编译出来的Java源代码&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;apktool&lt;/td&gt;
+      &lt;td&gt;反编译生成smali字节码文件，提取apk中的资源文件&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h1 id=&quot;反编译二次打包&quot;&gt;反编译&amp;amp;二次打包&lt;/h1&gt;
+
+&lt;p&gt;将apk拷贝到apktool工具目录下，执行命令&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ apktool d app-release.apk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;就会生成一个文件夹，内容是下列，里面有smali&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/apktool.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;由&lt;a href=&quot;https://sueisok.github.io/blog/hookroot/#絮絮叨叨如何反编译&quot;&gt;上一页反编译&lt;/a&gt;，定位到了是在HomeActivity里检测手机是否为root&lt;/p&gt;
+
+&lt;p&gt;同理，我们找到同路径下的HomeActivity.smali&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/smali.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;看到了熟悉的&lt;strong&gt;c&lt;/strong&gt;，我这里把这两个文件改成了如图，这个函数就等于永远flase了&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/web.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我们改好了之后就可以二次打包了&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ apktool b app-release
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;app-release文件夹里的dist文件夹里就是重新打包的apk了&lt;/p&gt;
+
+&lt;p&gt;接着要对apk进行签名下面是生成签名的命令&lt;/p&gt;
+
+&lt;p&gt;keytool -genkeypair  -alias [签名别名] -keystore [keystore的文件名]&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ keytool -genkeypair -alias serverkey -keystore sue.keystore
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在文件夹中会生成sue.keystore的文件&lt;/p&gt;
+
+&lt;p&gt;接着进行签名&lt;/p&gt;
+
+&lt;p&gt;jarsigner -verbose -keystore [keystore的文件名] -signedjar [签名后的文件] [待签名的文件] [签名别名]&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ jarsigner -verbose -keystore sue.keystore -signedjar signed.apk app-release.apk serverkey
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;就会生成文件名为signed.apk的文件，查看签名已经变成我的标记&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/sue.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;然后将这个apk重新安装到手机上，已经绕过了root的检测&lt;/p&gt;
+
+&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;fuzhi&quot;&gt;https://blog.csdn.net/goodlixueyong/article/details/51126874&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">上一篇尝试了用hook的方式使得判断root的函数失灵</summary></entry><entry><title type="html">SQL注入-失了智的盲注尝试</title><link href="http://localhost:4000/blog/stupid-sqli-blind/" rel="alternate" type="text/html" title="SQL注入-失了智的盲注尝试" /><published>2020-06-05T15:10:09+08:00</published><updated>2020-06-05T15:10:09+08:00</updated><id>http://localhost:4000/blog/stupid-sqli-blind</id><content type="html" xml:base="http://localhost:4000/blog/stupid-sqli-blind/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#测试环境&quot; id=&quot;markdown-toc-测试环境&quot;&gt;测试环境&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#二分の盲注&quot; id=&quot;markdown-toc-二分の盲注&quot;&gt;二分の盲注&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#左移の盲注&quot; id=&quot;markdown-toc-左移の盲注&quot;&gt;左移の盲注&lt;/a&gt;&lt;/li&gt;

@@ -1,0 +1,91 @@
+---
+layout:	post
+title:	"Android-二次打包绕过root检测"
+date:	2020-07-08 18:00:09 +0800
+tags:	Android
+color:	rgb(50,205,50)
+cover:	'../assets/blog_pic/20200709_pass_hook/cover.png'
+subtitle:	'root？二次打包:)'
+
+---
+
+* 目录
+{:toc}
+上一篇尝试了用hook的方式使得判断root的函数失灵
+
+![avatar](../../assets/blog_pic/20200708_hookroot/root.png)
+
+但是你在测的时候，要一直开着frida把他牢牢的勾住，有没有更粗暴的方法？既然我看到代码了，我就想直接把这行删掉，岂不是更好？
+
+今天参考的一种方法是**通过修改反编译得到的smali文件实现修改apk逻辑功能的目的。**
+
+# 工具介绍
+
+| 工具    | 功能                                                         |
+| ------- | ------------------------------------------------------------ |
+| dex2jar | 将apk中的classes.dex文件转换成jar文件                        |
+| jd-gui  | 查看由dex2jar转换成的jar文件，以界面的形式展示反编译出来的Java源代码 |
+| apktool | 反编译生成smali字节码文件，提取apk中的资源文件               |
+
+
+
+# 反编译&二次打包
+
+将apk拷贝到apktool工具目录下，执行命令
+
+```
+λ apktool d app-release.apk
+```
+
+就会生成一个文件夹，内容是下列，里面有smali
+
+![avatar](../../assets/blog_pic/20200709_pass_hook/apktool.png)
+
+由[上一页反编译](https://sueisok.github.io/blog/hookroot/#絮絮叨叨如何反编译)，定位到了是在HomeActivity里检测手机是否为root
+
+同理，我们找到同路径下的HomeActivity.smali
+
+![avatar](../../assets/blog_pic/20200709_pass_hook/smali.png)
+
+看到了熟悉的**c**，我这里把这两个文件改成了如图，这个函数就等于永远flase了
+
+![avatar](../../assets/blog_pic/20200709_pass_hook/web.png)
+
+我们改好了之后就可以二次打包了
+
+```
+λ apktool b app-release
+```
+
+app-release文件夹里的dist文件夹里就是重新打包的apk了
+
+接着要对apk进行签名下面是生成签名的命令
+
+keytool -genkeypair  -alias [签名别名] -keystore [keystore的文件名]
+
+```
+λ keytool -genkeypair -alias serverkey -keystore sue.keystore
+```
+
+在文件夹中会生成sue.keystore的文件
+
+接着进行签名
+
+jarsigner -verbose -keystore [keystore的文件名] -signedjar [签名后的文件] [待签名的文件] [签名别名]
+
+```
+λ jarsigner -verbose -keystore sue.keystore -signedjar signed.apk app-release.apk serverkey
+```
+
+就会生成文件名为signed.apk的文件，查看签名已经变成我的标记
+
+![avatar](../../assets/blog_pic/20200709_pass_hook/sue.png)
+
+然后将这个apk重新安装到手机上，已经绕过了root的检测
+
+
+
+# Refer
+
+[https://blog.csdn.net/goodlixueyong/article/details/51126874](fuzhi)
+
