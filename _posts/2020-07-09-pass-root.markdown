@@ -1,7 +1,7 @@
 ---
 layout:	post
 title:	"Android-二次打包绕过root检测"
-date:	2020-07-08 18:00:09 +0800
+date:	2020-07-09 16:08:09 +0800
 tags:	Android
 color:	rgb(50,205,50)
 cover:	'../assets/blog_pic/20200709_pass_hook/cover.png'
