@@ -1,4 +1,149 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-07-09T15:50:52+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Android-绕过root检测</title><link href="http://localhost:4000/blog/hookroot/" rel="alternate" type="text/html" title="Android-绕过root检测" /><published>2020-07-08T18:00:09+08:00</published><updated>2020-07-08T18:00:09+08:00</updated><id>http://localhost:4000/blog/hookroot</id><content type="html" xml:base="http://localhost:4000/blog/hookroot/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-07-28T15:32:13+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">CVE-2020-3452: Cisco ASA/FTD 任意文件读取漏洞</title><link href="http://localhost:4000/blog/cisco-asa/" rel="alternate" type="text/html" title="CVE-2020-3452: Cisco ASA/FTD 任意文件读取漏洞" /><published>2020-07-28T16:08:09+08:00</published><updated>2020-07-28T16:08:09+08:00</updated><id>http://localhost:4000/blog/cisco-asa</id><content type="html" xml:base="http://localhost:4000/blog/cisco-asa/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#漏洞描述&quot; id=&quot;markdown-toc-漏洞描述&quot;&gt;漏洞描述&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#漏洞编号&quot; id=&quot;markdown-toc-漏洞编号&quot;&gt;漏洞编号&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#影响版本&quot; id=&quot;markdown-toc-影响版本&quot;&gt;影响版本&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#漏洞等级&quot; id=&quot;markdown-toc-漏洞等级&quot;&gt;漏洞等级&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#利用难度&quot; id=&quot;markdown-toc-利用难度&quot;&gt;利用难度&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#漏洞详情&quot; id=&quot;markdown-toc-漏洞详情&quot;&gt;漏洞详情&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#修复建议&quot; id=&quot;markdown-toc-修复建议&quot;&gt;修复建议&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;漏洞描述&quot;&gt;漏洞描述&lt;/h1&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A vulnerability in the web services interface of Cisco Adaptive Security Appliance (ASA) Software and Cisco Firepower Threat Defense (FTD) Software could allow an unauthenticated, remote attacker to conduct directory traversal attacks and read sensitive files on a targeted system. The vulnerability is due to a lack of proper input validation of URLs in HTTP requests processed by an affected device. An attacker could exploit this vulnerability by sending a crafted HTTP request containing directory traversal character sequences to an affected device. A successful exploit could allow the attacker to view arbitrary files within the web services file system on the targeted device. The web services file system is enabled when the affected device is configured with either WebVPN or AnyConnect features. This vulnerability cannot be used to obtain access to ASA or FTD system files or underlying operating system (OS) files.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;思科自适应安全设备（ASA）软件和思科Firepower威胁防御（FTD）软件的Web服务界面中的漏洞可能允许未经身份验证的远程攻击者进行目录遍历攻击并读取目标系统上的敏感文件。该漏洞是由于受影响的设备处理的HTTP请求中的URL缺乏正确的输入验证所致。攻击者可以通过将包含目录遍历字符序列的特制HTTP请求发送到受影响的设备来利用此漏洞。成功的利用可能使攻击者可以在目标设备上查看Web服务文件系统内的任意文件。当受影响的设备配置了WebVPN或AnyConnect功能时，将启用Web服务文件系统。&lt;/p&gt;
+
+&lt;h1 id=&quot;漏洞编号&quot;&gt;漏洞编号&lt;/h1&gt;
+
+&lt;p&gt;CVE-2020-3452&lt;/p&gt;
+
+&lt;h1 id=&quot;影响版本&quot;&gt;影响版本&lt;/h1&gt;
+
+&lt;p&gt;Cisco ASA：&amp;lt;= 9.6&lt;/p&gt;
+
+&lt;p&gt;Cisco ASA：9.7 , 9.8 , 9.9 , 9.10 , 9.12 , 9.13 , 9.14&lt;/p&gt;
+
+&lt;p&gt;Cisco FTD：6.2.2 , 6.2.3 , 6.3.0 , 6.4.0 , 6.5.0 , 6.6.0&lt;/p&gt;
+
+&lt;h1 id=&quot;漏洞等级&quot;&gt;漏洞等级&lt;/h1&gt;
+
+&lt;p&gt;中&lt;/p&gt;
+
+&lt;h1 id=&quot;利用难度&quot;&gt;利用难度&lt;/h1&gt;
+
+&lt;p&gt;低&lt;/p&gt;
+
+&lt;h1 id=&quot;漏洞详情&quot;&gt;漏洞详情&lt;/h1&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200728_cisco_asa/poc.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;/+CSCOT+/translation-table?type=mst&amp;amp;textdomain=/%2bCSCOE%2b/portal_inc.lua&amp;amp;default-language&amp;amp;lang=../
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;修复建议&quot;&gt;修复建议&lt;/h1&gt;
+
+&lt;p&gt;建议相关企业将Cisco ASA及FTD升级到新版本。&lt;/p&gt;
+
+&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;fuzhi&quot;&gt;https://nvd.nist.gov/vuln/detail/CVE-2020-3452&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;yes&quot;&gt;https://s.tencent.com/research/bsafe/1057.html&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;ps：文章内容均为本人学习记录，造成其他后果不负责任&lt;/p&gt;</content><author><name>true</name></author><category term="CVE" /><summary type="html">漏洞描述 漏洞描述</summary></entry><entry><title type="html">Android-二次打包绕过root检测</title><link href="http://localhost:4000/blog/pass-root/" rel="alternate" type="text/html" title="Android-二次打包绕过root检测" /><published>2020-07-09T16:08:09+08:00</published><updated>2020-07-09T16:08:09+08:00</updated><id>http://localhost:4000/blog/pass-root</id><content type="html" xml:base="http://localhost:4000/blog/pass-root/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#工具介绍&quot; id=&quot;markdown-toc-工具介绍&quot;&gt;工具介绍&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#反编译二次打包&quot; id=&quot;markdown-toc-反编译二次打包&quot;&gt;反编译&amp;amp;二次打包&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;上一篇尝试了用hook的方式使得判断root的函数失灵&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/root.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;但是你在测的时候，要一直开着frida把他牢牢的勾住，有没有更粗暴的方法？既然我看到代码了，我就想直接把这行删掉，岂不是更好？&lt;/p&gt;
+
+&lt;p&gt;今天参考的一种方法是&lt;strong&gt;通过修改反编译得到的smali文件实现修改apk逻辑功能的目的。&lt;/strong&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;工具介绍&quot;&gt;工具介绍&lt;/h1&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;工具&lt;/th&gt;
+      &lt;th&gt;功能&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;dex2jar&lt;/td&gt;
+      &lt;td&gt;将apk中的classes.dex文件转换成jar文件&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;jd-gui&lt;/td&gt;
+      &lt;td&gt;查看由dex2jar转换成的jar文件，以界面的形式展示反编译出来的Java源代码&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;apktool&lt;/td&gt;
+      &lt;td&gt;反编译生成smali字节码文件，提取apk中的资源文件&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h1 id=&quot;反编译二次打包&quot;&gt;反编译&amp;amp;二次打包&lt;/h1&gt;
+
+&lt;p&gt;将apk拷贝到apktool工具目录下，执行命令&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ apktool d app-release.apk
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;就会生成一个文件夹，内容是下列，里面有smali&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/apktool.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;由&lt;a href=&quot;https://sueisok.github.io/blog/hookroot/#絮絮叨叨如何反编译&quot;&gt;上一页反编译&lt;/a&gt;，定位到了是在HomeActivity里检测手机是否为root&lt;/p&gt;
+
+&lt;p&gt;同理，我们找到同路径下的HomeActivity.smali&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/smali.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;看到了熟悉的&lt;strong&gt;c&lt;/strong&gt;，我这里把这两个文件改成了如图，这个函数就等于永远flase了&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/web.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我们改好了之后就可以二次打包了&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ apktool b app-release
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;app-release文件夹里的dist文件夹里就是重新打包的apk了&lt;/p&gt;
+
+&lt;p&gt;接着要对apk进行签名下面是生成签名的命令&lt;/p&gt;
+
+&lt;p&gt;keytool -genkeypair  -alias [签名别名] -keystore [keystore的文件名]&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ keytool -genkeypair -alias serverkey -keystore sue.keystore
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;在文件夹中会生成sue.keystore的文件&lt;/p&gt;
+
+&lt;p&gt;接着进行签名&lt;/p&gt;
+
+&lt;p&gt;jarsigner -verbose -keystore [keystore的文件名] -signedjar [签名后的文件] [待签名的文件] [签名别名]&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ jarsigner -verbose -keystore sue.keystore -signedjar signed.apk app-release.apk serverkey
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;就会生成文件名为signed.apk的文件，查看签名已经变成我的标记&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/sue.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;然后将这个apk重新安装到手机上，已经绕过了root的检测&lt;/p&gt;
+
+&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;fuzhi&quot;&gt;https://blog.csdn.net/goodlixueyong/article/details/51126874&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">上一篇尝试了用hook的方式使得判断root的函数失灵</summary></entry><entry><title type="html">Android-绕过root检测</title><link href="http://localhost:4000/blog/hookroot/" rel="alternate" type="text/html" title="Android-绕过root检测" /><published>2020-07-08T18:00:09+08:00</published><updated>2020-07-08T18:00:09+08:00</updated><id>http://localhost:4000/blog/hookroot</id><content type="html" xml:base="http://localhost:4000/blog/hookroot/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#环境说明&quot; id=&quot;markdown-toc-环境说明&quot;&gt;环境说明&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#安装frida&quot; id=&quot;markdown-toc-安装frida&quot;&gt;安装frida&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#安装frida客户端&quot; id=&quot;markdown-toc-安装frida客户端&quot;&gt;安装frida客户端&lt;/a&gt;&lt;/li&gt;
@@ -221,97 +366,7 @@ R11:/data/local/tmp # ./frida-server-12.10.4-android-x86
 
 &lt;p&gt;&lt;a href=&quot;zhantie&quot;&gt;https://www.cnblogs.com/luoyesiqiu/p/10718997.html&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&quot;？&quot;&gt;https://blog.csdn.net/cjx529377/article/details/95802532&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔</summary></entry><entry><title type="html">Android-二次打包绕过root检测</title><link href="http://localhost:4000/blog/pass-root/" rel="alternate" type="text/html" title="Android-二次打包绕过root检测" /><published>2020-07-08T18:00:09+08:00</published><updated>2020-07-08T18:00:09+08:00</updated><id>http://localhost:4000/blog/pass-root</id><content type="html" xml:base="http://localhost:4000/blog/pass-root/">&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#工具介绍&quot; id=&quot;markdown-toc-工具介绍&quot;&gt;工具介绍&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#反编译二次打包&quot; id=&quot;markdown-toc-反编译二次打包&quot;&gt;反编译&amp;amp;二次打包&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;上一篇尝试了用hook的方式使得判断root的函数失灵&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200708_hookroot/root.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;但是你在测的时候，要一直开着frida把他牢牢的勾住，有没有更粗暴的方法？既然我看到代码了，我就想直接把这行删掉，岂不是更好？&lt;/p&gt;
-
-&lt;p&gt;今天参考的一种方法是&lt;strong&gt;通过修改反编译得到的smali文件实现修改apk逻辑功能的目的。&lt;/strong&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;工具介绍&quot;&gt;工具介绍&lt;/h1&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;工具&lt;/th&gt;
-      &lt;th&gt;功能&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;dex2jar&lt;/td&gt;
-      &lt;td&gt;将apk中的classes.dex文件转换成jar文件&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;jd-gui&lt;/td&gt;
-      &lt;td&gt;查看由dex2jar转换成的jar文件，以界面的形式展示反编译出来的Java源代码&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;apktool&lt;/td&gt;
-      &lt;td&gt;反编译生成smali字节码文件，提取apk中的资源文件&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;h1 id=&quot;反编译二次打包&quot;&gt;反编译&amp;amp;二次打包&lt;/h1&gt;
-
-&lt;p&gt;将apk拷贝到apktool工具目录下，执行命令&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ apktool d app-release.apk
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;就会生成一个文件夹，内容是下列，里面有smali&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/apktool.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;由&lt;a href=&quot;https://sueisok.github.io/blog/hookroot/#絮絮叨叨如何反编译&quot;&gt;上一页反编译&lt;/a&gt;，定位到了是在HomeActivity里检测手机是否为root&lt;/p&gt;
-
-&lt;p&gt;同理，我们找到同路径下的HomeActivity.smali&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/smali.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;看到了熟悉的&lt;strong&gt;c&lt;/strong&gt;，我这里把这两个文件改成了如图，这个函数就等于永远flase了&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/web.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;我们改好了之后就可以二次打包了&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ apktool b app-release
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;app-release文件夹里的dist文件夹里就是重新打包的apk了&lt;/p&gt;
-
-&lt;p&gt;接着要对apk进行签名下面是生成签名的命令&lt;/p&gt;
-
-&lt;p&gt;keytool -genkeypair  -alias [签名别名] -keystore [keystore的文件名]&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ keytool -genkeypair -alias serverkey -keystore sue.keystore
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;在文件夹中会生成sue.keystore的文件&lt;/p&gt;
-
-&lt;p&gt;接着进行签名&lt;/p&gt;
-
-&lt;p&gt;jarsigner -verbose -keystore [keystore的文件名] -signedjar [签名后的文件] [待签名的文件] [签名别名]&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;λ jarsigner -verbose -keystore sue.keystore -signedjar signed.apk app-release.apk serverkey
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;就会生成文件名为signed.apk的文件，查看签名已经变成我的标记&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200709_pass_hook/sue.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;然后将这个apk重新安装到手机上，已经绕过了root的检测&lt;/p&gt;
-
-&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&quot;fuzhi&quot;&gt;https://blog.csdn.net/goodlixueyong/article/details/51126874&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">上一篇尝试了用hook的方式使得判断root的函数失灵</summary></entry><entry><title type="html">SQL注入-失了智的盲注尝试</title><link href="http://localhost:4000/blog/stupid-sqli-blind/" rel="alternate" type="text/html" title="SQL注入-失了智的盲注尝试" /><published>2020-06-05T15:10:09+08:00</published><updated>2020-06-05T15:10:09+08:00</updated><id>http://localhost:4000/blog/stupid-sqli-blind</id><content type="html" xml:base="http://localhost:4000/blog/stupid-sqli-blind/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+&lt;p&gt;&lt;a href=&quot;？&quot;&gt;https://blog.csdn.net/cjx529377/article/details/95802532&lt;/a&gt;&lt;/p&gt;</content><author><name>true</name></author><category term="Android" /><summary type="html">有些app安装到已root的手机上会提示手机被root，不能使用🙄那还叫人怎么玩啊，摔</summary></entry><entry><title type="html">SQL注入-失了智的盲注尝试</title><link href="http://localhost:4000/blog/stupid-sqli-blind/" rel="alternate" type="text/html" title="SQL注入-失了智的盲注尝试" /><published>2020-06-05T15:10:09+08:00</published><updated>2020-06-05T15:10:09+08:00</updated><id>http://localhost:4000/blog/stupid-sqli-blind</id><content type="html" xml:base="http://localhost:4000/blog/stupid-sqli-blind/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#测试环境&quot; id=&quot;markdown-toc-测试环境&quot;&gt;测试环境&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#二分の盲注&quot; id=&quot;markdown-toc-二分の盲注&quot;&gt;二分の盲注&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#左移の盲注&quot; id=&quot;markdown-toc-左移の盲注&quot;&gt;左移の盲注&lt;/a&gt;&lt;/li&gt;
@@ -2943,187 +2998,4 @@ Cache-Control: max-age=0
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;所以能任意写入文件getshell的条件还是很苛刻的&lt;/p&gt;</content><author><name>true</name></author><category term="ThinkPHP" /><category term="漏洞复现" /><summary type="html"></summary></entry><entry><title type="html">第一篇博客</title><link href="http://localhost:4000/blog/first-blog/" rel="alternate" type="text/html" title="第一篇博客" /><published>2020-01-15T15:04:21+08:00</published><updated>2020-01-15T15:04:21+08:00</updated><id>http://localhost:4000/blog/first-blog</id><content type="html" xml:base="http://localhost:4000/blog/first-blog/">&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#0x00-拥有github&quot; id=&quot;markdown-toc-0x00-拥有github&quot;&gt;0x00 拥有github&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#0x01-选择的工具&quot; id=&quot;markdown-toc-0x01-选择的工具&quot;&gt;0x01 选择的工具&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#0x02-安装工具&quot; id=&quot;markdown-toc-0x02-安装工具&quot;&gt;0x02 安装工具&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#安装ruby&quot; id=&quot;markdown-toc-安装ruby&quot;&gt;安装ruby&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#安装bundle&quot; id=&quot;markdown-toc-安装bundle&quot;&gt;安装bundle&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#安装jekyll&quot; id=&quot;markdown-toc-安装jekyll&quot;&gt;安装jekyll&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#注册来必力&quot; id=&quot;markdown-toc-注册来必力&quot;&gt;注册来必力&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#0x03-发表自己的第一篇博客&quot; id=&quot;markdown-toc-0x03-发表自己的第一篇博客&quot;&gt;0x03 发表自己的第一篇博客&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#把自己原先的仓库clone下来&quot; id=&quot;markdown-toc-把自己原先的仓库clone下来&quot;&gt;把自己原先的仓库clone下来&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#选择一个自己喜欢的主题&quot; id=&quot;markdown-toc-选择一个自己喜欢的主题&quot;&gt;选择一个自己喜欢的主题&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#用typora写一篇内容&quot; id=&quot;markdown-toc-用typora写一篇内容&quot;&gt;用Typora写一篇内容&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#将修改内容提交到github&quot; id=&quot;markdown-toc-将修改内容提交到github&quot;&gt;将修改内容提交到github&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;0x00-拥有github&quot;&gt;0x00 拥有github&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;为什么用github：
-(￣▽￣)”方便不要钱，没有别的&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;注册github账号：&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;这个不用说了，之前就有账号了，直接在仓库里新建就行，会有个域名，比如我的是&lt;code class=&quot;highlighter-rouge&quot;&gt;sueisok&lt;/code&gt;，域名就是&lt;code class=&quot;highlighter-rouge&quot;&gt;sueisok.github.io&lt;/code&gt;了。不需要什么dnspod，什么dnsdaddy，什么一年50美元租服务器，贵且不好维护，且第三方平台比如wordpress可能有漏洞之类的，还要时常更新版本&lt;/p&gt;
-
-&lt;h1 id=&quot;0x01-选择的工具&quot;&gt;0x01 选择的工具&lt;/h1&gt;
-
-&lt;p&gt;本人电脑为win10系统&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://rubyinstaller.org/downloads/&quot;&gt;Ruby&lt;/a&gt;:一种简单快捷的面向对象（面向对象程序设计）脚本语言，安装Jekyll需要电脑上安装Ruby&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://jekyllcn.com/&quot;&gt;Jekyll&lt;/a&gt;：jekyll生成Git Pages，是一个生成静态网页的工具，不需要数据库支持。但是可以配合第三方服务，比如评论区可以有第三方支持，我这里用的是来必力&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://typora.io/&quot;&gt;Typora&lt;/a&gt;:是一款支持实时预览的 Markdown 文本编辑器，很强大&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://livere.com/&quot;&gt;来必力&lt;/a&gt;:添加的第三方评论工具&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;0x02-安装工具&quot;&gt;0x02 安装工具&lt;/h1&gt;
-
-&lt;h2 id=&quot;安装ruby&quot;&gt;安装ruby&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://rubyinstaller.org/downloads/&quot;&gt;Ruby官网&lt;/a&gt;下载安装包，选择带DevKit的&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;安装到某个路径下即可&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;添加到环境变量&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;检查ruby是否安装成功：&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ ruby -v
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;ul&gt;
-  &lt;li&gt;检查gem版本，gem是一个管理ruby库和程序的标准包，用RubyInstaller安装ruby之后都附带有gem（不是邓紫棋&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem -v
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;h2 id=&quot;安装bundle&quot;&gt;安装bundle&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem install bundle
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;至于这是什么，我不知道，至于会出现什么报错，我没遇见&lt;/p&gt;
-
-&lt;h2 id=&quot;安装jekyll&quot;&gt;安装jekyll&lt;/h2&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ gem install jekyll
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;成功的话就成功了。这里碎碎念一下，(ノへ￣、)公司电脑上就可以安装成功，家里自己的电脑就不成功&lt;/p&gt;
-
-&lt;p&gt;查看jekyll版本&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ jekyll -v
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;如果报错啥的，就按他提示，有可能是&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle exec jekyll -v
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示了版本就是成功袅 我的是jekyll 3.8.6&lt;/p&gt;
-
-&lt;h2 id=&quot;注册来必力&quot;&gt;注册来必力&lt;/h2&gt;
-
-&lt;p&gt;注册完将生成的内容添加到仓库文件的&lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;里&lt;/p&gt;
-
-&lt;h1 id=&quot;0x03-发表自己的第一篇博客&quot;&gt;0x03 发表自己的第一篇博客&lt;/h1&gt;
-
-&lt;p&gt;我自己之前在github上有过主页，所以我这里只写如何应用一个自己喜欢的主题，然后提交到git上，让所有人都看到&lt;/p&gt;
-
-&lt;h2 id=&quot;把自己原先的仓库clone下来&quot;&gt;把自己原先的仓库clone下来&lt;/h2&gt;
-
-&lt;p&gt;原先github上有过主页，clone到本地一个路径下&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git clone xxx你的仓库xxx
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;选择一个自己喜欢的主题&quot;&gt;选择一个自己喜欢的主题&lt;/h2&gt;
-
-&lt;p&gt;有好多主题的网站，我这个是在&lt;a href=&quot;http://jekyllthemes.org/&quot;&gt;jekyllthemes&lt;/a&gt;找的，也可以在喜欢的博主页脚中找到他们用的主题（真是个小机灵鬼儿&lt;/p&gt;
-
-&lt;p&gt;下载下来，如果这个主题能用的话，接着往下进行&lt;/p&gt;
-
-&lt;p&gt;如果直接把主题中的内容复制到仓库里，会出错，这里建议先在主题的目录下生成页面，再复制到clone的仓库目录下，在下载的主题目录下：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle exec jekyll serve
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;然后将生成的所有内容复制到自己目录下&lt;/p&gt;
-
-&lt;p&gt;如果之前仓库有自己的内容，比如&lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt;里的静态页面或者&lt;code class=&quot;highlighter-rouge&quot;&gt;_config.yml&lt;/code&gt;的内容，需要修改后再替换&lt;/p&gt;
-
-&lt;p&gt;在自己的仓库目录下：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ bundle exec jekyll serve
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;显示&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Configuration file: xxxx/sueisok.github.io/_config.yml
-            Source: xxxx/sueisok.github.io
-       Destination: xxxx/sueisok.github.io/_site
- Incremental build: disabled. Enable with --incremental
-      Generating...
-       Jekyll Feed: Generating feed for posts
-                    done in 2.183 seconds.
- Auto-regeneration: enabled for 'xxxx/sueisok.github.io'
-  JekyllAdmin mode: production
-    Server address: http://127.0.0.1:4000
-  Server running... press ctrl-c to stop.
-...
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;即可访问本地&lt;code class=&quot;highlighter-rouge&quot;&gt;http://127.0.0.1:4000&lt;/code&gt;查看页面，直到自己满意了之后再提交到github上&lt;/p&gt;
-
-&lt;h2 id=&quot;用typora写一篇内容&quot;&gt;用Typora写一篇内容&lt;/h2&gt;
-
-&lt;p&gt;Typora是可以写markdown格式内容的编辑器，简约大方又不失便捷，还可以直接添加emoji表情，下次试一下&lt;/p&gt;
-
-&lt;p&gt;写完直接丢到仓库的&lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt;里面&lt;/p&gt;
-
-&lt;h2 id=&quot;将修改内容提交到github&quot;&gt;将修改内容提交到github&lt;/h2&gt;
-
-&lt;p&gt;可以下载&lt;a href=&quot;https://desktop.github.com/&quot;&gt;GitHub Desktop&lt;/a&gt;，比较直观&lt;/p&gt;
-
-&lt;p&gt;也可以手动提交到git，我这里目前只有一个master分支，操作也比较暴力因为只有我一个人维护，如果需要其他分支可自行百度&lt;/p&gt;
-
-&lt;p&gt;查看修改内容：&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git status
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;将要提交的文件的信息添加到索引库&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git add .
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;添加此次修改的备注&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git commit -m &quot;xxxx&quot;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;提交到master分支&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ git push origin master
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;网络差的话可能提交失败，再试一下就好了（〃｀ 3′〃）&lt;/p&gt;
-
-&lt;p&gt;然后稍等一下就可以看到自己的commit成功，在等一下就可以看到自己的文章更新好了，奥里给！&lt;/p&gt;</content><author><name>true</name></author><category term="jekyll" /><category term="github" /><summary type="html"></summary></entry></feed>
+&lt;p&gt;所以能任意写入文件getshell的条件还是很苛刻的&lt;/p&gt;</content><author><name>true</name></author><category term="ThinkPHP" /><category term="漏洞复现" /><summary type="html"></summary></entry></feed>

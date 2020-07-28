@@ -59,7 +59,7 @@ SNS-icon:
   # juejin: ''
   # twitch: ''
 permalink: '/blog/:title/'
-paginate: 4
+paginate: 10
 paginatepath:
   - 'page:num'
 footer:

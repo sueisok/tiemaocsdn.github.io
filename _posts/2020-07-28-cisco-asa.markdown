@@ -1,0 +1,81 @@
+---
+layout:	post
+title:	"CVE-2020-3452: Cisco ASA/FTD 任意文件读取漏洞"
+date:	2020-07-28 16:08:09 +0800
+tags:	CVE
+color:	rgb(131,111,255)
+cover:	'../assets/blog_pic/20200728_cisco_asa/cover.png'
+subtitle:	'CVE-2020-3452'
+
+---
+
+* 目录
+{:toc}
+# 漏洞描述
+
+> A vulnerability in the web services interface of Cisco Adaptive Security Appliance (ASA) Software and Cisco Firepower Threat Defense (FTD) Software could allow an unauthenticated, remote attacker to conduct directory traversal attacks and read sensitive files on a targeted system. The vulnerability is due to a lack of proper input validation of URLs in HTTP requests processed by an affected device. An attacker could exploit this vulnerability by sending a crafted HTTP request containing directory traversal character sequences to an affected device. A successful exploit could allow the attacker to view arbitrary files within the web services file system on the targeted device. The web services file system is enabled when the affected device is configured with either WebVPN or AnyConnect features. This vulnerability cannot be used to obtain access to ASA or FTD system files or underlying operating system (OS) files.
+
+思科自适应安全设备（ASA）软件和思科Firepower威胁防御（FTD）软件的Web服务界面中的漏洞可能允许未经身份验证的远程攻击者进行目录遍历攻击并读取目标系统上的敏感文件。该漏洞是由于受影响的设备处理的HTTP请求中的URL缺乏正确的输入验证所致。攻击者可以通过将包含目录遍历字符序列的特制HTTP请求发送到受影响的设备来利用此漏洞。成功的利用可能使攻击者可以在目标设备上查看Web服务文件系统内的任意文件。当受影响的设备配置了WebVPN或AnyConnect功能时，将启用Web服务文件系统。
+
+
+
+# 漏洞编号
+
+CVE-2020-3452
+
+
+
+# 影响版本
+
+Cisco ASA：<= 9.6
+
+Cisco ASA：9.7 , 9.8 , 9.9 , 9.10 , 9.12 , 9.13 , 9.14
+
+Cisco FTD：6.2.2 , 6.2.3 , 6.3.0 , 6.4.0 , 6.5.0 , 6.6.0
+
+
+# 漏洞等级
+
+中
+
+
+
+# 利用难度
+
+低
+
+
+
+# 漏洞详情
+
+![avatar](../../assets/blog_pic/20200728_cisco_asa/poc.png)
+
+```
+/+CSCOT+/translation-table?type=mst&textdomain=/%2bCSCOE%2b/portal_inc.lua&default-language&lang=../
+```
+
+
+
+# 修复建议
+
+建议相关企业将Cisco ASA及FTD升级到新版本。
+
+
+
+
+
+# Refer
+
+[https://nvd.nist.gov/vuln/detail/CVE-2020-3452](fuzhi)
+
+[https://s.tencent.com/research/bsafe/1057.html](yes)
+
+
+
+
+
+
+
+
+
+ps：文章内容均为本人学习记录，造成其他后果不负责任
